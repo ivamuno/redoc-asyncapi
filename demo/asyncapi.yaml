@@ -10,7 +10,7 @@ info:
     * Create MIDs
 tags:
   - name: MIDs_Setup
-    x-displayName: MIDs Setup
+    x-displayName: MIDs Setup (RPC)
     description: Everything about MIDs Setup
 
 x-tagGroups:
