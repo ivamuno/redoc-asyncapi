@@ -60,7 +60,9 @@ export class FieldDetails extends React.PureComponent<FieldProps, { patternShown
       } else {
         const label = l('example') + ':';
         const raw = !!field.in;
-        renderedExamples = <FieldDetail label={label} value={getSerializedValue(field, field.example)} raw={raw}  />;
+        renderedExamples = (
+          <FieldDetail label={label} value={getSerializedValue(field, field.example)} raw={raw} />
+        );
       }
     }
 
@@ -129,7 +131,8 @@ function Examples({ field }: { field: FieldModel }) {
         {Object.values(field.examples).map((example, idx) => {
           return (
             <li key={idx}>
-              <ExampleValue>{getSerializedValue(field, example.value)}</ExampleValue> - {example.summary || example.description}
+              <ExampleValue>{getSerializedValue(field, example.value)}</ExampleValue> -{' '}
+              {example.summary || example.description}
             </li>
           );
         })}
@@ -146,7 +149,6 @@ function getSerializedValue(field: FieldModel, example: any) {
     return example;
   }
 }
-
 
 const ExamplesList = styled.ul`
   margin-top: 1em;
