@@ -68,8 +68,8 @@ export class OpenAPIParser {
   }
 
   validate(spec: any) {
-    if (spec.openapi === undefined) {
-      throw new Error('Document must be valid OpenAPI 3.0.0 definition');
+    if (spec.openapi === undefined && spec.asyncapi === undefined) {
+      throw new Error('Document must be valid OpenApi 3.0.0 or AsyncAPI 2.0.0 definition');
     }
   }
 

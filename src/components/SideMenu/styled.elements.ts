@@ -49,6 +49,14 @@ export const OperationBadge = styled.span.attrs((props: { type: string }) => ({
     background-color: ${(props) => props.theme.colors.http.delete};
   }
 
+  &.pub {
+    background-color: ${(props) => props.theme.colors.http.pub};
+  }
+
+  &.sub {
+    background-color: ${(props) => props.theme.colors.http.sub};
+  }
+
   &.basic {
     background-color: ${(props) => props.theme.colors.http.basic};
   }

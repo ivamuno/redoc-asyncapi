@@ -85,3 +85,33 @@ export const ServerUrl = styled.div`
     color: ${(props) => props.theme.colors.text.primary};
   }
 `;
+
+export const ServerPropsItem = styled.div`
+  padding: 1px;
+`;
+
+export const ServerVarName = styled.span`
+  font-weight: ${(props) => props.theme.typography.fontWeightBold};
+  font-family: ${(props) => props.theme.typography.fontFamily};
+  padding: 5px;
+  word-break: break-all;
+  color: ${(props) => props.theme.colors.text.primary};
+`;
+
+export const ServerVarDesc = styled.span`
+  padding: 5px;
+  word-break: break-all;
+  color: ${(props) => props.theme.colors.text.primary};
+`;
+
+export const ServerVarValue = styled.span<{ compact?: boolean; isVar?: boolean }>`
+  font-size: 11px;
+  margin-left: 0.2rem;
+  font-weight: ${(props) => props.theme.typography.fontWeightBold};
+  font-family: ${(props) => props.theme.typography.fontFamily};
+  border-radius: 0.25rem;
+  word-break: break-all;
+  background-color: ${(props) => (props.isVar ? '#8795a1' : '#8795a1')};
+  color: #ffffff;
+  padding: ${(props) => (props.compact ? '2px' : '3px')};
+`;

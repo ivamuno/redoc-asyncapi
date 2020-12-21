@@ -17,6 +17,8 @@ import { RequestSamples } from '../RequestSamples/RequestSamples';
 import { ResponsesList } from '../Responses/ResponsesList';
 import { ResponseSamples } from '../ResponseSamples/ResponseSamples';
 import { SecurityRequirements } from '../SecurityRequirement/SecurityRequirement';
+import { PathBindings } from '../Bindings/PathBindings';
+import { OperationBindings } from '../Bindings/OperationBindings';
 
 const OperationRow = styled(Row)`
   backface-visibility: hidden;
@@ -37,7 +39,7 @@ export class Operation extends React.Component<OperationProps> {
   render() {
     const { operation } = this.props;
 
-    const { name: summary, description, deprecated, externalDocs, isWebhook } = operation;
+    const { name: summary, description, deprecated, externalDocs, isWebhook, isAsync } = operation;
     const hasDescription = !!(description || externalDocs);
 
     return (
@@ -50,7 +52,7 @@ export class Operation extends React.Component<OperationProps> {
                 {summary} {deprecated && <Badge type="warning"> Deprecated </Badge>}
                 {isWebhook && <Badge type="primary"> Webhook </Badge>}
               </H2>
-              {options.pathInMiddlePanel && !isWebhook && (
+              {options.pathInMiddlePanel && !isWebhook && !isAsync && (
                 <Endpoint operation={operation} inverted={true} />
               )}
               {hasDescription && (
@@ -61,6 +63,8 @@ export class Operation extends React.Component<OperationProps> {
               )}
               <Extensions extensions={operation.extensions} />
               <SecurityRequirements securities={operation.security} />
+              <PathBindings bindings={operation.pathBindings} />
+              <OperationBindings bindings={operation.bindings} />
               <Parameters parameters={operation.parameters} body={operation.requestBody} />
               <ResponsesList responses={operation.responses} />
               <CallbacksList callbacks={operation.callbacks} />

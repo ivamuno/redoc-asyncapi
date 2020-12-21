@@ -56,6 +56,8 @@ const operationNames = {
   patch: true,
   delete: true,
   options: true,
+  pub: true,
+  sub: true,
 };
 
 export function isOperationName(key: string): boolean {

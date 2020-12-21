@@ -1,0 +1,1112 @@
+asyncapi: 2.0.0
+info:
+  title: MBoarding Async API
+  version: '0.4.5'
+  description: |
+    This system API enables merchant onboarding to Payvision.
+
+    ### Availble features are:
+
+    * Create MIDs
+tags:
+  - name: MIDs_Setup
+    x-displayName: MIDs Setup
+    description: Everything about MIDs Setup
+
+x-tagGroups:
+  - name: MIDs
+    tags:
+      - MIDs_Setup
+
+servers:
+  production:
+    url: rabbbitserver-p:{port}
+    protocol: amqp
+    protocolVersion: 0.9.1
+    description: Allows you to connect using the AMQP protocol to our RabbitMQ server.
+    variables:
+      port:
+        description: Secure connection (TLS) is available through port 5672.
+        default: '5672'
+        enum:
+          - '5672'
+    security:
+      - user-password: []
+      
+  acceptance:
+    url: rabbbitserver-a:{port}
+    protocol: amqp
+    protocolVersion: 0.9.1
+    description: Allows you to connect using the AMQP protocol to our RabbitMQ server.
+    variables:
+      port:
+        description: Secure connection (TLS) is available through port 5672.
+        default: '5672'
+        enum:
+          - '5672'
+    security:
+      - user-password: []
+
+defaultContentType: application/json
+
+channels:
+  MIDSetupRequest:
+    description: The channel on which MID requests are consumed.
+    bindings:
+      $ref: '#/components/channelBindings/amqpMidSetupRequest'
+    subscribe:
+      operationId: subMidCreateRequest
+      summary: Sub MID setup request.
+      message:
+        $ref: '#/components/messages/midSetupCommand'
+      tags: 
+        - name: MIDs_Setup
+      bindings:
+        amqp:
+          deliveryMode: 2
+          replyTo: mids.setup
+          timestamp: true
+          ack: false
+        
+  MIDSetupResponse:
+    description: The channel on which MID responses are produced.
+    bindings:
+      $ref: '#/components/channelBindings/amqpMidSetupReply'
+    publish:
+      operationId: pubMidCreateResponse
+      summary: Pub MID setup response.
+      message:
+        $ref: '#/components/messages/midSetupReplyCommand'
+      tags: 
+        - name: MIDs_Setup
+
+components:
+  messages:  
+    midSetupCommand:
+      name: midSetupCommand
+      title: MID Setup Command
+      summary: Command to setup an MID.
+      contentType: application/json
+      traits:
+        - $ref: '#/components/messageTraits/requestHeaders'
+      bindings:
+        $ref: '#/components/messageBindings/amqp'
+      payload:
+        $ref: "#/components/schemas/midSetupPayload"
+
+    midSetupReplyCommand:
+      name: midSetupReplyCommand
+      title: MID Reply Command
+      summary: Reply Command after setting up an MID.
+      contentType: application/json
+      traits:
+        - $ref: '#/components/messageTraits/replyHeaders'
+      bindings:
+        $ref: '#/components/messageBindings/amqp'
+      payload:
+        $ref: "#/components/schemas/midSetupReplyCommandPayload"
+
+  schemas:
+    guid:
+      type: string
+      format: uuid
+      description: Date and time when the message was sent.
+      
+    dateTime:
+      type: string
+      format: date-time
+      description: Date and time when the message was sent.
+
+    midSetupPayload:
+      $ref: '#/components/schemas/mid'
+    
+    midSetupReplyCommandPayload:
+      type: object
+      required:
+        - outcome
+      discriminator:
+        propertyName: outcome
+        mapping:
+          Success: '#/components/schemas/midSetupReplySuccessCommandPayload'
+          Skipped: '#/components/schemas/midSetupReplySkippedCommandPayload'
+          Error: '#/components/schemas/midSetupReplyErrorCommandPayload'
+      properties:
+        outcome:
+          type: string
+          enum:
+          - 'Success'
+          - 'Skipped'
+          - 'Error'
+
+    midSetupReplySuccessCommandPayload:
+      allOf:
+        - $ref: '#/components/schemas/midSetupReplyCommandPayload'
+        - type: object
+          properties:
+            applicationNumber:
+              type: string
+              description: 'Returns the application number assigned to the on-boarding instance.'
+          required:
+            - applicationNumber
+          example:
+            outcome: 'Success'
+            applicationNumber: '0012345978'
+
+    midSetupReplySkippedCommandPayload:
+      allOf:
+        - $ref: '#/components/schemas/midSetupReplyCommandPayload'
+        - type: object
+          properties:
+            message:
+              type: string
+              description: outcome description
+            detail:
+              type: array
+              description: outcome details
+              items:
+                type: string
+          required:
+            - message
+          example:
+            outcome: 'Skipped'
+            message: 'Incompatible value'
+
+    midSetupReplyErrorCommandPayload:
+      allOf:
+        - $ref: '#/components/schemas/midSetupReplyCommandPayload'
+        - type: object
+          properties:
+            message:
+              type: string
+              description: outcome description
+            detail:
+              type: array
+              description: outcome details
+              items:
+                type: string
+            errorCode:
+              type: string
+              description: required if outcome is "Error", doesn't exist in other case
+          required:
+            - message
+            - errorCode
+          example:
+            outcome: 'Error'
+            errorCode: '42'
+            message: 'Invalid value'
+            detail: 
+              - 'Value for mcccode invalid'
+
+    mid:
+      type: object
+      description: Map from `CRMAccount`
+      required:
+      - mid
+      - legalEntity
+      - setupType
+      - mcccode
+      - settlementPeriod
+      - descriptor
+      - cardTypes
+      - payoutsAndReservesHandledBy
+      - gateway
+      - contractualReserves
+      - pricing
+      - acquirerOptions
+      - currencies
+      - rates
+      - acquirer
+      - account
+      - bankAccounts
+      properties:
+        mid:
+          type: string
+          description: Map from `CRMMID/pvt_mid`
+          example: '75001122'
+        legalEntity:
+          type: string
+          description: Map from `CRMMID/pvt_legal_entity`
+          enum:
+            - 'Acapture'
+            - 'Payvision'
+          example: 'Payvision'
+        setupType:
+          type: string
+          description: Map from `CRMMID/pvt_setuptype` 
+          enum:
+            - 'Merchant'
+            - 'PaymentFacilitator'
+            - 'SubMerchant'
+          example: 'Payment Facilitator'
+        alias:
+          type: string
+          description: Map from `CRMMID/`
+          example: 'MerchantNameExample AG 016'
+        memberId:
+          type: string
+          description: Map from `CRMMID/mid`
+          example: null
+        type:
+          type: string
+          description: Map from `CRMMID/pvt_midtype`
+          enum:
+            - 'ECOM'
+            - 'ECOMMOTO'
+            - 'MOTO'
+            - 'POS'
+            - 'POSdebitonly'
+            - 'APM'
+          example: 'ECOM'
+        name:
+          type: string
+          description: Map from `CRMMID/`
+          example: 'Merchant Name 0001'
+        mcccode:
+          type: string
+          description: Map from `CRMMID/pvt_mcccode`
+          format: 'string of 4 numbers - leftpad'
+          example: '7922'
+        resellerName:
+          type: string
+          description: Map from `CRMMID/`
+          example: null
+        settlementPeriod:
+          type: string
+          description: Map from `CRMMID/pvt_settlementperiod`
+          enum:
+            - 'Daily'
+            - 'Monthly'
+            - 'Weekly'
+          example: 'Monthly'
+        debitorNumber:
+          type: string
+          description: Map from 
+          example: null
+        downtimeEmail:
+          type: string
+          description: Map from 
+          example: 'rg@email.de'
+        serviceType:
+          type: string
+          description: Map from 
+          enum:
+            - 'AcquiringOnly'
+            - 'FullAcquiringandProcessing'
+            - 'ProcessingServicesOnly'
+          example: 'Full Acquiring and Processing'
+        chargebackEmailTo:
+          type: string
+          description: Map from 
+          example: 'ja@email.de; compliance@email.de'
+        integrationPlatform:
+          type: array
+          description: Map from 
+          items:
+            type: string
+          example:
+            - 'Web Services'
+        wid:
+          type: string
+          description: Map from 
+          example: null
+        descriptor:
+          type: string
+          description: Map from `CRMMID/pvt_descriptor`
+          example: 'MerchantNameExample'
+        recurring:
+          type: boolean
+          description: Map from 
+          example: true
+        usesThreeDSecure:
+          type: boolean
+          description: Map from 
+          example: true
+        usesDynamicDescriptor:
+          type: boolean
+          description: Map from 
+          example: true
+        payoutsAndReservesHandledBy:
+          type: string
+          description: Map from `CRMaccount/pvt_payoutsreserveshandledby`
+          enum:
+            - 'Acapture'
+            - 'Acquirer'
+          example: 'Acapture'
+        usesOCPT:
+          type: string
+          description: Map from 
+          enum:
+            - 'None'
+            - 'OC'
+            - 'PT'
+            - 'OCPT'
+          example: 'OCPT'
+        autoCapture:
+          type: boolean
+          description: Map from 
+          example: false
+        cardTypes:
+          type: array
+          description: Map from 
+          items:
+            type: string
+            enum:
+            - 'Amex'
+            - 'Bancontact'
+            - 'Beneficial'
+            - 'CarteBancaire'
+            - 'CarteBlanche'
+            - 'CarteBleue'
+            - 'Delta'
+            - 'Diners'
+            - 'Discover'
+            - 'EnRoute'
+            - 'Galeria'
+            - 'Gecc'
+            - 'JCB'
+            - 'Laser'
+            - 'Maestro'
+            - 'MasterCard'
+            - 'MasterCardDebit'
+            - 'PrivateLabel'
+            - 'Solo'
+            - 'Switch'
+            - 'UnionPay'
+            - 'UnknownCards'
+            - 'Vpay'
+            - 'Visa'
+            - 'VisaDebit'
+            - 'VisaElectron'
+          example:
+            - 'Maestro'
+            - 'MasterCard'
+            - 'Visa'
+        gateway:
+          description: Map from 
+          $ref: '#/components/schemas/midGateway'
+        threeDSecure:
+          description: Map from 
+          $ref: '#/components/schemas/midThreeDSecure'
+        contractualReserves:
+          description: Map from 
+          $ref: '#/components/schemas/midContractualReserves'
+        pricing:
+          description: Map from 
+          $ref: '#/components/schemas/midPricing'
+        acquirerOptions:
+          description: Map from 
+          $ref: '#/components/schemas/midAcquirerOptions'
+        currencies:
+          type: array
+          description: Map from 
+          items:
+            $ref: '#/components/schemas/midCurrencies'
+        rates:
+          description: Map from 
+          $ref: '#/components/schemas/midRates'
+        acquirer:
+          description: Map from 
+          $ref: '#/components/schemas/midAcquirer'
+        account:
+          description: Map from 
+          $ref: '#/components/schemas/account'
+        bankAccounts:
+          type: array
+          description: Map from `CRMCurrencySet/pvt_bankaccountid_lookupValue`
+          items:
+            $ref: '#/components/schemas/bankAccount'  
+
+    midGateway:
+      type: object
+      description: Map from section General then Setup Details.
+      required:
+      - name
+      - memberId
+      properties:
+        name:
+          type: string
+          description: Map from `CRMMID/pvt_gateway`
+        memberId:
+          type: string
+          description: Map from 
+      example:
+        name: 'Payvision V2'
+        memberId: '0'
+      
+    midThreeDSecure:
+      type: object
+      description: Map from
+      required:
+      - mpiUsed
+      - mpiType
+      - mpiOptions
+      properties:
+        mpiUsed:
+          type: string
+          description: Map from 
+        mpiType:
+          type: string
+          description: Map from 
+          enum:
+            - 'External'
+            - 'Internal'
+        mpiOptions:
+          type: string
+          description: Map from 
+          required:
+          - processorID
+          properties:
+            processorID:
+              type: string
+              description: Map from 
+              enum:
+              - 'ToBeDefined'
+      example:
+        mpiUsed: 'MPIExample'
+        mpiType: 'Internal'
+        mpiOptions:
+          processorID: '258'
+       
+    midContractualReserves:
+      type: object
+      required:
+      - delayedPayment
+      - rollingReserve
+      description: Map from section General then Contractual Reserves.
+      properties:
+        delayedPayment:
+          type: string
+          description: Map from `CRMMID/pvt_delayedpayment`
+        rollingReserve:
+          type: object
+          required:
+          - percentage
+          - months
+          properties:
+            percentage:
+              type: string
+              description: Map from `CRMMID/pvt_rrpercentage`
+            months:
+              type: integer
+              description: Map from `CRMMID/pvt_rollingreservernrofmonths`
+        upfrontDeposit:
+          type: string
+          description: Map from `CRMAcquirer/pvt_depositvalue`
+        depositCurrency:
+          type: string
+          description: Map from `CRMAcquirer/pvt_depositcurrency`
+          format: ThreeISOLetter
+      example:
+        delayedPayment: 3
+        rollingReserve:
+          percentage: '0.000'
+          months: 0
+          
+    midSetupDetails:
+      type: object
+      description: Map from section General then Setup Details.
+      required:
+      - gateway
+      properties:
+        gateway:
+          type: string
+          description: Map from `CRMMID/pvt_gateway`
+      example:
+        gateway: 'Payivision V2'
+
+    midAcquirerOptions:
+      type: object
+      description: Map from section Settings then Acquirer Settings.
+      required:
+      - countryCode
+      - postalCode
+      - city
+      - streetAddress
+      - dbaCity
+      - like4like
+      - returnMSFonCBs
+      - returnMSFonRefunds
+      properties:
+        processor:
+          type: string
+          description: Map from 
+        terminalID:
+          type: string
+          description: Map from 
+        countryCode:
+          type: string
+          format: ThreeISOLetter
+          description: Map from `CRMMID/pvt_country`
+        state:
+          type: string
+          description: Map from `CRMaccount/address1_stateorprovince`
+        postalCode:
+          type: string
+          description: Map from `CRMMID/pvt_omnizippostalcode`
+        city:
+          type: string
+          description: Map from `CRMMID/pvt_cecity`
+        streetAddress:
+          type: string
+          description: Map from `CRMMID/pvt_omnimerchantstreetadress`
+        merchantContractNumber:
+          type: string
+          description: Map from 
+        terminalIDAuthorization:
+          type: string
+          description: Map from 
+        merchantTaxID:
+          type: string
+          description: Map from 
+        customerPhoneNumber:
+          type: string
+          description: Map from 
+        printCustomerPhoneNumber:
+          type: boolean
+          description: Map from 
+        recurringDMAccount:
+          type: boolean
+          description: Map from 
+        lodgingEnabled:
+          type: boolean
+          description: Map from 
+        levelIIIIIEnabled:
+          type: boolean
+          description: Map from 
+        amexChargeDescription:
+          type: string
+          description: Map from 
+        dynamicAmexDescription:
+          type: boolean
+          description: Map from 
+        avsEnabled:
+          type: boolean
+          description: Map from 
+        rejectionPolicy:
+          type: string
+          description: Map from 
+          enum:
+            - 'N_rejecttransactionswhereAddressANDZIPdontmatch'
+            - 'NAZ_rejecttransactionswhereAddressandorZIPdontmatch'
+            - 'UNAZ_rejecttransactionswhereAddressandorZIPdontmatchANDtherewasanerror'
+        transactionCategory:
+          type: string
+          description: Map from 
+          enum:
+            - 'MailOrder'
+            - 'MOTO'
+            - 'TelephoneOrder'
+        userName:
+          type: string
+          description: Map from 
+        dbaCity:
+          type: string
+          description: Map from `CRMMID/pvt_dbacity`
+        midSettlement:
+          type: string
+          description: Map from
+        like4like:
+          type: boolean
+          description: Map from `CRMMID/pvt_like4like`
+        domesticVisaDebitOptOut:
+          type: boolean
+          description: Map from 
+        returnMSFonCBs:
+          type: boolean
+          description: Map from `CRMMID/pvt_returnmsfoncbs`
+        returnMSFonRefunds:
+          type: boolean
+          description: Map from `CRMMID/pvt_returnmsfonrefunds`
+        opClientTariff:
+          type: string
+          description: Map from `CRMMID/OPClientTariff`
+      example:
+        countryCode: '280'
+        postalCode: '98764'
+        city: 'Unterföhring'
+        streetAddress: 'street address 4'
+        dbaCity: 'email.de'
+        like4like: true
+        returnMSFonCBs: false
+        returnMSFonRefunds: false
+
+    midPricing:
+      type: object
+      description: Map from section Settings then Pricing.
+      required:
+      - pricingType
+      - domesticVolume
+      - intraVolume
+      - interVolume
+      properties:
+        pricingType:
+          type: string
+          description: Map from `CRMMID/pvt_pricingtype`
+          enum:
+            - 'FlatRate'
+            - 'InterchangePlus'
+            - 'InterchangePlusPlus'
+            - 'Tiered'
+        domesticVolume:
+          type: string
+          description: Map from `CRMMID/pvt_domesticvolume`
+        intraVolume:
+          type: string
+          description: Map from `CRMMID/pvt_intravolume`
+        interVolume:
+          type: string
+          description: Map from `CRMMID/pvt_intervolume`
+      example:
+        pricingType: 'Interchange PlusPlus'
+        domesticVolume: '57.59'
+        intraVolume: '0.00'
+        interVolume: '42.41'
+
+    midCurrencies:
+      type: object
+      description: Map from.
+      required:
+      - settlement
+      - processing
+      properties:
+        settlement:
+          type: string
+          description: Map from `CRMCurrencySet/pvt_settlementcurrency`
+          format: ThreeISOLetter
+        processing:
+          type: array
+          description: Wilcard ("*") is accepted for all the values. Map from 
+          format: ThreeISOLetter
+          items:
+            type: string
+      example:
+        settlement: 'USD'
+        processing:
+          - 'USD'
+
+    midRates:
+      type: array
+      description: Map from section Settings then Acquirer Fees (charged directly to merchant).
+      items:
+        type: object
+        required:
+        - type
+        - name
+        - base
+        - percent
+        properties:
+          type:
+            enum:
+            - 'Acquirer'
+            - 'Transaction'
+            - 'Assestment'
+          name:
+            enum:
+            - 'Refund'
+            - 'Retrieval'
+            - 'Chargeback'
+            - 'PreArb'
+            - 'Wire'
+            - 'AcquirerTransaction'
+            - 'Visa'
+            - 'VisaDebit'
+            - 'Mastercard'
+            - 'Maestro'
+          settlement:
+            type: string
+            description: Settlement currency.
+            format: ThreeISOLetter
+          base:
+            type: string
+            description: Map from `CRMMID/pvt_dxfeeoutrefund`, `CRMMID/pvt_dxfeeoutretrieval`, `CRMMID/pvt_dxfeeoutchargeback`, `CRMMID/pvt_dxfeeoutprearb`, `CRMMID/pvt_dxfeeoutwire`, `CRMMID/pvt_acquirertransactionfee`
+          percent:
+            type: string
+      example:
+        - type: 'acquirer'
+          name: 'refund'
+          settlement: 'EUR'
+          base: '0.050'
+          percent: '0.000'
+        - type: 'acquirer'
+          name: 'retrieval'
+          settlement: 'EUR'
+          base: '1.200'
+          percent: '0.000'
+        - type: 'acquirer'
+          name: 'chargeback'
+          settlement: 'EUR'
+          base: '10.500'
+          percent: '0.000'
+        - type: 'transaction'
+          name: 'visa'
+          base: '0.000'
+          percent: '0.300'
+        - type: 'assestment'
+          name: ''
+          base: '0.050'
+          percent: '0.000'
+
+    midAcquirer:
+      type: object
+      description: Map from.
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Map from `CRMMID/acquirer`
+          enum:
+            - 'American Express'
+            - 'B+S Card Service'
+            - 'Borgun'
+            - 'Dah Sing Bank HK'
+            - 'Deutsche Card Services (Pago)'
+            - 'Elavon'
+            - 'FDMS UK'
+            - 'HomeTrust'
+            - 'ING POS debit'
+            - 'Jetpay'
+            - 'Merchant E-Solutions (Cielo)'
+            - 'Merchant Solutions PLC'
+            - 'Merrick'
+            - 'MoneyBookers'
+            - 'OCBC Wing Hang Bank HK'
+            - 'OCBC Wing Hang Bank Macau'
+            - 'Payon (AMEX)'
+            - 'Payon CAPN (AMEX)'
+            - 'Payvision Acquiring'
+            - 'Postbank (EVO Kartenakzeptanz GmbH)'
+            - 'Privatbank 1891'
+            - 'Rentabiliweb'
+            - 'SagePay'
+            - 'UOB'
+            - 'Valitor'
+            - 'Vantiv'
+            - 'Wing Lung Bank HK'
+        reporterName:
+          type: string
+          description: Map from 
+        defaultCurrency:
+          type: string
+          description: Map from `CRMMID/pvt_defaultcurrency_acquirer`
+      example:
+        name: 'Payvision Acquiring'
+        reporterName: null
+        defaultCurrency: 'USD'
+
+    bankAccount:
+      type: object
+      description: Map from `CRMBankAccount`.
+      required:
+        - settlementCurrency
+      properties:
+        settlementCurrency:
+          type: string
+          format: ThreeCurrencyLetter
+          description: Map from `CRMBankAccount/pvt_settlementcurrency`
+        name:
+          type: string
+          description: Map from `CRMBankAccount/pvt_bankname`
+        iban:
+          type: string
+          description: Map from `CRMBankAccount/pvt_ibanno`
+        number:
+          type: string
+          description: Map from `CRMBankAccount/pvt_bankaccountnumber`
+        bic:
+          type: string
+          description: Map from `CRMBankAccount/pvt_bic_swiftno`
+        holder:
+          type: string
+          description: Map from `CRMBankAccount/pvt_bankaccountholder`
+        sortcode:
+          type: string
+          description: Map from `CRMBankAccount/pvt_banksortcode`
+        address:
+          type: object
+          description: Map from section Address then Address.
+          properties:
+            country:
+              type: string
+              format: ThreeISOLetter
+              description: Map from `CRMBankAccount/pvt_country`
+            city:
+              type: string
+              description: Map from `CRMBankAddress/pvt_city`
+      example:
+        settlementCurrency: 'USD'
+        name: 'Bank Salzburg'
+        iban: 'XXXX YYYY 0000 0000 0000'
+        number: 'XXXX YYYY 0000 0000 0000'
+        bic: 'RXXXXXXX'
+        holder: 'MerchantNameExample AG'
+        sortcode: 'ZZZZ'
+        address:
+          country: '040'
+          city: 'Salzburg'
+
+    account:
+      type: object
+      description: Map from `CRMBankAccount.`
+      required:
+        - accountNumber
+        - name
+        - dbaName
+        - telephone
+        - reseller
+        - registrationNo
+        - vatNumber
+        - legalAddress
+      properties:
+        accountNumber:
+          type: string
+          description: Map from 
+        name:
+          type: string
+          description: Map from `CRMaccount/name`
+        dbaName:
+          type: string
+          description: Map from 
+        telephone:
+          type: string
+          description: Map from 
+        reseller:
+          type: string
+          description: Map from 
+        registrationNo:
+          type: string
+          description: Map from `CRMaccount/pvt_registrationno`
+        vatNumber:
+          type: string
+          description: Map from `CRMaccount/pvt_vatnumber`
+        relationShipType:
+          type: string
+          description: Map from 
+          enum:
+            - 'Acquirer'
+            - 'Competitor'
+            - 'Consultant'
+            - 'Merchant'
+            - 'Other'
+            - 'Reseller'
+            - 'Supplier'
+        salesStatus:
+          type: string
+          description: Map from 
+          enum:
+            - 'Applicationwithdrawn'
+            - 'Closed'
+            - 'Declined'
+            - 'Live'
+            - 'Preapproved'
+            - 'Prospect'
+        pfidMastercard:
+          type: string
+          description: Map from `CRMaccount/pfi`
+        mcMarketplaceId:
+          type: string
+          description: Map from `CRMaccount/pvt_mcmarketplacei`
+        pfidVisa:
+          type: string
+          description: Map from 
+        visaMarketplaceId:
+          type: string
+          description: Map from 
+        primaryContact:
+          type: string
+          format: email
+          description: Map from 
+        generalContact:
+          type: string
+          format: email
+          description: Map from 
+        mainPhone:
+          type: string
+          description: Map from 
+        webSite:
+          type: string
+          format: uri
+          description: Map from 
+        legalAddress:
+          type: object
+          description: Map from section General then AccountInformation.
+          required:
+          - line1
+          - line2
+          - postalCode
+          - city
+          - stateOrProvince
+          - country
+          properties:
+            street1:
+              type: string
+              description: Map from `CRMaccount/address1_line`
+            houseNo:
+              type: string
+              description: Map from `CRMaccount/address1_line`
+            zipCode:
+              type: string
+              description: Map from `CRMaccount/address1_postalcode`
+            city:
+              type: string
+              description: Map from `CRMaccount/address1_city`
+            state:
+              type: string
+              description: Map from `CRMaccount/address1_stateorprovince`
+            country:
+              type: string
+              format: ThreeISOLetter
+              description: Map from `CRMaccount/pvt_country`
+      example:
+        accountNumber: '320987'
+        name: 'name example d.o.o.'
+        dbaName: 'MerchantNameExample AG'
+        telephone: '+49 999-99999-99'
+        reseller: ''
+        registrationNo: 'HRB 999XXX'
+        vatNumber: 'DE999XXX'
+        relationShipType: 'Merchant'
+        salesStatus: 'Closed'
+        pfidMastercard: ''
+        mcMarketplaceId: ''
+        pfidVisa: null
+        visaMarketplaceId: null
+        generalContact: 'ja@email.de'
+        mainPhone: '+49 000-00000-00'
+        webSite: 'www.MerchantNameExample.com'
+        legalAddress:
+          street1: 'street1 example'
+          houseNo: '4'
+          zipCode: '979413'
+          city: 'Unterföhring'
+          state: ''
+          country: '280'
+
+  securitySchemes:
+    user-password:
+      type: userPassword
+
+  messageTraits:
+    requestHeaders:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by application (unique by request)
+            $ref: "#/components/schemas/guid"
+          timestamp:
+            $ref: "#/components/schemas/dateTime"
+          replyTo:
+            description: Queue where the command is replied.
+            type: string
+            default: 'amq.rabbitmq.reply-to'
+          headers:
+            type: object
+            description: Custom headers no supported by RabbitMQ
+            properties:
+              correlationKey:
+                description: Correlation Key set by application (unique by configuration, i.e., mid number)
+                type: string
+              commandType:
+                description: Type of command to be queued.
+                type: string
+              version:
+                description: Message Version. Message Version.
+                format: 'X.Y.Z'
+                type: string
+        example:
+          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
+          correlationKey: '75102178'
+          commandType: 'MidSetupRequest'
+          timestamp: '2020-09-29T18:40:09+00:00'
+          version: '1.0.0'
+          replyTo: 'amq.rabbitmq.reply-to'
+    replyHeaders:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by application
+            $ref: "#/components/schemas/guid"
+          correlationKey:
+            description: Correlation Key set by application (unique by configuration, i.e., mid number)
+            type: string
+          commandType:
+            description: Type of command to be queued.
+            type: string
+          timestamp:
+              $ref: "#/components/schemas/dateTime"
+          version:
+            description: Message Version.
+            format: 'X.Y.Z'
+            type: string
+          outcome:
+            description: A value indicating the outcome of the command.
+            type: string
+            enum:
+            - 'Success'
+            - 'Error'
+            - 'Skipped'
+        examples:
+          - $ref: '#/components/messageTraits/replySuccessHeaders/headers/example'
+          - $ref: '#/components/messageTraits/replyErrorHeaders/headers/example'
+          - $ref: '#/components/messageTraits/replySkippedHeaders/headers/example'
+    replySuccessHeaders:
+      headers:
+        allOf:
+        - $ref: '#/components/messageTraits/replyHeaders'
+        example:
+          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
+          correlationKey: '75102178'
+          commandType: 'midSetupReplyCommand'
+          timestamp: '2020-09-29T18:41:55+00:00'
+          version: '1.0.1'
+          outcome: 'Success'
+    replyErrorHeaders:
+      headers:
+        allOf:
+        - $ref: '#/components/messageTraits/replyHeaders'
+        example:
+          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
+          correlationKey: '75102178'
+          commandType: 'midSetupReplyCommand'
+          timestamp: '2020-09-29T18:41:55+00:00'
+          version: '1.0.1'
+          outcome: 'Error'
+    replySkippedHeaders:
+      headers:
+        allOf:
+        - $ref: '#/components/messageTraits/replyHeaders'
+        example:
+          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
+          correlationKey: '75102178'
+          commandType: 'midSetupReplyCommand'
+          timestamp: '2020-09-29T18:41:55+00:00'
+          version: '1.0.0'
+          outcome: 'Skipped'
+
+  channelBindings:
+    amqpMidSetupRequest:
+      amqp:
+        is: routingKey
+        exchange:
+          name: CRM-OpsFlow-Request
+          type: topic
+          durable: true
+          autoDelete: false
+          vhost: /
+        bindingVersion: 0.1.0
+    amqpMidSetupReply:
+      amqp:
+        is: queue
+        queue:
+          name: amq.rabbitmq.reply-to
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: /
+        bindingVersion: 0.1.0
+          
+  messageBindings:
+    amqp:
+      contentEncoding: gzip

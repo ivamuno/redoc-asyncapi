@@ -81,6 +81,8 @@ const defaultTheme: ThemeInterface = {
       basic: '#707070',
       link: '#07818F',
       head: '#A23DAD',
+      pub: '#186FAF',
+      sub: '#2F8132',
     },
   },
   schema: {
@@ -266,6 +268,8 @@ export interface ResolvedThemeInterface {
       basic: string;
       link: string;
       head: string;
+      pub: string;
+      sub: string;
     };
   };
   schema: {

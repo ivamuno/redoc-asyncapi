@@ -1,10 +1,10 @@
 {
-  "name": "redoc",
-  "version": "2.0.0-rc.48",
-  "description": "ReDoc",
+  "name": "redoc-asyncapi",
+  "version": "0.0.1",
+  "description": "ReDoc for AsyncAPI",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Redocly/redoc"
+    "url": "git+https://github.com/ivamuno/redoc-asyncapi.git"
   },
   "engines": {
     "node": ">=6.9",

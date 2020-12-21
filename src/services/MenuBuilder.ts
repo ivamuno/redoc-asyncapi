@@ -30,6 +30,7 @@ export type ExtendedOpenAPIOperation = {
   pathParameters: Array<Referenced<OpenAPIParameter>>;
   pathServers: Array<OpenAPIServer> | undefined;
   isWebhook: boolean;
+  pathBindings: Record<string, any>;
 } & OpenAPIOperation;
 
 export type TagsInfoMap = Record<string, TagInfo>;
@@ -221,7 +222,7 @@ export class MenuBuilder {
       tags[tag.name] = { ...tag, operations: [] };
     }
 
-    getTags(spec.paths);
+    getTags(spec.paths || {});
     if (spec['x-webhooks']) {
       getTags(spec['x-webhooks'], true);
     }
@@ -259,6 +260,7 @@ export class MenuBuilder {
               pathParameters: path.parameters || [],
               pathServers: path.servers,
               isWebhook: !!isWebhook,
+              pathBindings: path.bindings,
             });
           }
         }
