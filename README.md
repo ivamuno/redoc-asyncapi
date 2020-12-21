@@ -7,7 +7,7 @@
 **This is README for an ReDoc extension which supports AsyncAPI**
 See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 
-## [Live demo]
+## Live demo
 
 ![ReDoc demo](./docs/images/redoc-asyncapi.gif)
 
