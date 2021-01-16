@@ -18,8 +18,15 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 - The following protocols can be used: AMQP
 
 ## Roadmap
+  - [x] AMQP Bindings
+  - [ ] Aggregator
+  - [ ] Channel Parameters
+  - [ ] Header/Traits
+  - [x] Collapse Protocol and Properties
+  - [ ] Try-it out for Open API
+  - [ ] Reset ErrorBoundary
+  - [ ] Generate Postman collection
   - [ ] Other protocols: http, ws, kafka, ...
-  - [ ] Traits.
 
 ## Releases
 

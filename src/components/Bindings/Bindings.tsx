@@ -1,9 +1,11 @@
 // import { transparentize } from 'polished';
 import * as React from 'react';
+import { Collapse } from 'react-collapse';
 import styled from '../../styled-components';
 import { UnderlinedHeader } from '../../common-elements';
 import { PropertiesTable } from '../../common-elements/fields-layout';
 import { MimeLabel } from '../../common-elements/dropdown';
+import { ShelfIcon } from '../../common-elements/shelfs';
 
 import { mapWithLast } from '../../utils';
 import {
@@ -17,34 +19,53 @@ const TypeName = styled.span`
   font-size: 13px;
 `;
 
+const BindingsHeader = styled(UnderlinedHeader)`
+  cursor: pointer;
+`;
+
 export interface BindingsProps {
   bindingGroupHeader: string;
   bindingGroupName?: string;
   bindings: any[];
 }
 
-export class Bindings extends React.PureComponent<BindingsProps> {
+export interface BindingsState {
+  expanded: boolean;
+}
+
+export class Bindings extends React.PureComponent<BindingsProps, BindingsState> {
+  constructor(props) {
+    super(props);
+    this.state = { expanded: false };
+  }
+
   render() {
+    const { expanded } = this.state;
     return (
       <div>
-        <UnderlinedHeader>
+        <BindingsHeader  onClick={() => {
+          this.setState({ expanded: !expanded });
+        }}>
           {this.props.bindingGroupHeader}: <MimeLabel>{this.props.bindingGroupName}</MimeLabel>
-        </UnderlinedHeader>
-        <PropertiesTable>
-          <tbody>
-            {mapWithLast(this.props.bindings, (b, isLast) => (
-              <tr key={b.key} className={isLast ? 'last' : ''}>
-                <PropertyNameCell title={b.key}>
-                  <PropertyBullet />
-                  <span>{b.key}</span>
-                </PropertyNameCell>
-                <PropertyDetailsCell>
-                  <TypeName>{b.value.toString()}</TypeName>
-                </PropertyDetailsCell>
-              </tr>
-            ))}
-          </tbody>
-        </PropertiesTable>
+          <ShelfIcon float={'right'} direction={expanded ? 'down' : 'right'} />
+        </BindingsHeader>
+        <Collapse isOpened={expanded}>
+          <PropertiesTable>
+            <tbody>
+              {mapWithLast(this.props.bindings, (b, isLast) => (
+                <tr key={b.key} className={isLast ? 'last' : ''}>
+                  <PropertyNameCell title={b.key}>
+                    <PropertyBullet />
+                    <span>{b.key}</span>
+                  </PropertyNameCell>
+                  <PropertyDetailsCell>
+                    <TypeName>{b.value.toString()}</TypeName>
+                  </PropertyDetailsCell>
+                </tr>
+              ))}
+            </tbody>
+          </PropertiesTable>
+        </Collapse>
       </div>
     );
   }
