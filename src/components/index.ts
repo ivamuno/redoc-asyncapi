@@ -37,3 +37,6 @@ export * from './SourceCode/SourceCode';
 
 export * from './Bindings/OperationBindings';
 export * from './Bindings/PathBindings';
+
+export * from './TryItOut/TryItOutParameters';
+export * from './TryItOut/TryItOut';

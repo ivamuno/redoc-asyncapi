@@ -33,10 +33,23 @@ export interface XPayloadSample {
   source: string;
 }
 
+export interface XTryItOutSample {
+  lang: 'tryItOut';
+  label: string;
+  operationModel: OperationModel;
+  source: string;
+}
+
 export function isPayloadSample(
-  sample: XPayloadSample | OpenAPIXCodeSample,
+  sample: XPayloadSample | OpenAPIXCodeSample | XTryItOutSample,
 ): sample is XPayloadSample {
   return sample.lang === 'payload' && (sample as any).requestBodyContent;
+}
+
+export function isTryItOutSample(
+  sample: XTryItOutSample | OpenAPIXCodeSample | XTryItOutSample,
+): sample is XTryItOutSample {
+  return sample.lang === 'tryItOut' && (sample as any).operationModel;
 }
 
 let isCodeSamplesWarningPrinted = false;
@@ -123,8 +136,8 @@ export class OperationModel implements IMenuItem {
         operationSpec.operationId !== undefined
           ? 'operation/' + operationSpec.operationId
           : parent !== undefined
-          ? parent.id + this.pointer
-          : this.pointer;
+            ? parent.id + this.pointer
+            : this.pointer;
 
       this.security = (operationSpec.security || parser.spec.security || []).map(
         (security) => new SecurityRequirementModel(security, parser),
@@ -186,7 +199,7 @@ export class OperationModel implements IMenuItem {
 
   @memoize
   get codeSamples() {
-    let samples: Array<OpenAPIXCodeSample | XPayloadSample> =
+    let samples: Array<OpenAPIXCodeSample | XPayloadSample | XTryItOutSample> =
       this.operationSpec['x-codeSamples'] || this.operationSpec['x-code-samples'] || [];
 
     if (this.operationSpec['x-code-samples'] && !isCodeSamplesWarningPrinted) {
@@ -195,9 +208,8 @@ export class OperationModel implements IMenuItem {
     }
 
     const requestBodyContent = this.requestBody && this.requestBody.content;
+    const insertInx = Math.min(samples.length, this.options.payloadSampleIdx);
     if (requestBodyContent && requestBodyContent.hasSample) {
-      const insertInx = Math.min(samples.length, this.options.payloadSampleIdx);
-
       samples = [
         ...samples.slice(0, insertInx),
         {
@@ -206,7 +218,21 @@ export class OperationModel implements IMenuItem {
           source: '',
           requestBodyContent,
         },
-        ...samples.slice(insertInx),
+        ...samples.slice(insertInx)
+      ];
+    }
+
+    if (!this.isAsync) {
+      samples = [
+        ...samples.slice(0, insertInx + 1),
+
+        {
+          lang: 'tryItOut',
+          label: 'Try it out',
+          source: '',
+          operationModel: this
+        },
+        ...samples.slice(insertInx + 1)
       ];
     }
 
