@@ -19,10 +19,8 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 
 ## Roadmap
   - [x] Collapse Protocol and Properties
-  - [ ] Serve Readme in Aggregator
-  - [ ] Send spec to RedocStandalone
   - [ ] Channel Parameters
-  - [ ] Reset ErrorBoundary
+  - [x] Reset ErrorBoundary state
   - [ ] Generate Postman collection
   - [ ] Try-it out for Open API
     - https://github.com/swagger-api/swagger-ui/blob/0a807d6237f59880d34131f66cd4fc542fdaca09/src/core/plugins/spec/actions.js
