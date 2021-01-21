@@ -19,8 +19,9 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 
 ## Roadmap
   - [x] Collapse Protocol and Properties
-  - [ ] Channel Parameters
+  - [x] Channel Parameters
   - [x] Reset ErrorBoundary state
+  - [ ] Header/Traits
   - [ ] Generate Postman collection
   - [ ] Try-it out for Open API
     - https://github.com/swagger-api/swagger-ui/blob/0a807d6237f59880d34131f66cd4fc542fdaca09/src/core/plugins/spec/actions.js
@@ -30,7 +31,6 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
       - application/xml
       - multipart/form-data
       - application/x-www-form-urlencoded
-  - [ ] Header/Traits
   - [ ] Other protocols: http, ws, kafka, ...
 
 ## Releases

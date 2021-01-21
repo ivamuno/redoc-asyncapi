@@ -170,6 +170,7 @@ export interface OpenAPIParameter {
   examples?: { [media: string]: Referenced<OpenAPIExample> };
   content?: { [media: string]: OpenAPIMediaType };
   encoding?: Record<string, OpenAPIEncoding>;
+  
   location?: string;
 }
 
@@ -217,7 +218,7 @@ export interface OpenAPISchema {
   minProperties?: number;
   enum?: any[];
   example?: any;
-  examples?: any[];
+  examples?: { [name: string]: OpenAPIExample };
 }
 
 export interface OpenAPIDiscriminator {
@@ -243,7 +244,7 @@ export interface OpenAPIEncoding {
   allowReserved: boolean;
 }
 
-export type OpenAPIParameterLocation = 'query' | 'header' | 'path' | 'cookie';
+export type OpenAPIParameterLocation = 'query' | 'header' | 'path' | 'cookie' | 'channel';
 export type OpenAPIParameterStyle =
   | 'matrix'
   | 'label'

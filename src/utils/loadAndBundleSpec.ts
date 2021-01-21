@@ -9,6 +9,7 @@ import {
   AsyncOperationObject,
   OpenAPIMediaType,
   OpenAPIOperation,
+  OpenAPIParameter,
   OpenAPIPath,
   OpenAPIRef,
   OpenAPIRequestBody,
@@ -124,14 +125,21 @@ function convertAsyncAPIChannel2OpenAPIPath(
   defaultContentType?: string,
   security?: OpenAPISecurityRequirement[],
 ): OpenAPIPath {
+  const channelParameters = channel.parameters || {};
   const path: OpenAPIPath = {
     description: channel.description,
-    //TODO: Pending to map parameters.
-    bindings: derefBindings(parser, channel.bindings),
+    parameters: Object.keys(channelParameters).map(k => {
+      const param = channelParameters[k];
+      return {
+        name: k,
+        in: 'channel',
+        description: param.description,
+        schema: param.schema,
+        required: true
+      } as OpenAPIParameter
+    }),
+    bindings: derefBindings(parser, channel.bindings)
   };
-
-  console.log('channel.bindings', channel.bindings);
-  console.log('path.bindings', path.bindings);
 
   if (channel.publish) {
     const publish = convertAsyncAPIOperation2OpenAPIOperation(
@@ -180,7 +188,7 @@ function convertAsyncAPIOperation2OpenAPIOperation(
   const contentTypeName = asyncOpMessage.schemaFormat || defaultContentType || 'application/json';
   const contentType: OpenAPIMediaType = {
     schema: schema,
-    examples: asyncOpMessage.examples,
+    examples: asyncOpMessage.examples || payloadBody.examples,
     example: payloadBody.example,
   };
   requestBody = {

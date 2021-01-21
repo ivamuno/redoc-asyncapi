@@ -63,9 +63,9 @@ export class Operation extends React.Component<OperationProps> {
               )}
               <Extensions extensions={operation.extensions} />
               <SecurityRequirements securities={operation.security} />
+              <Parameters parameters={operation.parameters} body={operation.requestBody} />
               <PathBindings bindings={operation.pathBindings} />
               <OperationBindings bindings={operation.bindings} />
-              <Parameters parameters={operation.parameters} body={operation.requestBody} />
               <ResponsesList responses={operation.responses} />
               <CallbacksList callbacks={operation.callbacks} />
             </MiddlePanel>

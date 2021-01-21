@@ -23,7 +23,7 @@ export interface ParametersProps {
   body?: RequestBodyModel;
 }
 
-const PARAM_PLACES = ['path', 'query', 'cookie', 'header'];
+const PARAM_PLACES = ['path', 'query', 'cookie', 'header', 'channel'];
 
 export class Parameters extends React.PureComponent<ParametersProps> {
   orderParams(params: FieldModel[]): Record<string, FieldModel[]> {
