@@ -8,6 +8,7 @@ import { ExternalDocumentation } from '../ExternalDocumentation/ExternalDocument
 import { Extensions } from '../Fields/Extensions';
 import { Markdown } from '../Markdown/Markdown';
 import { Parameters } from '../Parameters/Parameters';
+import { ParameterBody } from '../Parameters/ParameterBody';
 import { ResponsesList } from '../Responses/ResponsesList';
 import { SecurityRequirements } from '../SecurityRequirement/SecurityRequirement';
 import { CallbackDetailsWrap } from './styled.elements';
@@ -34,7 +35,8 @@ export class CallbackDetails extends React.Component<CallbackDetailsProps> {
         <Endpoint operation={this.props.operation} inverted={true} compact={true} />
         <Extensions extensions={operation.extensions} />
         <SecurityRequirements securities={operation.security} />
-        <Parameters parameters={operation.parameters} body={operation.requestBody} />
+        <Parameters parameters={operation.parameters} />
+        <ParameterBody body={operation.requestBody} />
         <ResponsesList responses={operation.responses} isCallback={operation.isCallback} />
       </CallbackDetailsWrap>
     );

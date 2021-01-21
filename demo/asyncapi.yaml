@@ -1,1112 +1,1602 @@
-asyncapi: 2.0.0
-info:
-  title: MBoarding Async API
-  version: '0.4.5'
-  description: |
-    This system API enables merchant onboarding to Payvision.
-
-    ### Availble features are:
-
-    * Create MIDs
-tags:
-  - name: MIDs_Setup
-    x-displayName: MIDs Setup (RPC)
-    description: Everything about MIDs Setup
-
-x-tagGroups:
-  - name: MIDs
-    tags:
-      - MIDs_Setup
-
-servers:
-  production:
-    url: rabbbitserver-p:{port}
-    protocol: amqp
-    protocolVersion: 0.9.1
-    description: Allows you to connect using the AMQP protocol to our RabbitMQ server.
-    variables:
-      port:
-        description: Secure connection (TLS) is available through port 5672.
-        default: '5672'
-        enum:
-          - '5672'
-    security:
-      - user-password: []
-      
-  acceptance:
-    url: rabbbitserver-a:{port}
-    protocol: amqp
-    protocolVersion: 0.9.1
-    description: Allows you to connect using the AMQP protocol to our RabbitMQ server.
-    variables:
-      port:
-        description: Secure connection (TLS) is available through port 5672.
-        default: '5672'
-        enum:
-          - '5672'
-    security:
-      - user-password: []
-
-defaultContentType: application/json
-
-channels:
-  MIDSetupRequest:
-    description: The channel on which MID requests are consumed.
-    bindings:
-      $ref: '#/components/channelBindings/amqpMidSetupRequest'
-    subscribe:
-      operationId: subMidCreateRequest
-      summary: Sub MID setup request.
-      message:
-        $ref: '#/components/messages/midSetupCommand'
-      tags: 
-        - name: MIDs_Setup
-      bindings:
-        amqp:
-          deliveryMode: 2
-          replyTo: mids.setup
-          timestamp: true
-          ack: false
-        
-  MIDSetupResponse:
-    description: The channel on which MID responses are produced.
-    bindings:
-      $ref: '#/components/channelBindings/amqpMidSetupReply'
-    publish:
-      operationId: pubMidCreateResponse
-      summary: Pub MID setup response.
-      message:
-        $ref: '#/components/messages/midSetupReplyCommand'
-      tags: 
-        - name: MIDs_Setup
-
-components:
-  messages:  
-    midSetupCommand:
-      name: midSetupCommand
-      title: MID Setup Command
-      summary: Command to setup an MID.
-      contentType: application/json
-      traits:
-        - $ref: '#/components/messageTraits/requestHeaders'
-      bindings:
-        $ref: '#/components/messageBindings/amqp'
-      payload:
-        $ref: "#/components/schemas/midSetupPayload"
-
-    midSetupReplyCommand:
-      name: midSetupReplyCommand
-      title: MID Reply Command
-      summary: Reply Command after setting up an MID.
-      contentType: application/json
-      traits:
-        - $ref: '#/components/messageTraits/replyHeaders'
-      bindings:
-        $ref: '#/components/messageBindings/amqp'
-      payload:
-        $ref: "#/components/schemas/midSetupReplyCommandPayload"
-
-  schemas:
-    guid:
-      type: string
-      format: uuid
-      description: Date and time when the message was sent.
-      
-    dateTime:
-      type: string
-      format: date-time
-      description: Date and time when the message was sent.
-
-    midSetupPayload:
-      $ref: '#/components/schemas/mid'
-    
-    midSetupReplyCommandPayload:
-      type: object
-      required:
-        - outcome
-      discriminator:
-        propertyName: outcome
-        mapping:
-          Success: '#/components/schemas/midSetupReplySuccessCommandPayload'
-          Skipped: '#/components/schemas/midSetupReplySkippedCommandPayload'
-          Error: '#/components/schemas/midSetupReplyErrorCommandPayload'
-      properties:
-        outcome:
-          type: string
-          enum:
-          - 'Success'
-          - 'Skipped'
-          - 'Error'
-
-    midSetupReplySuccessCommandPayload:
-      allOf:
-        - $ref: '#/components/schemas/midSetupReplyCommandPayload'
-        - type: object
-          properties:
-            applicationNumber:
-              type: string
-              description: 'Returns the application number assigned to the on-boarding instance.'
-          required:
-            - applicationNumber
-          example:
-            outcome: 'Success'
-            applicationNumber: '0012345978'
-
-    midSetupReplySkippedCommandPayload:
-      allOf:
-        - $ref: '#/components/schemas/midSetupReplyCommandPayload'
-        - type: object
-          properties:
-            message:
-              type: string
-              description: outcome description
-            detail:
-              type: array
-              description: outcome details
-              items:
-                type: string
-          required:
-            - message
-          example:
-            outcome: 'Skipped'
-            message: 'Incompatible value'
-
-    midSetupReplyErrorCommandPayload:
-      allOf:
-        - $ref: '#/components/schemas/midSetupReplyCommandPayload'
-        - type: object
-          properties:
-            message:
-              type: string
-              description: outcome description
-            detail:
-              type: array
-              description: outcome details
-              items:
-                type: string
-            errorCode:
-              type: string
-              description: required if outcome is "Error", doesn't exist in other case
-          required:
-            - message
-            - errorCode
-          example:
-            outcome: 'Error'
-            errorCode: '42'
-            message: 'Invalid value'
-            detail: 
-              - 'Value for mcccode invalid'
-
-    mid:
-      type: object
-      description: Map from `CRMAccount`
-      required:
-      - mid
-      - legalEntity
-      - setupType
-      - mcccode
-      - settlementPeriod
-      - descriptor
-      - cardTypes
-      - payoutsAndReservesHandledBy
-      - gateway
-      - contractualReserves
-      - pricing
-      - acquirerOptions
-      - currencies
-      - rates
-      - acquirer
-      - account
-      - bankAccounts
-      properties:
-        mid:
-          type: string
-          description: Map from `CRMMID/pvt_mid`
-          example: '75001122'
-        legalEntity:
-          type: string
-          description: Map from `CRMMID/pvt_legal_entity`
-          enum:
-            - 'Acapture'
-            - 'Payvision'
-          example: 'Payvision'
-        setupType:
-          type: string
-          description: Map from `CRMMID/pvt_setuptype` 
-          enum:
-            - 'Merchant'
-            - 'PaymentFacilitator'
-            - 'SubMerchant'
-          example: 'Payment Facilitator'
-        alias:
-          type: string
-          description: Map from `CRMMID/`
-          example: 'MerchantNameExample AG 016'
-        memberId:
-          type: string
-          description: Map from `CRMMID/mid`
-          example: null
-        type:
-          type: string
-          description: Map from `CRMMID/pvt_midtype`
-          enum:
-            - 'ECOM'
-            - 'ECOMMOTO'
-            - 'MOTO'
-            - 'POS'
-            - 'POSdebitonly'
-            - 'APM'
-          example: 'ECOM'
-        name:
-          type: string
-          description: Map from `CRMMID/`
-          example: 'Merchant Name 0001'
-        mcccode:
-          type: string
-          description: Map from `CRMMID/pvt_mcccode`
-          format: 'string of 4 numbers - leftpad'
-          example: '7922'
-        resellerName:
-          type: string
-          description: Map from `CRMMID/`
-          example: null
-        settlementPeriod:
-          type: string
-          description: Map from `CRMMID/pvt_settlementperiod`
-          enum:
-            - 'Daily'
-            - 'Monthly'
-            - 'Weekly'
-          example: 'Monthly'
-        debitorNumber:
-          type: string
-          description: Map from 
-          example: null
-        downtimeEmail:
-          type: string
-          description: Map from 
-          example: 'rg@email.de'
-        serviceType:
-          type: string
-          description: Map from 
-          enum:
-            - 'AcquiringOnly'
-            - 'FullAcquiringandProcessing'
-            - 'ProcessingServicesOnly'
-          example: 'Full Acquiring and Processing'
-        chargebackEmailTo:
-          type: string
-          description: Map from 
-          example: 'ja@email.de; compliance@email.de'
-        integrationPlatform:
-          type: array
-          description: Map from 
-          items:
-            type: string
-          example:
-            - 'Web Services'
-        wid:
-          type: string
-          description: Map from 
-          example: null
-        descriptor:
-          type: string
-          description: Map from `CRMMID/pvt_descriptor`
-          example: 'MerchantNameExample'
-        recurring:
-          type: boolean
-          description: Map from 
-          example: true
-        usesThreeDSecure:
-          type: boolean
-          description: Map from 
-          example: true
-        usesDynamicDescriptor:
-          type: boolean
-          description: Map from 
-          example: true
-        payoutsAndReservesHandledBy:
-          type: string
-          description: Map from `CRMaccount/pvt_payoutsreserveshandledby`
-          enum:
-            - 'Acapture'
-            - 'Acquirer'
-          example: 'Acapture'
-        usesOCPT:
-          type: string
-          description: Map from 
-          enum:
-            - 'None'
-            - 'OC'
-            - 'PT'
-            - 'OCPT'
-          example: 'OCPT'
-        autoCapture:
-          type: boolean
-          description: Map from 
-          example: false
-        cardTypes:
-          type: array
-          description: Map from 
-          items:
-            type: string
-            enum:
-            - 'Amex'
-            - 'Bancontact'
-            - 'Beneficial'
-            - 'CarteBancaire'
-            - 'CarteBlanche'
-            - 'CarteBleue'
-            - 'Delta'
-            - 'Diners'
-            - 'Discover'
-            - 'EnRoute'
-            - 'Galeria'
-            - 'Gecc'
-            - 'JCB'
-            - 'Laser'
-            - 'Maestro'
-            - 'MasterCard'
-            - 'MasterCardDebit'
-            - 'PrivateLabel'
-            - 'Solo'
-            - 'Switch'
-            - 'UnionPay'
-            - 'UnknownCards'
-            - 'Vpay'
-            - 'Visa'
-            - 'VisaDebit'
-            - 'VisaElectron'
-          example:
-            - 'Maestro'
-            - 'MasterCard'
-            - 'Visa'
-        gateway:
-          description: Map from 
-          $ref: '#/components/schemas/midGateway'
-        threeDSecure:
-          description: Map from 
-          $ref: '#/components/schemas/midThreeDSecure'
-        contractualReserves:
-          description: Map from 
-          $ref: '#/components/schemas/midContractualReserves'
-        pricing:
-          description: Map from 
-          $ref: '#/components/schemas/midPricing'
-        acquirerOptions:
-          description: Map from 
-          $ref: '#/components/schemas/midAcquirerOptions'
-        currencies:
-          type: array
-          description: Map from 
-          items:
-            $ref: '#/components/schemas/midCurrencies'
-        rates:
-          description: Map from 
-          $ref: '#/components/schemas/midRates'
-        acquirer:
-          description: Map from 
-          $ref: '#/components/schemas/midAcquirer'
-        account:
-          description: Map from 
-          $ref: '#/components/schemas/account'
-        bankAccounts:
-          type: array
-          description: Map from `CRMCurrencySet/pvt_bankaccountid_lookupValue`
-          items:
-            $ref: '#/components/schemas/bankAccount'  
-
-    midGateway:
-      type: object
-      description: Map from section General then Setup Details.
-      required:
-      - name
-      - memberId
-      properties:
-        name:
-          type: string
-          description: Map from `CRMMID/pvt_gateway`
-        memberId:
-          type: string
-          description: Map from 
-      example:
-        name: 'Payvision V2'
-        memberId: '0'
-      
-    midThreeDSecure:
-      type: object
-      description: Map from
-      required:
-      - mpiUsed
-      - mpiType
-      - mpiOptions
-      properties:
-        mpiUsed:
-          type: string
-          description: Map from 
-        mpiType:
-          type: string
-          description: Map from 
-          enum:
-            - 'External'
-            - 'Internal'
-        mpiOptions:
-          type: string
-          description: Map from 
-          required:
-          - processorID
-          properties:
-            processorID:
-              type: string
-              description: Map from 
-              enum:
-              - 'ToBeDefined'
-      example:
-        mpiUsed: 'MPIExample'
-        mpiType: 'Internal'
-        mpiOptions:
-          processorID: '258'
-       
-    midContractualReserves:
-      type: object
-      required:
-      - delayedPayment
-      - rollingReserve
-      description: Map from section General then Contractual Reserves.
-      properties:
-        delayedPayment:
-          type: string
-          description: Map from `CRMMID/pvt_delayedpayment`
-        rollingReserve:
-          type: object
-          required:
-          - percentage
-          - months
-          properties:
-            percentage:
-              type: string
-              description: Map from `CRMMID/pvt_rrpercentage`
-            months:
-              type: integer
-              description: Map from `CRMMID/pvt_rollingreservernrofmonths`
-        upfrontDeposit:
-          type: string
-          description: Map from `CRMAcquirer/pvt_depositvalue`
-        depositCurrency:
-          type: string
-          description: Map from `CRMAcquirer/pvt_depositcurrency`
-          format: ThreeISOLetter
-      example:
-        delayedPayment: 3
-        rollingReserve:
-          percentage: '0.000'
-          months: 0
-          
-    midSetupDetails:
-      type: object
-      description: Map from section General then Setup Details.
-      required:
-      - gateway
-      properties:
-        gateway:
-          type: string
-          description: Map from `CRMMID/pvt_gateway`
-      example:
-        gateway: 'Payivision V2'
-
-    midAcquirerOptions:
-      type: object
-      description: Map from section Settings then Acquirer Settings.
-      required:
-      - countryCode
-      - postalCode
-      - city
-      - streetAddress
-      - dbaCity
-      - like4like
-      - returnMSFonCBs
-      - returnMSFonRefunds
-      properties:
-        processor:
-          type: string
-          description: Map from 
-        terminalID:
-          type: string
-          description: Map from 
-        countryCode:
-          type: string
-          format: ThreeISOLetter
-          description: Map from `CRMMID/pvt_country`
-        state:
-          type: string
-          description: Map from `CRMaccount/address1_stateorprovince`
-        postalCode:
-          type: string
-          description: Map from `CRMMID/pvt_omnizippostalcode`
-        city:
-          type: string
-          description: Map from `CRMMID/pvt_cecity`
-        streetAddress:
-          type: string
-          description: Map from `CRMMID/pvt_omnimerchantstreetadress`
-        merchantContractNumber:
-          type: string
-          description: Map from 
-        terminalIDAuthorization:
-          type: string
-          description: Map from 
-        merchantTaxID:
-          type: string
-          description: Map from 
-        customerPhoneNumber:
-          type: string
-          description: Map from 
-        printCustomerPhoneNumber:
-          type: boolean
-          description: Map from 
-        recurringDMAccount:
-          type: boolean
-          description: Map from 
-        lodgingEnabled:
-          type: boolean
-          description: Map from 
-        levelIIIIIEnabled:
-          type: boolean
-          description: Map from 
-        amexChargeDescription:
-          type: string
-          description: Map from 
-        dynamicAmexDescription:
-          type: boolean
-          description: Map from 
-        avsEnabled:
-          type: boolean
-          description: Map from 
-        rejectionPolicy:
-          type: string
-          description: Map from 
-          enum:
-            - 'N_rejecttransactionswhereAddressANDZIPdontmatch'
-            - 'NAZ_rejecttransactionswhereAddressandorZIPdontmatch'
-            - 'UNAZ_rejecttransactionswhereAddressandorZIPdontmatchANDtherewasanerror'
-        transactionCategory:
-          type: string
-          description: Map from 
-          enum:
-            - 'MailOrder'
-            - 'MOTO'
-            - 'TelephoneOrder'
-        userName:
-          type: string
-          description: Map from 
-        dbaCity:
-          type: string
-          description: Map from `CRMMID/pvt_dbacity`
-        midSettlement:
-          type: string
-          description: Map from
-        like4like:
-          type: boolean
-          description: Map from `CRMMID/pvt_like4like`
-        domesticVisaDebitOptOut:
-          type: boolean
-          description: Map from 
-        returnMSFonCBs:
-          type: boolean
-          description: Map from `CRMMID/pvt_returnmsfoncbs`
-        returnMSFonRefunds:
-          type: boolean
-          description: Map from `CRMMID/pvt_returnmsfonrefunds`
-        opClientTariff:
-          type: string
-          description: Map from `CRMMID/OPClientTariff`
-      example:
-        countryCode: '280'
-        postalCode: '98764'
-        city: 'Unterföhring'
-        streetAddress: 'street address 4'
-        dbaCity: 'email.de'
-        like4like: true
-        returnMSFonCBs: false
-        returnMSFonRefunds: false
-
-    midPricing:
-      type: object
-      description: Map from section Settings then Pricing.
-      required:
-      - pricingType
-      - domesticVolume
-      - intraVolume
-      - interVolume
-      properties:
-        pricingType:
-          type: string
-          description: Map from `CRMMID/pvt_pricingtype`
-          enum:
-            - 'FlatRate'
-            - 'InterchangePlus'
-            - 'InterchangePlusPlus'
-            - 'Tiered'
-        domesticVolume:
-          type: string
-          description: Map from `CRMMID/pvt_domesticvolume`
-        intraVolume:
-          type: string
-          description: Map from `CRMMID/pvt_intravolume`
-        interVolume:
-          type: string
-          description: Map from `CRMMID/pvt_intervolume`
-      example:
-        pricingType: 'Interchange PlusPlus'
-        domesticVolume: '57.59'
-        intraVolume: '0.00'
-        interVolume: '42.41'
-
-    midCurrencies:
-      type: object
-      description: Map from.
-      required:
-      - settlement
-      - processing
-      properties:
-        settlement:
-          type: string
-          description: Map from `CRMCurrencySet/pvt_settlementcurrency`
-          format: ThreeISOLetter
-        processing:
-          type: array
-          description: Wilcard ("*") is accepted for all the values. Map from 
-          format: ThreeISOLetter
-          items:
-            type: string
-      example:
-        settlement: 'USD'
-        processing:
-          - 'USD'
-
-    midRates:
-      type: array
-      description: Map from section Settings then Acquirer Fees (charged directly to merchant).
-      items:
-        type: object
-        required:
-        - type
-        - name
-        - base
-        - percent
-        properties:
-          type:
-            enum:
-            - 'Acquirer'
-            - 'Transaction'
-            - 'Assestment'
-          name:
-            enum:
-            - 'Refund'
-            - 'Retrieval'
-            - 'Chargeback'
-            - 'PreArb'
-            - 'Wire'
-            - 'AcquirerTransaction'
-            - 'Visa'
-            - 'VisaDebit'
-            - 'Mastercard'
-            - 'Maestro'
-          settlement:
-            type: string
-            description: Settlement currency.
-            format: ThreeISOLetter
-          base:
-            type: string
-            description: Map from `CRMMID/pvt_dxfeeoutrefund`, `CRMMID/pvt_dxfeeoutretrieval`, `CRMMID/pvt_dxfeeoutchargeback`, `CRMMID/pvt_dxfeeoutprearb`, `CRMMID/pvt_dxfeeoutwire`, `CRMMID/pvt_acquirertransactionfee`
-          percent:
-            type: string
-      example:
-        - type: 'acquirer'
-          name: 'refund'
-          settlement: 'EUR'
-          base: '0.050'
-          percent: '0.000'
-        - type: 'acquirer'
-          name: 'retrieval'
-          settlement: 'EUR'
-          base: '1.200'
-          percent: '0.000'
-        - type: 'acquirer'
-          name: 'chargeback'
-          settlement: 'EUR'
-          base: '10.500'
-          percent: '0.000'
-        - type: 'transaction'
-          name: 'visa'
-          base: '0.000'
-          percent: '0.300'
-        - type: 'assestment'
-          name: ''
-          base: '0.050'
-          percent: '0.000'
-
-    midAcquirer:
-      type: object
-      description: Map from.
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: Map from `CRMMID/acquirer`
-          enum:
-            - 'American Express'
-            - 'B+S Card Service'
-            - 'Borgun'
-            - 'Dah Sing Bank HK'
-            - 'Deutsche Card Services (Pago)'
-            - 'Elavon'
-            - 'FDMS UK'
-            - 'HomeTrust'
-            - 'ING POS debit'
-            - 'Jetpay'
-            - 'Merchant E-Solutions (Cielo)'
-            - 'Merchant Solutions PLC'
-            - 'Merrick'
-            - 'MoneyBookers'
-            - 'OCBC Wing Hang Bank HK'
-            - 'OCBC Wing Hang Bank Macau'
-            - 'Payon (AMEX)'
-            - 'Payon CAPN (AMEX)'
-            - 'Payvision Acquiring'
-            - 'Postbank (EVO Kartenakzeptanz GmbH)'
-            - 'Privatbank 1891'
-            - 'Rentabiliweb'
-            - 'SagePay'
-            - 'UOB'
-            - 'Valitor'
-            - 'Vantiv'
-            - 'Wing Lung Bank HK'
-        reporterName:
-          type: string
-          description: Map from 
-        defaultCurrency:
-          type: string
-          description: Map from `CRMMID/pvt_defaultcurrency_acquirer`
-      example:
-        name: 'Payvision Acquiring'
-        reporterName: null
-        defaultCurrency: 'USD'
-
-    bankAccount:
-      type: object
-      description: Map from `CRMBankAccount`.
-      required:
-        - settlementCurrency
-      properties:
-        settlementCurrency:
-          type: string
-          format: ThreeCurrencyLetter
-          description: Map from `CRMBankAccount/pvt_settlementcurrency`
-        name:
-          type: string
-          description: Map from `CRMBankAccount/pvt_bankname`
-        iban:
-          type: string
-          description: Map from `CRMBankAccount/pvt_ibanno`
-        number:
-          type: string
-          description: Map from `CRMBankAccount/pvt_bankaccountnumber`
-        bic:
-          type: string
-          description: Map from `CRMBankAccount/pvt_bic_swiftno`
-        holder:
-          type: string
-          description: Map from `CRMBankAccount/pvt_bankaccountholder`
-        sortcode:
-          type: string
-          description: Map from `CRMBankAccount/pvt_banksortcode`
-        address:
-          type: object
-          description: Map from section Address then Address.
-          properties:
-            country:
-              type: string
-              format: ThreeISOLetter
-              description: Map from `CRMBankAccount/pvt_country`
-            city:
-              type: string
-              description: Map from `CRMBankAddress/pvt_city`
-      example:
-        settlementCurrency: 'USD'
-        name: 'Bank Salzburg'
-        iban: 'XXXX YYYY 0000 0000 0000'
-        number: 'XXXX YYYY 0000 0000 0000'
-        bic: 'RXXXXXXX'
-        holder: 'MerchantNameExample AG'
-        sortcode: 'ZZZZ'
-        address:
-          country: '040'
-          city: 'Salzburg'
-
-    account:
-      type: object
-      description: Map from `CRMBankAccount.`
-      required:
-        - accountNumber
-        - name
-        - dbaName
-        - telephone
-        - reseller
-        - registrationNo
-        - vatNumber
-        - legalAddress
-      properties:
-        accountNumber:
-          type: string
-          description: Map from 
-        name:
-          type: string
-          description: Map from `CRMaccount/name`
-        dbaName:
-          type: string
-          description: Map from 
-        telephone:
-          type: string
-          description: Map from 
-        reseller:
-          type: string
-          description: Map from 
-        registrationNo:
-          type: string
-          description: Map from `CRMaccount/pvt_registrationno`
-        vatNumber:
-          type: string
-          description: Map from `CRMaccount/pvt_vatnumber`
-        relationShipType:
-          type: string
-          description: Map from 
-          enum:
-            - 'Acquirer'
-            - 'Competitor'
-            - 'Consultant'
-            - 'Merchant'
-            - 'Other'
-            - 'Reseller'
-            - 'Supplier'
-        salesStatus:
-          type: string
-          description: Map from 
-          enum:
-            - 'Applicationwithdrawn'
-            - 'Closed'
-            - 'Declined'
-            - 'Live'
-            - 'Preapproved'
-            - 'Prospect'
-        pfidMastercard:
-          type: string
-          description: Map from `CRMaccount/pfi`
-        mcMarketplaceId:
-          type: string
-          description: Map from `CRMaccount/pvt_mcmarketplacei`
-        pfidVisa:
-          type: string
-          description: Map from 
-        visaMarketplaceId:
-          type: string
-          description: Map from 
-        primaryContact:
-          type: string
-          format: email
-          description: Map from 
-        generalContact:
-          type: string
-          format: email
-          description: Map from 
-        mainPhone:
-          type: string
-          description: Map from 
-        webSite:
-          type: string
-          format: uri
-          description: Map from 
-        legalAddress:
-          type: object
-          description: Map from section General then AccountInformation.
-          required:
-          - line1
-          - line2
-          - postalCode
-          - city
-          - stateOrProvince
-          - country
-          properties:
-            street1:
-              type: string
-              description: Map from `CRMaccount/address1_line`
-            houseNo:
-              type: string
-              description: Map from `CRMaccount/address1_line`
-            zipCode:
-              type: string
-              description: Map from `CRMaccount/address1_postalcode`
-            city:
-              type: string
-              description: Map from `CRMaccount/address1_city`
-            state:
-              type: string
-              description: Map from `CRMaccount/address1_stateorprovince`
-            country:
-              type: string
-              format: ThreeISOLetter
-              description: Map from `CRMaccount/pvt_country`
-      example:
-        accountNumber: '320987'
-        name: 'name example d.o.o.'
-        dbaName: 'MerchantNameExample AG'
-        telephone: '+49 999-99999-99'
-        reseller: ''
-        registrationNo: 'HRB 999XXX'
-        vatNumber: 'DE999XXX'
-        relationShipType: 'Merchant'
-        salesStatus: 'Closed'
-        pfidMastercard: ''
-        mcMarketplaceId: ''
-        pfidVisa: null
-        visaMarketplaceId: null
-        generalContact: 'ja@email.de'
-        mainPhone: '+49 000-00000-00'
-        webSite: 'www.MerchantNameExample.com'
-        legalAddress:
-          street1: 'street1 example'
-          houseNo: '4'
-          zipCode: '979413'
-          city: 'Unterföhring'
-          state: ''
-          country: '280'
-
-  securitySchemes:
-    user-password:
-      type: userPassword
-
-  messageTraits:
-    requestHeaders:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by application (unique by request)
-            $ref: "#/components/schemas/guid"
-          timestamp:
-            $ref: "#/components/schemas/dateTime"
-          replyTo:
-            description: Queue where the command is replied.
-            type: string
-            default: 'amq.rabbitmq.reply-to'
-          headers:
-            type: object
-            description: Custom headers no supported by RabbitMQ
-            properties:
-              correlationKey:
-                description: Correlation Key set by application (unique by configuration, i.e., mid number)
-                type: string
-              commandType:
-                description: Type of command to be queued.
-                type: string
-              version:
-                description: Message Version. Message Version.
-                format: 'X.Y.Z'
-                type: string
-        example:
-          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
-          correlationKey: '75102178'
-          commandType: 'MidSetupRequest'
-          timestamp: '2020-09-29T18:40:09+00:00'
-          version: '1.0.0'
-          replyTo: 'amq.rabbitmq.reply-to'
-    replyHeaders:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by application
-            $ref: "#/components/schemas/guid"
-          correlationKey:
-            description: Correlation Key set by application (unique by configuration, i.e., mid number)
-            type: string
-          commandType:
-            description: Type of command to be queued.
-            type: string
-          timestamp:
-              $ref: "#/components/schemas/dateTime"
-          version:
-            description: Message Version.
-            format: 'X.Y.Z'
-            type: string
-          outcome:
-            description: A value indicating the outcome of the command.
-            type: string
-            enum:
-            - 'Success'
-            - 'Error'
-            - 'Skipped'
-        examples:
-          - $ref: '#/components/messageTraits/replySuccessHeaders/headers/example'
-          - $ref: '#/components/messageTraits/replyErrorHeaders/headers/example'
-          - $ref: '#/components/messageTraits/replySkippedHeaders/headers/example'
-    replySuccessHeaders:
-      headers:
-        allOf:
-        - $ref: '#/components/messageTraits/replyHeaders'
-        example:
-          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
-          correlationKey: '75102178'
-          commandType: 'midSetupReplyCommand'
-          timestamp: '2020-09-29T18:41:55+00:00'
-          version: '1.0.1'
-          outcome: 'Success'
-    replyErrorHeaders:
-      headers:
-        allOf:
-        - $ref: '#/components/messageTraits/replyHeaders'
-        example:
-          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
-          correlationKey: '75102178'
-          commandType: 'midSetupReplyCommand'
-          timestamp: '2020-09-29T18:41:55+00:00'
-          version: '1.0.1'
-          outcome: 'Error'
-    replySkippedHeaders:
-      headers:
-        allOf:
-        - $ref: '#/components/messageTraits/replyHeaders'
-        example:
-          correlationId: '47813e36-bb7e-45ef-b348-2df1b41a8183'
-          correlationKey: '75102178'
-          commandType: 'midSetupReplyCommand'
-          timestamp: '2020-09-29T18:41:55+00:00'
-          version: '1.0.0'
-          outcome: 'Skipped'
-
-  channelBindings:
-    amqpMidSetupRequest:
-      amqp:
-        is: routingKey
-        exchange:
-          name: CRM-OpsFlow-Request
-          type: topic
-          durable: true
-          autoDelete: false
-          vhost: /
-        bindingVersion: 0.1.0
-    amqpMidSetupReply:
-      amqp:
-        is: queue
-        queue:
-          name: amq.rabbitmq.reply-to
-          durable: true
-          exclusive: true
-          autoDelete: false
-          vhost: /
-        bindingVersion: 0.1.0
-          
-  messageBindings:
-    amqp:
-      contentEncoding: gzip
+{
+  "asyncapi": "2.0.0",
+  "info": {
+    "title": "Gateway",
+    "version": "v3",
+    "description": "\r\nPayments API.\r\n\r\n# Master data\r\n\r\n## Payment methods\r\n\r\n| ID | Key | Description |\r\n| -- | --- | ----------- |\r\n| 1 | Card | Credit or debit cards. |\r\n| 2 | CardRedirect | Credit or debit cards by redirect. |\r\n| 3 | EBank | Electronic bank fund transfers. |\r\n| 4 | Wallet | Wallet payments. |\r\n| 5 | Invoice | Invoice and other offline payments, generally cash payments. |\r\n| 6 | DirectDebit | Mandate based direct debit payments. |\r\n| 7 | Mobile | Mobile or carrier billing based payments. |\r\n| 8 | Prepaid | Prepaid vouchers by redirect. |\r\n\r\n## Payment brands\r\n\r\n| ID | Key | Payment method | Description |\r\n| -- | --- | -------------- | ----------- |\r\n| 1010 | VISA | Card | VISA Credit and Debit cards |\r\n| 1011 | VISAELECTRON | Card | Visa Electron |\r\n| 1012 | DANKORT | Card | Dankort |\r\n| 1013 | VISA_DEBIT | Card | Visa Debit |\r\n| 1014 | VISA_CARTEBANCAIRE | Card | Visa - Carte Bancaire co-branded. |\r\n| 1015 | VPAY | Card | VISA VPAY cards |\r\n| 1017 | DELTA | Card | Delta |\r\n| 1020 | MASTERCARD | Card | Mastercard Credit and Debit cards |\r\n| 1023 | MASTERCARD_DEBIT | Card | Mastercard Debit |\r\n| 1024 | MASTERCARD_CARTEBANCAIRE | Card | Mastercard - Carte Bancaire co-branded. |\r\n| 1030 | AMEX | Card | American Express Credit cards |\r\n| 1040 | DISCOVER | Card | Discover Credit cards |\r\n| 1050 | MAESTRO | Card | Maestro Debit cards |\r\n| 1060 | DINERS | Card | Diners Club Credit cards |\r\n| 1070 | CARTEBANCAIRE | Card | Carte Bancaire Credit and Debit cards |\r\n| 1080 | CARTASI | Card | CartaSi Credit cards |\r\n| 1090 | JCB | Card | JCB Credit cards |\r\n| 1100 | ARGENCARD | Card | Argencard credit cards (AstroPay) |\r\n| 1101 | CABAL | Card | Cabal credit cards (Astropay) |\r\n| 1102 | ELO | Card | Elo credit cards (Astropay) |\r\n| 1103 | HIPERCARD | Card | Hipercards credit cards (Astropay) |\r\n| 1104 | PRESTO | Card | Presto credit cards (Astropay) |\r\n| 1105 | RIPLEY | Card | Ripley credit cards (Astropay) |\r\n| 1106 | TARJETANARANJA | Card | Tarjeta Naranja credit cards (Astropay) |\r\n| 1107 | ASYACARD | Card | Asyacard |\r\n| 1108 | AXESS | Card | Axess |\r\n| 1109 | BONUS | Card | Bonus card |\r\n| 1110 | CARDFINANS | Card | Card Finans |\r\n| 1111 | CARTEBLEUE | Card | Carte Bleue |\r\n| 1112 | MAXIMUM | Card | Maximum |\r\n| 1113 | MERCADOLIVRE | Card | MercadoLivre |\r\n| 1114 | NATIVA | Card | Nativa |\r\n| 1115 | POSTEPAY | Card | Postepay |\r\n| 1116 | SERVIRED | Card | ServiRed |\r\n| 1117 | TARJETASHOPPING | Card | Tarjeta Shopping |\r\n| 1118 | WORLD | Card | World |\r\n| 1119 | CENCOSUD | Card | Cencosud |\r\n| 1200 | UNIONPAY | Card | Union Pay cards |\r\n| 1210 | BCMC | Card | Belgium Bancontact/MisterCash bank transfers by Worldline |\r\n| 2010 | UNIONPAY | CardRedirect | Union Pay international payments |\r\n| 2020 | INICIS | CardRedirect | Korean credit and debit cards by INICIS |\r\n| 2030 | BCMC | CardRedirect | Bancontact/MisterCash |\r\n| 3010 | IDEAL | EBank | Dutch iDeal bank electronic bank transfers |\r\n| 3020 | SOFORT | EBank | Sofort\u00DCberweisung bank transfers |\r\n| 3025 | GIROPAY | EBank | Giropay bank transfers |\r\n| 3030 | EPS | EBank | Austrian bank transfers |\r\n| 3035 | MULTIBANCO | EBank | Multibanco online bank payments (Portugal) |\r\n| 3040 | POLI | EBank | Australian bank transfers |\r\n| 3045 | BPAY | EBank | Bpay online bank payment (Australia) |\r\n| 3060 | P24 | EBank | Polish bank transfers |\r\n| 3070 | PAYTRAIL | EBank | Paytrail |\r\n| 3080 | POSTFINANCE | EBank | Post Finance |\r\n| 3090 | NETBANKING | EBank | Netbanking India by Citrus Pay |\r\n| 3095 | ENETS | EBank | eNets online bank payment (Singapore) |\r\n| 3100 | TRUSTPAY | EBank | Trustpay |\r\n| 3110 | TRUSTLY | EBank | Trustly |\r\n| 3120 | ENTERCASH | EBank | EnterCash |\r\n| 3130 | INTERAC | EBank | Interac Online |\r\n| 3140 | PREPAYMENT | EBank | Prepayment |\r\n| 3200 | BCMC | EBank | Belgium Bancontact/MisterCash bank transfers by Worldline. DEPRECATED (Now is 1210) |\r\n| 3500 | BITCOIN | EBank | Bitcoin |\r\n| 4010 | PAYPAL | Wallet | Paypal wallet payments |\r\n| 4020 | ALIPAY | Wallet | Alipay wallet payments |\r\n| 4030 | YANDEX | Wallet | Yandex wallet payments |\r\n| 4040 | ONECARD | Wallet | Onecard wallet payments |\r\n| 4050 | QIWI | Wallet | QIWI wallet payments |\r\n| 4060 | TENPAY | Wallet | Tenpay wallet payments (China) |\r\n| 4070 | MERCADOPAGO | Wallet | MercadoPago wallet payments |\r\n| 4080 | CASHU | Wallet | CashU prepayment |\r\n| 4090 | WEBMONEY | Wallet | Webmoney wallets (Russia) |\r\n| 4100 | SKRILL | Wallet | Skrill (moneybookers) |\r\n| 4110 | IPARA | Wallet | iPara |\r\n| 4120 | MASTERPASS | Wallet | Masterpass |\r\n| 4130 | MONEYSAFE | Wallet | MoneySafe |\r\n| 4140 | PAYDIREKT | Wallet | PayDirekt |\r\n| 4150 | SHETAB | Wallet | Shetab Basic Info |\r\n| 4160 | PAYBOX | Wallet | P Point / Paybox |\r\n| 4200 | ASTROPAY_CASH | Wallet | Astropay (redirect) |\r\n| 4210 | ASTROPAY_OT | Wallet | Astropay |\r\n| 5010 | KLARNA | Wallet | Klarna invoice payments |\r\n| 5020 | AFTERPAY | Wallet | Afterpay post payments |\r\n| 5030 | LOCALBANKTRANSFER | Wallet | Local Bank Transfer (Brazil) |\r\n| 5040 | TELEINGRESO | Wallet | Teleingreso pre-payment (Spain) |\r\n| 5100 | 7ELEVEN | Wallet | 7-Eleven prepayment by Astropay (Mexico) |\r\n| 5110 | BALOTO | Wallet | Baloto Electronico prepayment by Astropay (Colombia) |\r\n| 5120 | BOLETOBANCARIO | Wallet | Boleto Bancario prepayment by Astropay (Brazil) |\r\n| 5130 | OXXO | Wallet | OXXO prepayment by Astropay (Mexico) |\r\n| 5140 | PAGOFACIL | Wallet | Pago F\u00E1cil prepayment by Astropay (Argentina) |\r\n| 5150 | RAPIPAGO | Wallet | Rapipago prepayment by Astropay (Argentina) |\r\n| 5200 | KONBINI | Wallet | Konbini payments (Japan) |\r\n| 5205 | PAYEASY | Wallet | Pay-easy pre-payment (Japan) |\r\n| 6010 | SEPA | DirectDebit | SEPA (Europe) |\r\n| 6020 | SIGN2PAY | DirectDebit | Sign2Pay |\r\n| 6100 | PAYOLUTION_INS | DirectDebit | Payolution Installments |\r\n| 6110 | PAYOLUTION_ELV | DirectDebit | Payolution ELV |\r\n| 6120 | PAYOLUTION_INVOICE | DirectDebit | Payolution Invoice |\r\n| 7010 | DAOPAY | Mobile | Daopay mobile carrier billing SMS (Mainly europe) |\r\n| 7020 | BOKU | Mobile | BOKU mobile payments (World) |\r\n| 7030 | MMIT | Mobile | MMIT Mobile payments (Nigeria) |\r\n| 8010 | PAYSAFECARD | Prepaid | Paysafecard prepaid voucher payments (German speaking countries and LATAM) |\r\n| 8020 | GIFTCARDS | Prepaid | Intersolve gift cards. |\r\n",
+    "contact": {
+      "name": "Samurai",
+      "url": "https://dev.azure.com/payvision/AceHub",
+      "email": "DevTeamS@payvision.com"
+    }
+  },
+  "servers": {
+    "Development": {
+      "url": "itg-d-mq.adam.payvision:{port}",
+      "protocol": "amqp",
+      "protocolVersion": "0.9.1",
+      "description": "Development and Integration RabbitMQ server.",
+      "variables": {
+        "port": {
+          "enum": ["5672"],
+          "default": "5672",
+          "description": "Secure connection (TLS) is available through port 5672."
+        }
+      },
+      "security": [{ "user-password": [] }]
+    },
+    "Acceptance": {
+      "url": "itg-a-mq.adam.payvision:{port}",
+      "protocol": "amqp",
+      "protocolVersion": "0.9.1",
+      "description": "Acceptance (aka Staging) RabbitMQ server.",
+      "variables": {
+        "port": {
+          "enum": ["5672"],
+          "default": "5672",
+          "description": "Secure connection (TLS) is available through port 5672."
+        }
+      },
+      "security": [{ "user-password": [] }]
+    },
+    "Production": {
+      "url": "itg-p-mq.adam.payvision:{port}",
+      "protocol": "amqp",
+      "protocolVersion": "0.9.1",
+      "description": "Production RabbitMQ server.",
+      "variables": {
+        "port": {
+          "enum": ["5672"],
+          "default": "5672",
+          "description": "Secure connection (TLS) is available through port 5672."
+        }
+      },
+      "security": [{ "user-password": [] }]
+    }
+  },
+  "defaultContentType": "application/json",
+  "channels": {
+    "{transactionType}.{eventType}": {
+      "publish": {
+        "operationId": "transactions",
+        "summary": "Transactions lifecycle",
+        "description": "Publishes transaction events with routingKey \u0060{transactionType}.{eventType}\u0060. See the channel parameters for more detail.",
+        "tags": [],
+        "message": {
+          "payload": { "$ref": "#/components/schemas/iEvent" },
+          "name": "iEvent",
+          "tags": [],
+          "examples": {
+            "example0": {
+              "summary": "Intersolve Payment.Created",
+              "value": {
+                "id": "AceHub.Registered.562d969d-c375-4f3d-900d-ac543899bf1b",
+                "eventType": "Created",
+                "sentTime": "2020-12-02T14:53:17Z",
+                "formatVersion": "1.1.0",
+                "source": "AceHub",
+                "payload": {
+                  "storeId": 1,
+                  "transactionType": "Payment",
+                  "amount": {
+                    "quantity": 0.01,
+                    "currency": "EUR"
+                  },
+                  "account": {
+                    "id": "7000001193684410991"
+                  },
+                  "customer": {
+                    "email": "test@email.com",
+                    "deviceType": null
+                  },
+                  "businessId": "501210019",
+                  "transactionId": "562d969d-c375-4f3d-900d-ac543899bf1b",
+                  "orderId": "c7ea2011-98c5-428c-bf3b-173fc43d5565",
+                  "trackingCode": "AceHubTest__92f1f69c-7e9b-4a67-b052-71cb4381c3be",
+                  "requestTimestamp": "2020-12-02T14:53:16Z",
+                  "status": "Registered",
+                  "method": "Prepaid",
+                  "brand": "GIFTCARDS",
+                  "capture": true
+                }
+              }
+            },
+            "example1": {
+              "summary": "Intersolve Payment.Finished",
+              "value": {
+                "id": "AceHub.Succeeded.562d969d-c375-4f3d-900d-ac543899bf1b",
+                "eventType": "Finished",
+                "sentTime": "2020-12-02T14:53:29Z",
+                "formatVersion": "1.1.0",
+                "source": "AceHub",
+                "payload": {
+                  "account": {
+                    "id": "7000001193684410991",
+                    "accountBrand": "ExternalDev",
+                    "balance": 49.18,
+                    "clientTransactionReference": "1087390979"
+                  },
+                  "businessId": "501210019",
+                  "storeId": 1,
+                  "transactionId": "562d969d-c375-4f3d-900d-ac543899bf1b",
+                  "orderId": "c7ea2011-98c5-428c-bf3b-173fc43d5565",
+                  "trackingCode": "AceHubTest__92f1f69c-7e9b-4a67-b052-71cb4381c3be",
+                  "transactionType": "Payment",
+                  "requestTimestamp": "2020-12-02T14:53:16Z",
+                  "status": "Succeeded",
+                  "method": "Prepaid",
+                  "brand": "GIFTCARDS",
+                  "amount": {
+                    "quantity": 0.01,
+                    "currency": "EUR"
+                  },
+                  "capture": true,
+                  "customer": {
+                    "email": "test@email.com",
+                    "deviceType": null
+                  },
+                  "processChain": [
+                    {
+                      "provider": "Intersolve",
+                      "properties": {
+                        "TransactionId": 310686819,
+                        "UserName": "627901001"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "traits": []
+        },
+        "traits": []
+      },
+      "parameters": {
+        "transactionType": {
+          "description": "\r\nPossible values:\r\n- Payment.\r\n- Capture.\r\n- Cancel.\r\n- Refund.\r\n- Credit.\r\n",
+          "schema": { "$ref": "#/components/schemas/string" }
+        },
+        "eventType": {
+          "description": "\r\nPossible values:\r\n- Created: when a transaction is requested by merchants.\r\n- Updated: is triggered on any change produced on the transaction status but still is not finished.\r\n- Finished: is triggered when the transaction is processed and can\u2019t change its status anymore.\r\n- Denied: when a transaction is finished (it won\u2019t change its status) but was not sent to processor (due to an internal error, fraud prevention, etc.).\r\n",
+          "schema": { "$ref": "#/components/schemas/string" }
+        }
+      },
+      "bindings": {
+        "amqp": {
+          "is": "routingKey",
+          "exchange": {
+            "name": "AceHub.Transactions",
+            "type": "fanout",
+            "durable": true,
+            "autoDelete": false,
+            "vhost": "acehub"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "string": { "type": "string" },
+      "amount": {
+        "required": ["quantity", "currency"],
+        "properties": {
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the amount."
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency code of the order line. Format ISO-4217."
+          }
+        }
+      },
+      "card": {
+        "required": ["holderName", "firstSixDigits", "lastFourDigits"],
+        "properties": {
+          "holderName": {
+            "type": "string",
+            "description": "Name of the card holder as printed on the card."
+          },
+          "firstSixDigits": {
+            "type": "string",
+            "description": "First six digits of the card number."
+          },
+          "lastFourDigits": {
+            "type": "string",
+            "description": "Last four digits of the card number."
+          },
+          "expiryMonth": {
+            "type": "string",
+            "description": "Month part of the expiry date. Format MM."
+          },
+          "expiryYear": {
+            "type": "string",
+            "description": "Year part of expiry date. Format YYYY."
+          },
+          "checkEnrollment": {
+            "type": "boolean",
+            "description": "True whether the transaction is a 3DS enrollment operation. It can be null."
+          },
+          "threeDSVersionRequested": {
+            "type": "string",
+            "description": "The 3DS version to be submitted. It is set to 1.0.0 when the transaction is a 3DS1 enrollment operation. It can be\nnull."
+          }
+        }
+      },
+      "bank": {
+        "properties": {
+          "issuerId": {
+            "type": "integer",
+            "description": "Identifier of the issuing bank. This can be used for certain brands like iDEAL."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code of issuing bank. Format ISO-3166-1."
+          },
+          "name": { "type": "string", "description": "Name of the bank." },
+          "accountHolderName": {
+            "type": "string",
+            "description": "Bank account holder name."
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "The bank account number or IBAN when it is in one field."
+          },
+          "bankCode": { "type": "string", "description": "Bank code." },
+          "mandateId": {
+            "type": "string",
+            "description": "ID of the mandate."
+          },
+          "bic": {
+            "type": "string",
+            "description": "Bank identification code."
+          },
+          "iban": {
+            "type": "string",
+            "description": "IBAN bank account number."
+          },
+          "dateCollection": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date when the payment should be collected. Format YYYY-MM-DD."
+          },
+          "dateMandateSigned": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date when the mandate was signed. Format YYYY-MM-DD."
+          }
+        }
+      },
+      "account": {
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "description": "Account identifier." },
+          "accountBrand": {
+            "type": "string",
+            "description": "The name of the account brand e.g. gift card name such as VVV, Bol.com."
+          },
+          "balance": {
+            "type": "number",
+            "description": "Account remaining amount."
+          },
+          "clientTransactionReference": {
+            "type": "string",
+            "description": "Intersolve side unique tracking code generated by AceHub."
+          },
+          "expiryDate": {
+            "type": "string",
+            "description": "Expiry date of the card , format could vary, depends on the accountBrand. i.e MMYY."
+          }
+        }
+      },
+      "dba": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Doing business as \u2013 name. For applicable providers, used generally as first part of the dynamic descriptor."
+          },
+          "street": {
+            "type": "string",
+            "description": "Street address of merchant. This value is assigned by the payment facilitator or their acquirer. Cannot be space or\nzero filled."
+          },
+          "shortName": {
+            "type": "string",
+            "description": "Short name for \u201CDoing business as\u201D. Can be used for Union Pay as part of the dynamic descriptor."
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the merchant. Used for applicable providers as part of dynamic descriptor."
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP of the merchant. Used for applicable providers as part of dynamic descriptor."
+          },
+          "stateCode": {
+            "type": "string",
+            "description": "US state code. Used for applicable providers as part of dynamic descriptor."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code of the merchant. Format ISO-3166-1. Used for applicable providers as part of dynamic descriptor."
+          },
+          "email": {
+            "type": "string",
+            "description": "Email of the merchant. Used for applicable providers as part of dynamic descriptor."
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number of the merchant. Used for applicable providers as part of dynamic descriptor."
+          },
+          "subMerchantId": {
+            "type": "string",
+            "description": "The ID of the sub-merchant."
+          },
+          "website": {
+            "type": "string",
+            "description": "The overriding merchant URL configured in the 3DS server merchant profile."
+          },
+          "merchantCategoryCode": {
+            "type": "integer",
+            "description": "The merchant category code that overrides the default value."
+          }
+        }
+      },
+      "customer": {
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "The ID of a customer given by the merchant."
+          },
+          "givenName": {
+            "type": "string",
+            "description": "Given name of the customer."
+          },
+          "familyName": {
+            "type": "string",
+            "description": "Family name of the customer."
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender of the customer.\n- M - Male.\n- F - Female."
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Birth date of the customer. Format YYYY-MM-DD. Required for some risk checks."
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number of the customer. Required for some risk checks."
+          },
+          "mobileNumber": {
+            "type": "string",
+            "description": "Mobile number of the customer. Recommended format E.164. Required for some risk checks."
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the customer."
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Company name of the customer."
+          },
+          "identificationType": {
+            "type": "string",
+            "description": "Type of (National) identification (Number).\n- 1 \u2013 Passport.\n- 2 \u2013 Driver\u2019s license.\n- 3 \u2013 ID card.\n- 4 \u2013 Tax statement."
+          },
+          "identificationNumber": {
+            "type": "string",
+            "description": "(National) Identification (Number)."
+          },
+          "ipAddress": {
+            "type": "string",
+            "description": "IPV4 or IPV6 address of customer (as registered by merchant)."
+          },
+          "type": {
+            "type": "integer",
+            "description": "Customer type.\n- 1 - Personal.\n- 2 - Company."
+          },
+          "taxNumber": { "type": "string", "description": "Tax number." },
+          "httpUserAgent": {
+            "type": "string",
+            "description": "HTTP user agent as detected by the merchant."
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "Customer\u0027s device type.\n- 1 - Desktop Web.\n- 2 - Desktop App.\n- 3 - Mobile Web.\n- 4 - Mobile App.\n- 5 - Tablet Web.\n- 6 - Tablet App."
+          }
+        }
+      },
+      "billingAddress": {
+        "properties": {
+          "street": {
+            "type": "string",
+            "description": "The name of the street. This is mandatory if the address is given."
+          },
+          "houseNumber": {
+            "type": "string",
+            "description": "The number of the house."
+          },
+          "houseNumberSuffix": {
+            "type": "string",
+            "description": "The suffix of the house number."
+          },
+          "streetInfo": {
+            "type": "string",
+            "description": "Additional street information."
+          },
+          "city": {
+            "type": "string",
+            "description": "The name of the city. This is mandatory if address is given."
+          },
+          "stateCode": {
+            "type": "string",
+            "description": "State code. Format ISO-3166-2."
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP code for the billing address."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code. Format ISO-3166-2. This is mandatory if address is given."
+          }
+        }
+      },
+      "shippingInfo": {
+        "properties": {
+          "customer": { "$ref": "#/components/schemas/customer" },
+          "street": {
+            "type": "string",
+            "description": "The name of the street. This is mandatory if the address is given."
+          },
+          "houseNumber": {
+            "type": "string",
+            "description": "The number of the house."
+          },
+          "houseNumberSuffix": {
+            "type": "string",
+            "description": "The suffix of the house number."
+          },
+          "streetInfo": {
+            "type": "string",
+            "description": "Additional street information."
+          },
+          "city": {
+            "type": "string",
+            "description": "The name of the city. This is mandatory if address is given."
+          },
+          "stateCode": {
+            "type": "string",
+            "description": "State code. Format ISO-3166-2."
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP code for the billing address."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code. Format ISO-3166-2. This is mandatory if address is given."
+          }
+        }
+      },
+      "token": {
+        "required": ["value", "source"],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The token value provided by the merchant."
+          },
+          "source": {
+            "type": "string",
+            "description": "The source of the token. Valid values:\n- Read: The token has been read modifying payload values.\n- Created: The token has been created among transaction process."
+          }
+        }
+      },
+      "options": {
+        "properties": {
+          "noShipping": {
+            "type": "integer",
+            "description": "PayPal \u2013 Determines whether or not PayPal displays shipping address fields on the experience pages.\nAllowed values:\n- 0 - PayPal displays the shipping address on the PayPal pages.\n- 1 - PayPal does not display shipping address fields at all.\n- 2 - If shipping address wouldn\u0027t be provided, PayPal obtains it from the buyer\u2019s account profile. For digital goods,\nthis field is required and you must set it to 1."
+          },
+          "brandName": {
+            "type": "string",
+            "description": "Name of brand the business wants to indicate. PayPal specific."
+          },
+          "cartBorderColor": {
+            "type": "string",
+            "description": "Cart border color. PayPal specific."
+          },
+          "headerImage": {
+            "type": "string",
+            "description": "Header image. PayPal specific."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Total quantity. PayPal specific."
+          },
+          "locale": {
+            "type": "string",
+            "description": "To control the language on the page of the shopper. PayPal specific."
+          },
+          "processingType": {
+            "type": "integer",
+            "description": "Indicates how the transaction is processed. PayPal specific.\n- 0 \u2013 Complete payment on PayPal site.\n- 1 \u2013 Paypal Express."
+          },
+          "minAgeRestriction": {
+            "type": "integer",
+            "description": "Age restriction. Used to restrict payments to customers who are at least the specified number of years old. Supported\nonly by\nsome payment methods (e.g. PaySafeCard)."
+          },
+          "countryRestriction": {
+            "type": "string",
+            "description": "Country restriction used to restrict payments to customers of the specific country. Supported only by some payment\nmethods (e.g.: PaySafeCard). Format ISO-3166-1."
+          }
+        }
+      },
+      "qr": {
+        "required": ["size"],
+        "properties": {
+          "size": {
+            "type": "integer",
+            "description": "Size in pixels of the QR code to generate."
+          }
+        }
+      },
+      "orderLine": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Line description."
+          },
+          "discountAmount": { "$ref": "#/components/schemas/amount" },
+          "itemAmount": { "$ref": "#/components/schemas/amount" },
+          "productCode": {
+            "type": "string",
+            "description": "The code of the product or service."
+          },
+          "productName": {
+            "type": "string",
+            "description": "The name of the product or service."
+          },
+          "purchaseType": {
+            "type": "string",
+            "description": "The type of the identifier assigned by the payment acceptor that categorized the item being purchased."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items."
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "description": "The sequence number of the order line."
+          },
+          "shippingAmount": { "$ref": "#/components/schemas/amount" },
+          "taxPercentage": {
+            "type": "number",
+            "description": "The percentage used for the tax or VAT. The percentage must be formatted using a dot (\u201C.\u201D) as a decimal separator."
+          },
+          "totalAmount": { "$ref": "#/components/schemas/amount" }
+        }
+      },
+      "order": {
+        "properties": {
+          "orderLines": {
+            "type": "array",
+            "description": "Transaction related order lines. In the case of PayPal Digital Goods, one item is mandatory with type=DG.",
+            "uniqueItems": false,
+            "items": { "$ref": "#/components/schemas/orderLine" }
+          }
+        }
+      },
+      "createdEventPayload": {
+        "required": [
+          "businessId",
+          "transactionId",
+          "orderId",
+          "trackingCode",
+          "transactionType",
+          "requestTimestamp"
+        ],
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
+          },
+          "storeId": {
+            "type": "integer",
+            "description": "Identifier used to indicate a specific sub-account."
+          },
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the transaction given by AceHub."
+          },
+          "orderId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier grouping all dependent transactions related to this payment."
+          },
+          "initialTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "parentTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "trackingCode": {
+            "type": "string",
+            "description": "Merchant provided unique transaction identifier."
+          },
+          "transactionType": {
+            "type": "string",
+            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
+          },
+          "requestTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The time stamp (ISO-8601) when the transaction has been received."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
+          },
+          "method": {
+            "type": "string",
+            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
+          },
+          "descriptor": {
+            "type": "string",
+            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
+          },
+          "amount": { "$ref": "#/components/schemas/amount" },
+          "capture": {
+            "type": "boolean",
+            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
+          },
+          "source": {
+            "type": "string",
+            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
+          },
+          "subscriptionType": {
+            "type": "string",
+            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
+          },
+          "languageCode": {
+            "type": "string",
+            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "purchaseId": {
+            "type": "string",
+            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "card": { "$ref": "#/components/schemas/card" },
+          "bank": { "$ref": "#/components/schemas/bank" },
+          "account": { "$ref": "#/components/schemas/account" },
+          "dba": { "$ref": "#/components/schemas/dba" },
+          "customer": { "$ref": "#/components/schemas/customer" },
+          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
+          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
+          "token": { "$ref": "#/components/schemas/token" },
+          "options": { "$ref": "#/components/schemas/options" },
+          "qr": { "$ref": "#/components/schemas/qr" },
+          "order": { "$ref": "#/components/schemas/order" }
+        }
+      },
+      "createdEvent": {
+        "required": [
+          "id",
+          "eventType",
+          "sentTime",
+          "formatVersion",
+          "source",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Specifies the time when the current event has been sent. ISO-8601."
+          },
+          "formatVersion": {
+            "type": "string",
+            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
+          },
+          "source": {
+            "type": "string",
+            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
+          },
+          "payload": { "$ref": "#/components/schemas/createdEventPayload" }
+        }
+      },
+      "threeDSecure": {
+        "properties": {
+          "threeDResult": {
+            "type": "string",
+            "description": "Result of the AVV (CAVV or UCAF) check. See 3D Secure Result."
+          },
+          "enrollmentResult": {
+            "type": "string",
+            "description": "Enrollment result.\n- Y - Yes, consumer enrolled in 3D Secure program and eligible for authentication.\n- N - No, consumer not enrolled in 3D Secure program.\n- U - Unavailable, Directory Server (DS) or Access Control Server (ACS) not available at the time of the request.\n- B - Bypass, 3D Secure program not applied."
+          },
+          "authenticationResult": {
+            "type": "string",
+            "description": "Authentication result.\n- Y - Authenticated (Issuer liability).\n- A - Attempted.\n- N - Failed (Merchant liability).\n- U - Unavailable (Merchant liability).\n- C - Challenge (only 3DS2)."
+          },
+          "version": {
+            "type": "string",
+            "description": "3DS version processed. It can be null."
+          },
+          "flow": {
+            "type": "string",
+            "description": "Defines the different types of flows supported in a 3DS transaction (only 3DS2).\n- Challenge: The customer authentication is needed.\n- Frictionless: The customer authentication is not needed, the transaction will be completed without customer intervention."
+          },
+          "eci": {
+            "type": "integer",
+            "description": "The ECI code given by the authentication server (only 3DS2).\nMastercard:\n- 2 - Authenticated.\n- 1 - Authentication attempted.\n- 0 - Internet transaction (No authenticated or attempted).\nVisa, AMEX and JCB:\n- 5 - Authenticated.\n- 6 - Authentication attempted.\n- 7 - Internet transaction (No authenticated or attempted)."
+          }
+        }
+      },
+      "processedCard": {
+        "required": ["holderName", "firstSixDigits", "lastFourDigits"],
+        "properties": {
+          "brand": {
+            "type": "string",
+            "description": "Card brand according to processing."
+          },
+          "approvalCode": {
+            "type": "string",
+            "description": "The approval code of issuer/supplier."
+          },
+          "avsAuthorizationEntity": {
+            "type": "string",
+            "description": "The code for the entity checking the AVS."
+          },
+          "avsResult": {
+            "type": "string",
+            "description": "Result of the AVS check. See AVS Result."
+          },
+          "cvvResult": {
+            "type": "string",
+            "description": "Result of the CVV check. See CVV Result."
+          },
+          "recurringAdvice": {
+            "type": "string",
+            "description": "For recurring transactions a recurring advice code may be returned by card schemes. See recurring advice code."
+          },
+          "threeDSecure": { "$ref": "#/components/schemas/threeDSecure" },
+          "holderName": {
+            "type": "string",
+            "description": "Name of the card holder as printed on the card."
+          },
+          "firstSixDigits": {
+            "type": "string",
+            "description": "First six digits of the card number."
+          },
+          "lastFourDigits": {
+            "type": "string",
+            "description": "Last four digits of the card number."
+          },
+          "expiryMonth": {
+            "type": "string",
+            "description": "Month part of the expiry date. Format MM."
+          },
+          "expiryYear": {
+            "type": "string",
+            "description": "Year part of expiry date. Format YYYY."
+          },
+          "checkEnrollment": {
+            "type": "boolean",
+            "description": "True whether the transaction is a 3DS enrollment operation. It can be null."
+          },
+          "threeDSVersionRequested": {
+            "type": "string",
+            "description": "The 3DS version to be submitted. It is set to 1.0.0 when the transaction is a 3DS1 enrollment operation. It can be\nnull."
+          }
+        }
+      },
+      "payvisionProcessHopProperties": {
+        "required": ["transactionId", "transactionGuid", "memberId"],
+        "properties": {
+          "transactionId": {
+            "type": "integer",
+            "description": "The card engine transaction identifier."
+          },
+          "transactionGuid": {
+            "type": "string",
+            "description": "The card engine transaction identifier."
+          },
+          "memberId": {
+            "type": "string",
+            "description": "The Card Engine member identifier."
+          }
+        }
+      },
+      "payvisionProcessHop": {
+        "required": ["provider", "properties"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "Payvision. The provider used to process the transaction."
+          },
+          "properties": {
+            "$ref": "#/components/schemas/payvisionProcessHopProperties"
+          }
+        }
+      },
+      "payOnProcessHopProperties": {
+        "required": ["transactionId", "entityId", "userId"],
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "description": "Transaction identifier given by PayOn (UUID from PayOn)."
+          },
+          "entityId": {
+            "type": "string",
+            "description": "The account identifier."
+          },
+          "userId": {
+            "type": "string",
+            "description": "The user identifier for the entity. UserId is a secure credential for the webservice between AceHub/PayOn and it varies per account we create at PayOn."
+          }
+        }
+      },
+      "payOnProcessHop": {
+        "required": ["provider", "properties"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "PayOn. The provider used to process the transaction."
+          },
+          "properties": {
+            "$ref": "#/components/schemas/payOnProcessHopProperties"
+          }
+        }
+      },
+      "ingProcessHopProperties": {
+        "required": ["acquirerId", "transactionId", "merchantId"],
+        "properties": {
+          "acquirerId": {
+            "type": "string",
+            "description": "Clearing institute for the iDeal transaction."
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "Transaction identifier given by iDeal."
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "The merchant identifier. The merchant identifier is either a Acapture Payment facilitator or an ING merchant customer."
+          },
+          "merchantSubId": {
+            "type": "integer",
+            "description": "The merchant subgroup identifier."
+          }
+        }
+      },
+      "ingProcessHop": {
+        "required": ["provider", "properties"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "ING. The provider used to process the transaction."
+          },
+          "properties": {
+            "$ref": "#/components/schemas/ingProcessHopProperties"
+          }
+        }
+      },
+      "intersolveProcessHopProperties": {
+        "required": ["userName"],
+        "properties": {
+          "transactionId": {
+            "type": "integer",
+            "description": "Transaction identifier given by Intersolve. Only for Payments."
+          },
+          "userName": {
+            "type": "string",
+            "description": "The Intersolve user. Required. For Payments and Refunds."
+          }
+        }
+      },
+      "intersolveProcessHop": {
+        "required": ["provider", "properties"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "Intersolve. The provider used to process the transaction."
+          },
+          "properties": {
+            "$ref": "#/components/schemas/intersolveProcessHopProperties"
+          }
+        }
+      },
+      "iProcessHop": {
+        "required": ["provider"],
+        "discriminator": {
+          "propertyName": "provider",
+          "mapping": {
+            "Payvision": "#/components/schemas/payvisionProcessHop",
+            "PayOn": "#/components/schemas/payOnProcessHop",
+            "ING": "#/components/schemas/ingProcessHop",
+            "Intersolve": "#/components/schemas/intersolveProcessHop"
+          }
+        },
+        "oneOf": [
+          { "$ref": "#/components/schemas/payvisionProcessHop" },
+          { "$ref": "#/components/schemas/payOnProcessHop" },
+          { "$ref": "#/components/schemas/ingProcessHop" },
+          { "$ref": "#/components/schemas/intersolveProcessHop" }
+        ]
+      },
+      "aceProtectFraudHopProperties": {
+        "required": ["fraudScrubbingId"],
+        "properties": {
+          "fraudScrubbingId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The identifier returned by AceProtect."
+          }
+        }
+      },
+      "aceProtectFraudHop": {
+        "required": ["provider", "properties"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "AceProtect. The provider used to process the transaction."
+          },
+          "properties": {
+            "$ref": "#/components/schemas/aceProtectFraudHopProperties"
+          }
+        }
+      },
+      "payOnFraudHopProperties": { "properties": {} },
+      "payOnFraudHop": {
+        "required": ["provider", "properties"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "PayOn. The provider used to process the transaction."
+          },
+          "properties": {
+            "$ref": "#/components/schemas/payOnFraudHopProperties"
+          }
+        }
+      },
+      "iFraudHop": {
+        "required": ["provider"],
+        "discriminator": {
+          "propertyName": "provider",
+          "mapping": {
+            "AceProtect": "#/components/schemas/aceProtectFraudHop",
+            "PayOn": "#/components/schemas/payOnFraudHop"
+          }
+        },
+        "oneOf": [
+          { "$ref": "#/components/schemas/aceProtectFraudHop" },
+          { "$ref": "#/components/schemas/payOnFraudHop" }
+        ]
+      },
+      "additionalInfoShippingInfoCustomer": {
+        "properties": {
+          "givenName": {
+            "type": "string",
+            "description": "Given name of the customer address."
+          },
+          "familyName": {
+            "type": "string",
+            "description": "Family name of the customer address."
+          }
+        }
+      },
+      "additionalInfoShippingInfo": {
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/additionalInfoShippingInfoCustomer"
+          },
+          "street": {
+            "type": "string",
+            "description": "The name of the street."
+          },
+          "street2": {
+            "type": "string",
+            "description": "The extra information of the street."
+          },
+          "city": { "type": "string", "description": "The name of the city." },
+          "stateCode": { "type": "string", "description": "The state code." },
+          "countryCode": {
+            "type": "string",
+            "description": "The country code."
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP code for the shipping address."
+          },
+          "status": { "type": "string", "description": "The address status." }
+        }
+      },
+      "additionalInfoCustomer": {
+        "properties": {
+          "phone": {
+            "type": "string",
+            "description": "The phone of the customer."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the customer."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the customer."
+          }
+        }
+      },
+      "additionalInfo": {
+        "properties": {
+          "shippingAddress": {
+            "$ref": "#/components/schemas/additionalInfoShippingInfo"
+          },
+          "customer": { "$ref": "#/components/schemas/additionalInfoCustomer" }
+        }
+      },
+      "updatedEventPayload": {
+        "required": [
+          "businessId",
+          "transactionId",
+          "orderId",
+          "trackingCode",
+          "transactionType",
+          "requestTimestamp",
+          "processChain"
+        ],
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
+          },
+          "storeId": {
+            "type": "integer",
+            "description": "Identifier used to indicate a specific sub-account."
+          },
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the transaction given by AceHub."
+          },
+          "orderId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier grouping all dependent transactions related to this payment."
+          },
+          "initialTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "parentTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "trackingCode": {
+            "type": "string",
+            "description": "Merchant provided unique transaction identifier."
+          },
+          "transactionType": {
+            "type": "string",
+            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
+          },
+          "requestTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The time stamp (ISO-8601) when the transaction has been received."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
+          },
+          "method": {
+            "type": "string",
+            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
+          },
+          "descriptor": {
+            "type": "string",
+            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
+          },
+          "amount": { "$ref": "#/components/schemas/amount" },
+          "capture": {
+            "type": "boolean",
+            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
+          },
+          "source": {
+            "type": "string",
+            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
+          },
+          "subscriptionType": {
+            "type": "string",
+            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
+          },
+          "languageCode": {
+            "type": "string",
+            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "purchaseId": {
+            "type": "string",
+            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "card": { "$ref": "#/components/schemas/processedCard" },
+          "bank": { "$ref": "#/components/schemas/bank" },
+          "account": { "$ref": "#/components/schemas/account" },
+          "dba": { "$ref": "#/components/schemas/dba" },
+          "customer": { "$ref": "#/components/schemas/customer" },
+          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
+          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
+          "token": { "$ref": "#/components/schemas/token" },
+          "options": { "$ref": "#/components/schemas/options" },
+          "qr": { "$ref": "#/components/schemas/qr" },
+          "order": { "$ref": "#/components/schemas/order" },
+          "processChain": {
+            "type": "array",
+            "description": "Process information gathered from all hops made to process the transaction.",
+            "uniqueItems": false,
+            "items": { "$ref": "#/components/schemas/iProcessHop" }
+          },
+          "fraudScrubbing": {
+            "type": "array",
+            "description": "Chain used to calculate the transaction fraud score.",
+            "uniqueItems": false,
+            "items": { "$ref": "#/components/schemas/iFraudHop" }
+          },
+          "additionalInfo": { "$ref": "#/components/schemas/additionalInfo" }
+        }
+      },
+      "updatedEvent": {
+        "required": [
+          "id",
+          "eventType",
+          "sentTime",
+          "formatVersion",
+          "source",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Specifies the time when the current event has been sent. ISO-8601."
+          },
+          "formatVersion": {
+            "type": "string",
+            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
+          },
+          "source": {
+            "type": "string",
+            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
+          },
+          "payload": { "$ref": "#/components/schemas/updatedEventPayload" }
+        }
+      },
+      "finishedEventPayload": {
+        "required": [
+          "businessId",
+          "transactionId",
+          "orderId",
+          "trackingCode",
+          "transactionType",
+          "requestTimestamp",
+          "processChain"
+        ],
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
+          },
+          "storeId": {
+            "type": "integer",
+            "description": "Identifier used to indicate a specific sub-account."
+          },
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the transaction given by AceHub."
+          },
+          "orderId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier grouping all dependent transactions related to this payment."
+          },
+          "initialTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "parentTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "trackingCode": {
+            "type": "string",
+            "description": "Merchant provided unique transaction identifier."
+          },
+          "transactionType": {
+            "type": "string",
+            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
+          },
+          "requestTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The time stamp (ISO-8601) when the transaction has been received."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
+          },
+          "method": {
+            "type": "string",
+            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
+          },
+          "descriptor": {
+            "type": "string",
+            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
+          },
+          "amount": { "$ref": "#/components/schemas/amount" },
+          "capture": {
+            "type": "boolean",
+            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
+          },
+          "source": {
+            "type": "string",
+            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
+          },
+          "subscriptionType": {
+            "type": "string",
+            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
+          },
+          "languageCode": {
+            "type": "string",
+            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "purchaseId": {
+            "type": "string",
+            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "card": { "$ref": "#/components/schemas/processedCard" },
+          "bank": { "$ref": "#/components/schemas/bank" },
+          "account": { "$ref": "#/components/schemas/account" },
+          "dba": { "$ref": "#/components/schemas/dba" },
+          "customer": { "$ref": "#/components/schemas/customer" },
+          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
+          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
+          "token": { "$ref": "#/components/schemas/token" },
+          "options": { "$ref": "#/components/schemas/options" },
+          "qr": { "$ref": "#/components/schemas/qr" },
+          "order": { "$ref": "#/components/schemas/order" },
+          "processChain": {
+            "type": "array",
+            "description": "Process information gathered from all hops made to process the transaction.",
+            "uniqueItems": false,
+            "items": { "$ref": "#/components/schemas/iProcessHop" }
+          },
+          "fraudScrubbing": {
+            "type": "array",
+            "description": "Chain used to calculate the transaction fraud score.",
+            "uniqueItems": false,
+            "items": { "$ref": "#/components/schemas/iFraudHop" }
+          },
+          "additionalInfo": { "$ref": "#/components/schemas/additionalInfo" }
+        }
+      },
+      "finishedEvent": {
+        "required": [
+          "id",
+          "eventType",
+          "sentTime",
+          "formatVersion",
+          "source",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Specifies the time when the current event has been sent. ISO-8601."
+          },
+          "formatVersion": {
+            "type": "string",
+            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
+          },
+          "source": {
+            "type": "string",
+            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
+          },
+          "payload": { "$ref": "#/components/schemas/finishedEventPayload" }
+        }
+      },
+      "rejection": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "The message explaining why the transaction was rejected."
+          },
+          "validator": {
+            "type": "string",
+            "description": "The identification of the system that rejects the transaction."
+          }
+        }
+      },
+      "error": {
+        "required": ["code", "description"],
+        "properties": {
+          "code": { "type": "integer", "description": "The error code." },
+          "description": {
+            "type": "string",
+            "description": "Error code on detailed level."
+          },
+          "detailedDescription": {
+            "type": "string",
+            "description": "Human-friendly message explaining the error."
+          }
+        }
+      },
+      "deniedEventPayload": {
+        "required": [
+          "businessId",
+          "transactionId",
+          "orderId",
+          "trackingCode",
+          "transactionType",
+          "requestTimestamp",
+          "processChain"
+        ],
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
+          },
+          "storeId": {
+            "type": "integer",
+            "description": "Identifier used to indicate a specific sub-account."
+          },
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the transaction given by AceHub."
+          },
+          "orderId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier grouping all dependent transactions related to this payment."
+          },
+          "initialTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "parentTransactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
+          },
+          "trackingCode": {
+            "type": "string",
+            "description": "Merchant provided unique transaction identifier."
+          },
+          "transactionType": {
+            "type": "string",
+            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
+          },
+          "requestTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The time stamp (ISO-8601) when the transaction has been received."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
+          },
+          "method": {
+            "type": "string",
+            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
+          },
+          "descriptor": {
+            "type": "string",
+            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
+          },
+          "amount": { "$ref": "#/components/schemas/amount" },
+          "capture": {
+            "type": "boolean",
+            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
+          },
+          "source": {
+            "type": "string",
+            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
+          },
+          "subscriptionType": {
+            "type": "string",
+            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
+          },
+          "languageCode": {
+            "type": "string",
+            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "purchaseId": {
+            "type": "string",
+            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
+          },
+          "card": { "$ref": "#/components/schemas/processedCard" },
+          "bank": { "$ref": "#/components/schemas/bank" },
+          "account": { "$ref": "#/components/schemas/account" },
+          "dba": { "$ref": "#/components/schemas/dba" },
+          "customer": { "$ref": "#/components/schemas/customer" },
+          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
+          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
+          "token": { "$ref": "#/components/schemas/token" },
+          "options": { "$ref": "#/components/schemas/options" },
+          "qr": { "$ref": "#/components/schemas/qr" },
+          "order": { "$ref": "#/components/schemas/order" },
+          "processChain": {
+            "type": "array",
+            "description": "Process information gathered from all hops made to process the transaction.",
+            "uniqueItems": false,
+            "items": { "$ref": "#/components/schemas/iProcessHop" }
+          },
+          "fraudScrubbing": {
+            "type": "array",
+            "description": "Chain used to calculate the transaction fraud score.",
+            "uniqueItems": false,
+            "items": { "$ref": "#/components/schemas/iFraudHop" }
+          },
+          "rejection": { "$ref": "#/components/schemas/rejection" },
+          "error": { "$ref": "#/components/schemas/error" },
+          "additionalInfo": { "$ref": "#/components/schemas/additionalInfo" }
+        }
+      },
+      "deniedEvent": {
+        "required": [
+          "id",
+          "eventType",
+          "sentTime",
+          "formatVersion",
+          "source",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Specifies the time when the current event has been sent. ISO-8601."
+          },
+          "formatVersion": {
+            "type": "string",
+            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
+          },
+          "source": {
+            "type": "string",
+            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
+          },
+          "payload": { "$ref": "#/components/schemas/deniedEventPayload" }
+        }
+      },
+      "iEvent": {
+        "required": ["eventType"],
+        "discriminator": {
+          "propertyName": "eventType",
+          "mapping": {
+            "Created": "#/components/schemas/createdEvent",
+            "Updated": "#/components/schemas/updatedEvent",
+            "Finished": "#/components/schemas/finishedEvent",
+            "Denied": "#/components/schemas/deniedEvent"
+          }
+        },
+        "oneOf": [
+          { "$ref": "#/components/schemas/createdEvent" },
+          { "$ref": "#/components/schemas/updatedEvent" },
+          { "$ref": "#/components/schemas/finishedEvent" },
+          { "$ref": "#/components/schemas/deniedEvent" }
+        ]
+      }
+    },
+    "messages": {},
+    "securitySchemes": {
+      "user-password": {
+        "type": "userPassword",
+        "description": "RabbitMQ user and password."
+      }
+    },
+    "parameters": {},
+    "correlationIds": {},
+    "serverBindings": {},
+    "channelBindings": {},
+    "operationBindings": {},
+    "messageBindings": {},
+    "operationTraits": {},
+    "messageTraits": {}
+  },
+  "tags": []
+}

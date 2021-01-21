@@ -38,7 +38,7 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 ## Version Guidance
 | Aync ReDoc Release | OpenAPI Specification | AsyncAPI Specification |
 |:-------------------|:----------------------|:-----------------------|
-| 0.0.1              | 3.0, 2.0              | 2.0                    |
+| 0.0.6              | 3.0, 2.0              | 2.0                    |
 
 ## Some Real-life usages
 

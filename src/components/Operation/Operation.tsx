@@ -13,6 +13,7 @@ import { Extensions } from '../Fields/Extensions';
 import { Markdown } from '../Markdown/Markdown';
 import { OptionsContext } from '../OptionsProvider';
 import { Parameters } from '../Parameters/Parameters';
+import { ParameterBody } from '../Parameters/ParameterBody';
 import { RequestSamples } from '../RequestSamples/RequestSamples';
 import { ResponsesList } from '../Responses/ResponsesList';
 import { ResponseSamples } from '../ResponseSamples/ResponseSamples';
@@ -63,9 +64,10 @@ export class Operation extends React.Component<OperationProps> {
               )}
               <Extensions extensions={operation.extensions} />
               <SecurityRequirements securities={operation.security} />
-              <Parameters parameters={operation.parameters} body={operation.requestBody} />
+              <Parameters parameters={operation.parameters} />
               <PathBindings bindings={operation.pathBindings} />
               <OperationBindings bindings={operation.bindings} />
+              <ParameterBody body={operation.requestBody} />
               <ResponsesList responses={operation.responses} />
               <CallbacksList callbacks={operation.callbacks} />
             </MiddlePanel>
