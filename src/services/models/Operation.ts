@@ -77,6 +77,10 @@ export class OperationModel implements IMenuItem {
   isCallback: boolean;
   isWebhook: boolean;
 
+  isAsync: boolean;
+  pathBindings: Record<string, any>;
+  bindings: Record<string, any>;
+
   constructor(
     private parser: OpenAPIParser,
     private operationSpec: ExtendedOpenAPIOperation,
@@ -99,6 +103,9 @@ export class OperationModel implements IMenuItem {
     this.path = operationSpec.pathName;
     this.isCallback = isCallback;
     this.isWebhook = !!operationSpec.isWebhook;
+    this.isAsync = ['pub', 'sub'].includes(operationSpec.httpVerb);
+    this.pathBindings = operationSpec.pathBindings || {};
+    this.bindings = operationSpec.bindings || {};
 
     this.name = getOperationSummary(operationSpec);
 
@@ -123,9 +130,10 @@ export class OperationModel implements IMenuItem {
         (security) => new SecurityRequirementModel(security, parser),
       );
 
+      const operationSpecServers = operationSpec.servers as OpenAPIServer[];
       this.servers = normalizeServers(
         parser.specUrl,
-        operationSpec.servers || operationSpec.pathServers || parser.spec.servers || [],
+        operationSpecServers || operationSpec.pathServers || parser.spec.servers || [],
       );
     }
 
@@ -227,7 +235,8 @@ export class OperationModel implements IMenuItem {
   @memoize
   get responses() {
     let hasSuccessResponses = false;
-    return Object.keys(this.operationSpec.responses || [])
+    const reponses = this.operationSpec.responses || [];
+    return Object.keys(reponses)
       .filter((code) => {
         if (code === 'default') {
           return true;
@@ -244,7 +253,7 @@ export class OperationModel implements IMenuItem {
           this.parser,
           code,
           hasSuccessResponses,
-          this.operationSpec.responses[code],
+          reponses[code],
           this.options,
         );
       });

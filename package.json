@@ -1,10 +1,10 @@
 {
-  "name": "redoc",
-  "version": "2.0.0-rc.48",
-  "description": "ReDoc",
+  "name": "redoc-asyncapi",
+  "version": "0.0.5",
+  "description": "ReDoc for AsyncAPI",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Redocly/redoc"
+    "url": "git+https://github.com/ivamuno/redoc-asyncapi.git"
   },
   "engines": {
     "node": ">=6.9",
@@ -152,6 +152,7 @@
     "polished": "^3.6.5",
     "prismjs": "^1.22.0",
     "prop-types": "^15.7.2",
+    "react-collapse": "^5.1.0",
     "react-tabs": "^3.1.1",
     "slugify": "^1.4.4",
     "stickyfill": "^1.1.1",

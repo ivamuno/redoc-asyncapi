@@ -134,9 +134,9 @@ describe('Utils', () => {
       object: ['maxProperties', 'minProperties', 'required', 'additionalProperties', 'properties'],
     };
 
-    Object.keys(tests).forEach(name => {
+    Object.keys(tests).forEach((name) => {
       it(`Should detect ${name} if ${name} properties are present`, () => {
-        tests[name].forEach(propName => {
+        tests[name].forEach((propName) => {
           expect(
             detectType({
               [propName]: 0,
@@ -375,9 +375,9 @@ describe('Utils', () => {
     });
 
     it('should have a humanized constraint when uniqueItems is set', () => {
-      expect(humanizeConstraints(itemConstraintSchema(undefined, undefined, undefined, true))).toContain(
-        'unique',
-      );
+      expect(
+        humanizeConstraints(itemConstraintSchema(undefined, undefined, undefined, true)),
+      ).toContain('unique');
     });
   });
 
@@ -576,11 +576,11 @@ describe('Utils', () => {
       },
     ];
 
-    testCases.forEach(locationTestGroup => {
+    testCases.forEach((locationTestGroup) => {
       describe(locationTestGroup.description, () => {
-        locationTestGroup.cases.forEach(valueTypeTestGroup => {
+        locationTestGroup.cases.forEach((valueTypeTestGroup) => {
           describe(valueTypeTestGroup.description, () => {
-            valueTypeTestGroup.cases.forEach(testCase => {
+            valueTypeTestGroup.cases.forEach((testCase) => {
               it(`should serialize correctly when style is ${testCase.style} and explode is ${testCase.explode}`, () => {
                 const parameter: OpenAPIParameter = {
                   name: locationTestGroup.name,

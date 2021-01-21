@@ -34,6 +34,10 @@ const DEFAULT_SERIALIZATION: Record<
     style: 'form',
     explode: true,
   },
+  channel: {
+    style: 'simple',
+    explode: false,
+  },
 };
 
 /**
@@ -87,7 +91,7 @@ export class FieldModel {
     if (info.examples !== undefined) {
       this.examples = mapValues(
         info.examples,
-        example => new ExampleModel(parser, example, name, info.encoding),
+        (example) => new ExampleModel(parser, example, name, info.encoding),
       );
     }
 

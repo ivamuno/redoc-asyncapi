@@ -11,6 +11,10 @@ import {
   HttpVerb,
   OperationEndpointWrap,
   ServerItem,
+  ServerPropsItem,
+  ServerVarName,
+  ServerVarDesc,
+  ServerVarValue,
   ServerRelativeURL,
   ServersOverlay,
   ServerUrl,
@@ -47,7 +51,7 @@ export class Endpoint extends React.Component<EndpointProps, EndpointState> {
     // TODO: highlight server variables, e.g. https://{user}.test.com
     return (
       <OptionsContext.Consumer>
-        {options => (
+        {(options) => (
           <OperationEndpointWrap>
             <EndpointInfo onClick={this.toggle} expanded={expanded} inverted={inverted}>
               <HttpVerb type={operation.httpVerb} compact={this.props.compact}>
@@ -63,13 +67,16 @@ export class Endpoint extends React.Component<EndpointProps, EndpointState> {
               />
             </EndpointInfo>
             <ServersOverlay expanded={expanded} aria-hidden={!expanded}>
-              {operation.servers.map(server => {
-                const normalizedUrl = options.expandDefaultServerVariables
+              {operation.servers.map((server) => {
+                const expandDefaultServerVars = options.expandDefaultServerVariables;
+                const normalizedUrl = expandDefaultServerVars
                   ? expandDefaultServerVariables(server.url, server.variables)
                   : server.url;
                 const basePath = getBasePath(normalizedUrl);
+                const serverVariables = server.variables || [];
                 return (
                   <ServerItem key={normalizedUrl}>
+                    <Markdown source={`**${(server.name || '').toUpperCase()}**`} compact={true} />
                     <Markdown source={server.description || ''} compact={true} />
                     <SelectOnClick>
                       <ServerUrl>
@@ -80,9 +87,27 @@ export class Endpoint extends React.Component<EndpointProps, EndpointState> {
                               : basePath
                             : normalizedUrl}
                         </span>
-                        {operation.path}
+                        {server.protocol && (
+                          <ServerVarValue isVar={false}>
+                            {server.protocol} {server.protocolVersion}
+                          </ServerVarValue>
+                        )}
                       </ServerUrl>
                     </SelectOnClick>
+                    {!expandDefaultServerVars &&
+                      Object.keys(serverVariables).map((key) => {
+                        const variable = serverVariables[key];
+                        return (
+                          <ServerPropsItem key={key}>
+                            <ServerVarName>{key}</ServerVarName>
+                            <ServerVarDesc>{variable.description}</ServerVarDesc>
+                            <ServerVarValue isVar={true}>ENUM: {variable.enum}</ServerVarValue>
+                            <ServerVarValue isVar={true}>
+                              DEFAULT: {variable.default}
+                            </ServerVarValue>
+                          </ServerPropsItem>
+                        );
+                      })}
                   </ServerItem>
                 );
               })}

@@ -68,8 +68,8 @@ export class OpenAPIParser {
   }
 
   validate(spec: any) {
-    if (spec.openapi === undefined) {
-      throw new Error('Document must be valid OpenAPI 3.0.0 definition');
+    if (spec.openapi === undefined && spec.asyncapi === undefined) {
+      throw new Error('Document must be valid OpenApi 3.0.0 or AsyncAPI 2.0.0 definition');
     }
   }
 
@@ -234,7 +234,7 @@ export class OpenAPIParser {
           schema: subMerged,
         };
       })
-      .filter(child => child !== undefined) as Array<{
+      .filter((child) => child !== undefined) as Array<{
       $ref: string | undefined;
       schema: MergedOpenAPISchema;
     }>;
@@ -311,7 +311,7 @@ export class OpenAPIParser {
       const def = this.deref(schemas[defName]);
       if (
         def.allOf !== undefined &&
-        def.allOf.find(obj => obj.$ref !== undefined && $refs.indexOf(obj.$ref) > -1)
+        def.allOf.find((obj) => obj.$ref !== undefined && $refs.indexOf(obj.$ref) > -1)
       ) {
         res['#/components/schemas/' + defName] = [def['x-discriminator-value'] || defName];
       }
@@ -337,7 +337,7 @@ export class OpenAPIParser {
         const beforeAllOf = allOf.slice(0, i);
         const afterAllOf = allOf.slice(i + 1);
         return {
-          oneOf: sub.oneOf.map(part => {
+          oneOf: sub.oneOf.map((part) => {
             const merged = this.mergeAllOf({
               allOf: [...beforeAllOf, part, ...afterAllOf],
             });
