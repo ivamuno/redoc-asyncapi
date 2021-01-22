@@ -1,6 +1,6 @@
 {
   "name": "redoc-asyncapi",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "ReDoc for AsyncAPI",
   "repository": {
     "type": "git",

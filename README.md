@@ -5,7 +5,7 @@
 </div>
 
 **This is README for an ReDoc extension which supports AsyncAPI**
-See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
+- This project is a fork of [ReDoc documentation](https://github.com/Redocly/redoc).
 
 ## Live demo
 
@@ -13,14 +13,13 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 
 ## Features
 - OpenAPI support.
-- AsyncAPI pub/sub operations support.
-- It supports `discriminator` feature for version 3.0.
+- Basic support for AsyncAPI pub/sub operations.
+  - Paremetres, Protocol and Properties for Async API channels.
+- It supports `discriminator` feature for both, Open and Async API.
 - The following protocols can be used: AMQP
+- Availabilty to collapse 
 
 ## Roadmap
-  - [x] Collapse Protocol and Properties
-  - [x] Channel Parameters
-  - [x] Reset ErrorBoundary state
   - [ ] Header/Traits
   - [ ] Generate Postman collection
   - [ ] Try-it out for Open API
@@ -38,7 +37,7 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 ## Version Guidance
 | Aync ReDoc Release | OpenAPI Specification | AsyncAPI Specification |
 |:-------------------|:----------------------|:-----------------------|
-| 0.0.6              | 3.0, 2.0              | 2.0                    |
+| 0.0.7              | 3.0, 2.0              | 2.0                    |
 
 ## Some Real-life usages
 
