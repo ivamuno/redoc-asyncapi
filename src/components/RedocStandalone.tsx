@@ -15,6 +15,8 @@ export interface RedocStandaloneProps {
 }
 
 export class RedocStandalone extends React.PureComponent<RedocStandaloneProps> {
+  errorBoundary = React.createRef<ErrorBoundary>();
+
   static propTypes = {
     spec: (props, _, componentName) => {
       if (!props.spec && !props.specUrl) {
@@ -42,9 +44,12 @@ export class RedocStandalone extends React.PureComponent<RedocStandaloneProps> {
     const hideLoading = options.hideLoading !== undefined;
 
     const normalizedOpts = new RedocNormalizedOptions(options);
+    if (this.errorBoundary.current?.state.error) {
+      this.errorBoundary.current?.setState({ error: undefined });
+    }
 
     return (
-      <ErrorBoundary>
+      <ErrorBoundary ref={this.errorBoundary}>
         <StoreBuilder spec={spec} specUrl={specUrl} options={options} onLoaded={onLoaded}>
           {({ loading, store }) =>
             !loading ? (

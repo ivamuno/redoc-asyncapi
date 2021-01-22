@@ -23,6 +23,6 @@ export class OperationBindings extends React.PureComponent<OperationBindingsProp
       bindings.push({ key: key, value: textValue });
     }
 
-    return <Bindings bindingGroupHeader="Properties" bindings={bindings} />;
+    return <Bindings bindingGroupHeader="Operation &amp; Message Bindings" bindings={bindings} />;
   }
 }

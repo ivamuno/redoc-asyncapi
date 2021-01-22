@@ -20,6 +20,6 @@ export class PathBindings extends React.PureComponent<PathBindingsProps> {
       bindings.push({ key: key, value: value });
     }
 
-    return <Bindings bindingGroupHeader="Protocol" bindingGroupName="AMQP" bindings={bindings} />;
+    return <Bindings bindingGroupHeader="Channel Bindings" bindingGroupName="AMQP" bindings={bindings} />;
   }
 }

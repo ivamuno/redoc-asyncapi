@@ -34,6 +34,10 @@ const DEFAULT_SERIALIZATION: Record<
     style: 'form',
     explode: true,
   },
+  channel: {
+    style: 'simple',
+    explode: false,
+  },
 };
 
 /**

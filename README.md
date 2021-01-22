@@ -5,7 +5,7 @@
 </div>
 
 **This is README for an ReDoc extension which supports AsyncAPI**
-See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
+- This project is a fork of [ReDoc documentation](https://github.com/Redocly/redoc).
 
 ## Live demo
 
@@ -13,19 +13,23 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 
 ## Features
 - OpenAPI support.
-- AsyncAPI pub/sub operations support.
-- It supports `discriminator` feature.
+- Basic support for AsyncAPI pub/sub operations.
+  - Paremetres, Protocol and Properties for Async API channels.
+- It supports `discriminator` feature for both, Open and Async API.
 - The following protocols can be used: AMQP
+- Availabilty to collapse 
 
 ## Roadmap
-  - [x] AMQP Bindings
-  - [ ] Aggregator
-  - [ ] Channel Parameters
   - [ ] Header/Traits
-  - [x] Collapse Protocol and Properties
-  - [ ] Try-it out for Open API
-  - [ ] Reset ErrorBoundary
   - [ ] Generate Postman collection
+  - [ ] Try-it out for Open API
+    - https://github.com/swagger-api/swagger-ui/blob/0a807d6237f59880d34131f66cd4fc542fdaca09/src/core/plugins/spec/actions.js
+    - https://github.com/swagger-api/swagger-ui/blob/aee8cc5a177327203fb5d5fa91ef1c5cd5df4d30/src/core/components/responses.jsx
+    - Schema
+      - application/json
+      - application/xml
+      - multipart/form-data
+      - application/x-www-form-urlencoded
   - [ ] Other protocols: http, ws, kafka, ...
 
 ## Releases
@@ -33,7 +37,7 @@ See [ReDoc documentation](https://github.com/Redocly/redoc) for more details.
 ## Version Guidance
 | Aync ReDoc Release | OpenAPI Specification | AsyncAPI Specification |
 |:-------------------|:----------------------|:-----------------------|
-| 0.0.1              | 3.0, 2.0              | 2.0                    |
+| 0.0.7              | 3.0, 2.0              | 2.0                    |
 
 ## Some Real-life usages
 
