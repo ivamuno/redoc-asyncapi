@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { ParametersGroup } from '../Parameters/ParametersGroup';
+import { TryItOutParametersGroup } from './TryItOutParametersGroup';
+import { TryItOutUseForm } from './TryItOutUseForm';
 
-import { FieldModel } from '../../services/models';
+import { FieldModel, RequestBodyModel } from '../../services/models';
+import { TryItOutParameterBody } from './TryItOutParameterBody';
 
 function safePush(obj, prop, item) {
   if (!obj[prop]) {
@@ -11,7 +13,9 @@ function safePush(obj, prop, item) {
 }
 
 export interface TryItOutParametersProps {
+  body?: RequestBodyModel;
   parameters?: FieldModel[];
+  useForm: TryItOutUseForm;
 }
 
 const PARAM_PLACES = ['path', 'query', 'cookie', 'header'];
@@ -26,8 +30,8 @@ export class TryItOutParameters extends React.PureComponent<TryItOutParametersPr
   }
 
   render() {
-    const { parameters = [] } = this.props;
-    if (parameters === undefined) {
+    const { body, parameters = [], useForm } = this.props;
+    if (body === undefined && parameters === undefined) {
       return null;
     }
 
@@ -37,8 +41,9 @@ export class TryItOutParameters extends React.PureComponent<TryItOutParametersPr
     return (
       <>
         {paramsPlaces.map((place) => (
-          <ParametersGroup key={place} place={place} parameters={paramsMap[place]} />
+          <TryItOutParametersGroup key={place} place={place} parameters={paramsMap[place]} useForm={useForm} />
         ))}
+        {body && <TryItOutParameterBody body={body} useForm={useForm} />}
       </>
     );
   }

@@ -13,6 +13,7 @@
     "importHelpers": true,
     "outDir": "lib",
     "pretty": true,
+    "allowJs": true,
     "lib": [
       "es2015",
       "es2016",
@@ -40,6 +41,6 @@
     "./demo/playground/hmr-playground.tsx",
     "./src/**/*.ts?",
     "demo/*.tsx",
-    "src/empty.js"
+    "./src/**/*.js?"
   ]
 }

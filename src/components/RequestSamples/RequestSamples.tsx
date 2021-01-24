@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 import { isPayloadSample, isTryItOutSample, OperationModel, RedocNormalizedOptions } from '../../services';
 import { PayloadSamples } from '../PayloadSamples/PayloadSamples';
-import { TryItOut } from '../TryItOut/TryItOut';
+import TryItOut from '../TryItOut/TryItOut';
 import { SourceCodeWithCopy } from '../SourceCode/SourceCode';
 
 import { RightPanelHeader, Tab, TabList, TabPanel, Tabs } from '../../common-elements';

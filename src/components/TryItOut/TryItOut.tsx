@@ -1,19 +1,24 @@
 import * as React from 'react';
+import { useForm } from "react-hook-form";
+
 import { OperationModel } from '../../services';
-import { TryItOutParameters } from '..';
+import { TryItOutParameters } from './TryItOutParameters';
+import { TryItOutSubmit } from './tryItOut.layout';
 
 export interface TryItOutProps {
   operation: OperationModel
 }
 
-export class TryItOut extends React.PureComponent<TryItOutProps> {
+export default function TryItOut(props: TryItOutProps) {
+  const { register, handleSubmit, errors } = useForm();
+  const onSubmit = data => console.log(data);
 
-  render() {
-    return (
-      <div>
-        <span>{this.props.operation.parameters.join(',')}</span>
-        <TryItOutParameters parameters={this.props.operation.parameters} />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <TryItOutParameters parameters={props.operation.parameters} body={props.operation.requestBody} useForm={{ register, errors }} />
+        <TryItOutSubmit type="submit" value="Submit" />
+      </form>
+    </div>
+  );
 }
