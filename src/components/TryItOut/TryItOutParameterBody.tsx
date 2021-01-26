@@ -17,7 +17,7 @@ export interface TryItOutParameterBodyProps {
 
 export class TryItOutParameterBody extends React.PureComponent<TryItOutParameterBodyProps> {
   render() {
-    const { body } = this.props;
+    const { body, useForm } = this.props;
     if (body === undefined) {
       return null;
     }
@@ -26,7 +26,7 @@ export class TryItOutParameterBody extends React.PureComponent<TryItOutParameter
 
     return (
       <>
-        {bodyContent && <BodyContent content={bodyContent} />}
+        {bodyContent && <BodyContent content={bodyContent} useForm={useForm} />}
       </>
     );
   }
@@ -36,8 +36,8 @@ const renderDropdown = (props) => {
   return <DropdownOrLabel Label={TryItOutMimeLabel} Dropdown={TryItOutInvertedSimpleDropdown} {...props} />;
 };
 
-export function BodyContent(props: { content: MediaContentModel }): JSX.Element {
-  const { content } = props;
+export function BodyContent(props: { content: MediaContentModel, useForm: TryItOutUseForm }): JSX.Element {
+  const { content, useForm } = props;
 
   return (
     <>
@@ -49,6 +49,7 @@ export function BodyContent(props: { content: MediaContentModel }): JSX.Element 
               key="tryItOutSamples"
               mediaType={mediaType}
               renderDropdown={renderDropdown}
+              useForm={useForm}
             />
           )}
         </MediaTypesSwitch>

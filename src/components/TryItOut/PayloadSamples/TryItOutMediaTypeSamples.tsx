@@ -7,9 +7,11 @@ import { MediaTypeModel } from '../../../services/models';
 import { Markdown } from '../../Markdown/Markdown';
 import { TryItOutExample } from './TryItOutExample';
 import { TryItOutDropdownLabel, TryItOutDropdownWrapper, TryItOutNoSampleLabel } from './tryItOut.styled.elements';
+import { TryItOutUseForm } from '../TryItOutUseForm';
 
 export interface TryItOutMediaTypeSamplesProps {
   mediaType: MediaTypeModel;
+  useForm: TryItOutUseForm;
   renderDropdown: (props: DropdownProps) => JSX.Element;
 }
 
@@ -30,6 +32,7 @@ export class TryItOutMediaTypeSamples extends React.Component<TryItOutMediaTypeS
     const { activeIdx } = this.state;
     const examples = this.props.mediaType.examples || {};
     const mimeType = this.props.mediaType.name;
+    const useForm = this.props.useForm;
 
     const noSample = <TryItOutNoSampleLabel>No sample</TryItOutNoSampleLabel>;
 
@@ -62,7 +65,7 @@ export class TryItOutMediaTypeSamples extends React.Component<TryItOutMediaTypeS
           </TryItOutDropdownWrapper>
           <div>
             {description && <Markdown source={description} />}
-            <TryItOutExample example={example} mimeType={mimeType} />
+            <TryItOutExample example={example} mimeType={mimeType} useForm={useForm} />
           </div>
         </TryItOutSamplesWrapper>
       );
@@ -71,7 +74,7 @@ export class TryItOutMediaTypeSamples extends React.Component<TryItOutMediaTypeS
       return (
         <TryItOutSamplesWrapper>
           {example.description && <Markdown source={example.description} />}
-          <TryItOutExample example={example} mimeType={mimeType} />
+          <TryItOutExample example={example} mimeType={mimeType} useForm={useForm} />
         </TryItOutSamplesWrapper>
       );
     }

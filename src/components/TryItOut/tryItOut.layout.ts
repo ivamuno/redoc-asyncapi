@@ -46,6 +46,7 @@ export const TryItOutSubmit = styled.input`
   min-width: 120px;
   outline: none;
   transition: all .3s;
+  margin: 10px 0px 0px 0px;
 
   &:hover {
     background-color: rgb(65, 65, 195);

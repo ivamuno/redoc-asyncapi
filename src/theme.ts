@@ -118,13 +118,41 @@ const defaultTheme: ThemeInterface = {
       lineHeight: '1.6em',
     },
     code: {
-      fontSize: '13px',
+      fontSize: '12px',
       fontFamily: 'Courier, monospace',
       lineHeight: ({ typography }) => typography.lineHeight,
       fontWeight: ({ typography }) => typography.fontWeightRegular,
-      color: '#e53935',
-      backgroundColor: 'rgba(38, 50, 56, 0.05)',
-      wrap: false,
+      backgroundColor: 'rgba(38, 50, 56, 0.4)',
+      selected: {
+        background: 'rgba(128, 203, 196, 0.2)',
+      },
+      colors: {
+        main: '#EEFFFF',
+        attribute: '#C792EA',
+        atom: '#F78C6C',
+        bracket: '#997',
+        builtin: '#FFCB6B',
+        comment: '#546E7A',
+        def: '#82AAFF',
+        meta: '#FFCB6B',
+        number: '#FF5370',
+        keyword: '#C792EA',
+        operator: '#89DDFF',
+        property: '#C792EA',
+        qualifier: '#DECB6B',
+        string: '#C3E88D',
+        string2: '#f07178',
+        tag: '#FF5370',
+        type: '#DECB6B',
+        variable: '#f07178',
+        variable2: '#EEFFFF'
+      },
+      guttermarker: {
+        color: '#546E7A',
+      },
+      cursor: {
+        color: '#FFCC00',
+      }
     },
     links: {
       color: ({ colors }) => colors.primary.main,
@@ -299,6 +327,36 @@ export interface ResolvedThemeInterface {
 
     code: FontSettings & {
       backgroundColor: string;
+      selected: {
+        background: string
+      };
+      colors: {
+        main: string,
+        attribute: string;
+        atom: string;
+        bracket: string;
+        builtin: string;
+        comment: string;
+        def: string;
+        meta: string;
+        number: string;
+        keyword: string;
+        operator: string;
+        property: string;
+        qualifier: string;
+        string: string;
+        string2: string;
+        tag: string;
+        type: string;
+        variable: string;
+        variable2: string;
+      };
+      guttermarker: {
+        color: string;
+      };
+      cursor: {
+        color: string;
+      };
       wrap: boolean;
     };
     headings: {
@@ -306,7 +364,6 @@ export interface ResolvedThemeInterface {
       fontWeight: string;
       lineHeight: string;
     };
-
     links: {
       color: string;
       visited: string;

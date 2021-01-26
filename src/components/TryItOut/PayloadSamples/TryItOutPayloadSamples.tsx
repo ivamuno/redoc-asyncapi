@@ -6,9 +6,11 @@ import { MediaContentModel } from '../../../services/models';
 import { DropdownOrLabel } from '../../DropdownOrLabel/DropdownOrLabel';
 import { MediaTypesSwitch } from '../../MediaTypeSwitch/MediaTypesSwitch';
 import { TryItOutInvertedSimpleDropdown, TryItOutMimeLabel } from './tryItOut.styled.elements';
+import { TryItOutUseForm } from '../TryItOutUseForm';
 
 export interface TryItOutPayloadSamplesProps {
   content: MediaContentModel;
+  useForm: TryItOutUseForm;
 }
 
 @observer
@@ -26,6 +28,7 @@ export class TryItOutPayloadSamples extends React.Component<TryItOutPayloadSampl
             key="samples"
             mediaType={mediaType}
             renderDropdown={this.renderDropdown}
+            useForm={this.props.useForm}
           />
         )}
       </MediaTypesSwitch>

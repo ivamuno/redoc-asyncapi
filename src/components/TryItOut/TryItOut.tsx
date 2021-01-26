@@ -17,7 +17,9 @@ export default function TryItOut(props: TryItOutProps) {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <TryItOutParameters parameters={props.operation.parameters} body={props.operation.requestBody} useForm={{ register, errors }} />
-        <TryItOutSubmit type="submit" value="Submit" />
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <TryItOutSubmit type="submit" value="Submit" />
+        </div>
       </form>
     </div>
   );
