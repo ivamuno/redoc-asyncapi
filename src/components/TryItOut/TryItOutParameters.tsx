@@ -4,6 +4,8 @@ import { TryItOutUseForm } from './TryItOutUseForm';
 
 import { FieldModel, RequestBodyModel } from '../../services/models';
 import { TryItOutParameterBody } from './TryItOutParameterBody';
+import { TryItOutParameterTarget } from './TryItOutParameterTarget';
+import { OpenAPIServer } from '../../types/open-api';
 
 function safePush(obj, prop, item) {
   if (!obj[prop]) {
@@ -13,6 +15,7 @@ function safePush(obj, prop, item) {
 }
 
 export interface TryItOutParametersProps {
+  servers: OpenAPIServer[];
   body?: RequestBodyModel;
   parameters?: FieldModel[];
   useForm: TryItOutUseForm;
@@ -30,16 +33,13 @@ export class TryItOutParameters extends React.PureComponent<TryItOutParametersPr
   }
 
   render() {
-    const { body, parameters = [], useForm } = this.props;
-    if (body === undefined && parameters === undefined) {
-      return null;
-    }
-
+    const { servers, body, parameters = [], useForm } = this.props;
     const paramsMap = this.orderParams(parameters);
     const paramsPlaces = parameters.length > 0 ? PARAM_PLACES : [];
 
     return (
       <>
+        <TryItOutParameterTarget servers={servers} useForm={useForm} />
         {paramsPlaces.map((place) => (
           <TryItOutParametersGroup key={place} place={place} parameters={paramsMap[place]} useForm={useForm} />
         ))}

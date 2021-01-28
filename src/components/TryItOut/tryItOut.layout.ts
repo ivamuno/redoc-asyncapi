@@ -13,6 +13,26 @@ export const TryItOutRequiredLabel = styled(FieldLabel.withComponent('div'))`
   line-height: 1;
 `;
 
+export const TryItOutUnderSelect = styled.select`
+  display: block;
+  border-width: 1px;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  transition: all .3s;
+
+  &.is-invalid {
+    border-width: 1px 1px 1px 10px;
+    border-style: solid;
+    border-color: #d41f1c;
+    background: rgb(251, 236, 242)
+  }
+
+  ${extensionsHook('TryItOutUnderSelect')};
+`;
+
 export const TryItOutUnderInput = styled.input`
   display: block;
   border-width: 1px;
