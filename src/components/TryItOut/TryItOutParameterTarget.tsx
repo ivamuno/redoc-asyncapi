@@ -36,7 +36,7 @@ export class TryItOutParameterTarget extends React.PureComponent<TryItOutParamet
                   ref={useForm.register({ required: true })}
                   name={name}
                   className={useForm?.errors[name] ? 'is-invalid' : ''}>
-                  {servers.map(s => (<option value={s.url}>{`${s.url} - ${s.description}`}</option>))}
+                  {servers.map(s => (<option key={s.url} value={s.url}>{`${s.url} - ${s.description}`}</option>))}
                 </TryItOutUnderSelect>
               </TryItOutPropertyDetailsCell>
             </tr>

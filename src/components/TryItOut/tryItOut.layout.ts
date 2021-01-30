@@ -19,7 +19,7 @@ export const TryItOutUnderSelect = styled.select`
   box-sizing: border-box;
   width: 100%;
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 5px 10px;
   margin-bottom: 10px;
   transition: all .3s;
 
@@ -53,7 +53,7 @@ export const TryItOutUnderInput = styled.input`
   ${extensionsHook('TryItOutUnderInput')};
 `;
 
-export const TryItOutSubmit = styled.input`
+export const TryItOutButton = styled.input`
   padding: 5px 15px;
   text-transform: uppercase;
   cursor: pointer;
@@ -67,6 +67,7 @@ export const TryItOutSubmit = styled.input`
   outline: none;
   transition: all .3s;
   margin: 10px 0px 0px 0px;
+  border-radius: 4px;
 
   &:hover {
     background-color: rgb(65, 65, 195);
@@ -74,6 +75,18 @@ export const TryItOutSubmit = styled.input`
 
   &:active {
     background-color: rgb(44, 44, 140);
+  }
+
+  &.is-authorized {
+    background-color: #49cc90;
+  }
+
+  &.is-invalid {
+    border-width: 1px 1px 1px 10px;
+    border-style: solid;
+    border-color: #d41f1c;
+    background: rgb(251, 236, 242);
+    color: rgba(38,50,56,0.5);
   }
 
   ${extensionsHook('TryItOutUnderInput')};

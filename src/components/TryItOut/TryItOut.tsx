@@ -1,29 +1,21 @@
 import * as React from 'react';
-import { useForm } from "react-hook-form";
+import Modal from 'react-modal';
 
 import { OperationModel } from '../../services';
-import { TryItOutParameters } from './TryItOutParameters';
-import { TryItOutSubmit } from './tryItOut.layout';
 import { Tab, TabList, TabPanel, Tabs } from '../../common-elements';
+import TryItOutRequest from './TryItOutRequest';
+
+Modal.setAppElement('redoc');
 
 export interface TryItOutProps {
   operation: OperationModel
 }
 
-const renderRequest = (operation: OperationModel, useForm) => {
-  const { register, handleSubmit, errors } = useForm;
-  const onSubmit = data => console.log(data);
-  return (<div style={{ padding: '2px' }}>
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <TryItOutParameters servers={operation.servers} parameters={operation.parameters} body={operation.requestBody} useForm={{ register, errors }} />
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <TryItOutSubmit type="submit" value="Submit" />
-      </div>
-    </form>
-  </div>);
+const renderRequest = (operation: OperationModel) => {
+  return (<TryItOutRequest operation={operation} />);
 }
 
-const renderResponse = (_props, _useForm) => {
+const renderResponse = (_props) => {
   return (<><span>Response Example</span></>);
 }
 
@@ -40,7 +32,7 @@ export default function TryItOut(props: TryItOutProps) {
       </TabList>
       {tabs.map((tab) => (
         <TabPanel key={tab.name}>
-          {tab.render(props.operation, useForm())}
+          {tab.render(props.operation)}
         </TabPanel>
       ))}
     </Tabs>

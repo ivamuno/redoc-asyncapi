@@ -156,6 +156,7 @@
     "prop-types": "^15.7.2",
     "react-collapse": "^5.1.0",
     "react-hook-form": "^6.14.2",
+    "react-modal": "^3.12.1",
     "react-tabs": "^3.1.1",
     "slugify": "^1.4.4",
     "stickyfill": "^1.1.1",
