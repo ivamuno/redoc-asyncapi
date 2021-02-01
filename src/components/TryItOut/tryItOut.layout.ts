@@ -6,6 +6,25 @@ import { deprecatedCss } from '../../common-elements/mixins';
 import { InnerPropertiesWrap } from '../../common-elements/fields-layout';
 import { FieldLabel } from '../../common-elements/fields';
 
+export const TryItOutPropertySpan = styled.span`
+  box-sizing: border-box;
+  position: relative;
+  padding: 10px 10px 10px 0;
+
+  ${media.lessThan('small')`
+    display: block;
+    overflow: hidden;
+  `}
+
+  vertical-align: top;
+  line-height: 20px;
+  white-space: nowrap;
+  font-size: 13px;
+  font-family: ${(props) => props.theme.typography.code.fontFamily};
+
+  ${extensionsHook('TryItOutPropertySpan')};
+`;
+
 export const TryItOutRequiredLabel = styled(FieldLabel.withComponent('div'))`
   color: rgb(255,99,71);
   font-size: ${(props) => props.theme.schema.labelsTextSize};
@@ -112,6 +131,7 @@ export const TryItOutPropertyNameCell = styled.td`
   box-sizing: border-box;
   position: relative;
   padding: 10px 10px 10px 0;
+  font-weight: bold;
 
   ${media.lessThan('small')`
     display: block;
@@ -129,6 +149,51 @@ export const TryItOutPropertyNameCell = styled.td`
   }
 
   ${extensionsHook('TryItOutPropertyNameCell')};
+`;
+
+export const TryItOutResponsePropertyNameCell = styled.td`
+  box-sizing: border-box;
+  position: relative;
+  padding: 2px 0;
+  
+  vertical-align: top;
+  line-height: 20px;
+  white-space: nowrap;
+
+  ${media.lessThan('small')`
+    display: block;
+    overflow: hidden;
+  `}
+
+  ${media.lessThan('small')`
+    padding: 0 0px;
+    border-bottom: none;
+    border-left: 1px solid ${(props) => props.theme.schema.linesColor};
+  `}
+
+  ${extensionsHook('TryItOutResponsePropertyNameCell')};
+`;
+
+export const TryItOutResponsePropertyValueCell = styled.td`
+  padding: 2px 0;
+  width: ${(props) => props.theme.schema.defaultDetailsWidth};
+  box-sizing: border-box;
+
+  tr.expanded & {
+    border-bottom: none;
+  }
+
+  ${media.lessThan('small')`
+    padding: 0 20px;
+    border-bottom: none;
+    border-left: 1px solid ${(props) => props.theme.schema.linesColor};
+
+    tr.last > & {
+      border-left: none;
+    }
+  `}
+
+  ${extensionsHook('TryItOutResponsePropertyValueCell')};
 `;
 
 export const TryItOutPropertyDetailsCell = styled.td`

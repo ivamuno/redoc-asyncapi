@@ -97,13 +97,19 @@ export default function TryItOutRequest(props: TryItOutRequestProps) {
         });
         const duration = new Date().getTime() - startTime;
         response.text().then(text => {
+          let requestBody: any = text;
+          try {
+            requestBody = JSON.parse(requestBody);
+          }
+          catch { }
+
           props.onLoaded({
             headers: headers,
             status: response.status,
             statusText: response.statusText,
             url: response.url,
             redirected: response.redirected,
-            responseBody: text,
+            responseBody: requestBody,
             duration: duration
           });
         });

@@ -41,7 +41,7 @@ export function BodyContent(props: { content: MediaContentModel, useForm: TryItO
 
   return (
     <>
-      <TryItOutUnderlinedHeader key="header">Request Body:</TryItOutUnderlinedHeader>
+      <TryItOutUnderlinedHeader key="header">Request Body</TryItOutUnderlinedHeader>
       <div style={{ marginTop: '12px' }}>
         <MediaTypesSwitch content={content} renderDropdown={renderDropdown} withLabel={true}>
           {(mediaType) => (

@@ -18,13 +18,13 @@ export interface TryItOutState {
 const initialState: TryItOutState = {
   selectedIndex: 0,
   loadingReponse: false,
-  response: {}
+  response: undefined
 }
 
 export default function TryItOut(props: TryItOutProps) {
   const [state, setState] = React.useState(initialState);
   const onLoading = () => {
-    setState({ loadingReponse: true, selectedIndex: 1, response: {} });
+    setState({ loadingReponse: true, selectedIndex: 1, response: undefined });
   }
   const onLoaded = r => {
     setState({ loadingReponse: false, selectedIndex: 1, response: r });

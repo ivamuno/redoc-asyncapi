@@ -4,8 +4,9 @@ import { TryItOutCodeMirror } from './tryItOut.styled.elements';
 
 export interface TryItOutJsonProps {
   data: any;
+  readOnly?: boolean;
   name?: string;
-  useForm: TryItOutUseForm;
+  useForm?: TryItOutUseForm;
 }
 
 export interface TryItOutJsonState {
@@ -22,11 +23,11 @@ export class TryItOutJson extends React.PureComponent<TryItOutJsonProps, TryItOu
   }
 
   render() {
-    const { useForm, data } = this.props;
+    const { useForm, data, readOnly } = this.props;
     const name = 'body';
 
     return (<div>
-      <textarea readOnly
+      {useForm && <textarea readOnly
         name={name}
         ref={useForm.register({
           required: true,
@@ -42,10 +43,12 @@ export class TryItOutJson extends React.PureComponent<TryItOutJsonProps, TryItOu
         })}
         value={this.state.data}
         style={{ display: 'none' }} />
+      }
       <TryItOutCodeMirror
         className={useForm?.errors[name] ? 'is-invalid' : ''}
         value={JSON.stringify(data, null, 2)}
         options={{
+          readOnly: readOnly,
           mode: "application/json"
         }}
         onChange={this.onCodeMirrorChange}
