@@ -14,7 +14,7 @@ import { ApiContentWrap, BackgroundStub, RedocWrap } from './styled.elements';
 
 import { SearchBox } from '../SearchBox/SearchBox';
 import { StoreProvider } from '../StoreBuilder';
-import { AuthProvider } from '../TryItOut/TryItOutAuthStorer';
+import { AuthProvider } from '../TryItOut/Auth/TryItOutAuthStorer';
 
 export interface RedocProps {
   store: AppStore;

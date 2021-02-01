@@ -8,6 +8,7 @@ import {
   OpenAPIMediaType,
   OpenAPIOperation,
   OpenAPIParameter,
+  OpenAPIParameterLocation,
   OpenAPIParameterStyle,
   OpenAPISchema,
   OpenAPIServer,
@@ -328,11 +329,11 @@ export function serializeParameterValue(
 
   if (serializationMime) {
     switch (parameter.in) {
-      case 'path':
-      case 'header':
+      case OpenAPIParameterLocation.path:
+      case OpenAPIParameterLocation.header:
         return serializeParameterValueWithMime(value, serializationMime);
-      case 'cookie':
-      case 'query':
+      case OpenAPIParameterLocation.cookie:
+      case OpenAPIParameterLocation.query:
         return `${name}=${serializeParameterValueWithMime(value, serializationMime)}`;
       default:
         console.warn('Unexpected parameter location: ' + parameter.in);
@@ -346,13 +347,13 @@ export function serializeParameterValue(
   }
 
   switch (parameter.in) {
-    case 'path':
+    case OpenAPIParameterLocation.path:
       return serializePathParameter(name, style, explode, value);
-    case 'query':
+    case OpenAPIParameterLocation.query:
       return serializeQueryParameter(name, style, explode, value);
-    case 'header':
+    case OpenAPIParameterLocation.header:
       return serializeHeaderParameter(style, explode, value);
-    case 'cookie':
+    case OpenAPIParameterLocation.cookie:
       return serializeCookieParameter(name, style, explode, value);
     default:
       console.warn('Unexpected parameter location: ' + parameter.in);

@@ -22,13 +22,29 @@ export class TryItOutJson extends React.PureComponent<TryItOutJsonProps, TryItOu
   }
 
   render() {
-    const { useForm } = this.props;
+    const { useForm, data } = this.props;
     const name = 'body';
+
     return (<div>
-      <textarea name={name} ref={useForm.register({ required: true })} value={this.state.data} readOnly style={{ display: 'none' }} />
+      <textarea readOnly
+        name={name}
+        ref={useForm.register({
+          required: true,
+          validate: {
+            isJson: value => {
+              try {
+                JSON.parse(value)
+              } catch (error) {
+                return error.message
+              }
+            }
+          }
+        })}
+        value={this.state.data}
+        style={{ display: 'none' }} />
       <TryItOutCodeMirror
         className={useForm?.errors[name] ? 'is-invalid' : ''}
-        value={this.state.data}
+        value={JSON.stringify(data, null, 2)}
         options={{
           mode: "application/json"
         }}

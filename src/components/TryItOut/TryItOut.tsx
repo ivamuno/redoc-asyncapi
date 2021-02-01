@@ -1,40 +1,47 @@
 import * as React from 'react';
-import Modal from 'react-modal';
-
+;
 import { OperationModel } from '../../services';
 import { Tab, TabList, TabPanel, Tabs } from '../../common-elements';
 import TryItOutRequest from './TryItOutRequest';
-
-Modal.setAppElement('redoc');
+import TryItOutResponse from './TryItOutResponse';
 
 export interface TryItOutProps {
   operation: OperationModel
 }
 
-const renderRequest = (operation: OperationModel) => {
-  return (<TryItOutRequest operation={operation} />);
+export interface TryItOutState {
+  selectedIndex: number;
+  loadingReponse: boolean;
+  response: any;
 }
 
-const renderResponse = (_props) => {
-  return (<><span>Response Example</span></>);
+const initialState: TryItOutState = {
+  selectedIndex: 0,
+  loadingReponse: false,
+  response: {}
 }
-
-const tabs = [
-  { name: 'Request', render: renderRequest },
-  { name: 'Response', render: renderResponse }
-];
 
 export default function TryItOut(props: TryItOutProps) {
+  const [state, setState] = React.useState(initialState);
+  const onLoading = () => {
+    setState({ loadingReponse: true, selectedIndex: 1, response: {} });
+  }
+  const onLoaded = r => {
+    setState({ loadingReponse: false, selectedIndex: 1, response: r });
+  }
+
   return (
-    <Tabs defaultIndex={0}>
+    <Tabs selectedIndex={state.selectedIndex} onSelect={index => setState({ ...state, selectedIndex: index })} >
       <TabList hidden={false}>
-        {tabs.map((tab) => (<Tab key={tab.name} style={{ border: '1px solid white' }}>{tab.name}</Tab>))}
+        <Tab key='Request' style={{ border: '1px solid white' }}>Request</Tab>
+        <Tab key='Response' style={{ border: '1px solid white' }}>Response</Tab>
       </TabList>
-      {tabs.map((tab) => (
-        <TabPanel key={tab.name}>
-          {tab.render(props.operation)}
-        </TabPanel>
-      ))}
+      <TabPanel key='Request'>
+        <TryItOutRequest operation={props.operation} onLoading={onLoading} onLoaded={onLoaded} />
+      </TabPanel>
+      <TabPanel key='Response'>
+        <TryItOutResponse loading={state.loadingReponse} response={state.response} />
+      </TabPanel>
     </Tabs>
   );
 }

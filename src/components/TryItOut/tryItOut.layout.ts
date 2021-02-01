@@ -42,6 +42,10 @@ export const TryItOutUnderInput = styled.input`
   padding: 6px 10px;
   margin-bottom: 10px;
   transition: all .3s;
+  
+  &:disabled {
+    color: black;
+  }
 
   &.is-invalid {
     border-width: 1px 1px 1px 10px;

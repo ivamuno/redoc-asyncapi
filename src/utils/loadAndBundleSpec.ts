@@ -10,6 +10,7 @@ import {
   OpenAPIMediaType,
   OpenAPIOperation,
   OpenAPIParameter,
+  OpenAPIParameterLocation,
   OpenAPIPath,
   OpenAPIRef,
   OpenAPIRequestBody,
@@ -132,7 +133,7 @@ function convertAsyncAPIChannel2OpenAPIPath(
       const param = channelParameters[k];
       return {
         name: k,
-        in: 'channel',
+        in: OpenAPIParameterLocation.channel,
         description: param.description,
         schema: param.schema,
         required: true

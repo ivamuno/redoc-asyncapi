@@ -170,7 +170,7 @@ export interface OpenAPIParameter {
   examples?: { [media: string]: Referenced<OpenAPIExample> };
   content?: { [media: string]: OpenAPIMediaType };
   encoding?: Record<string, OpenAPIEncoding>;
-  
+
   location?: string;
 }
 
@@ -244,7 +244,14 @@ export interface OpenAPIEncoding {
   allowReserved: boolean;
 }
 
-export type OpenAPIParameterLocation = 'query' | 'header' | 'path' | 'cookie' | 'channel';
+export const enum OpenAPIParameterLocation { 
+  query = 'query', 
+  header = 'header', 
+  path = 'path', 
+  cookie = 'cookie', 
+  channel = 'channel' 
+}
+
 export type OpenAPIParameterStyle =
   | 'matrix'
   | 'label'
@@ -297,8 +304,15 @@ export interface OpenAPISecurityRequirement {
   [name: string]: string[];
 }
 
+export const enum OpenAPISecuritySchemeEnum {
+  apiKey = 'apiKey',
+  http = 'http',
+  oauth2 = 'oauth2',
+  openIdConnect = 'openIdConnect'
+}
+
 export interface OpenAPISecurityScheme {
-  type: 'apiKey' | 'http' | 'oauth2' | 'openIdConnect';
+  type: OpenAPISecuritySchemeEnum;
   description?: string;
   name?: string;
   in?: 'query' | 'header' | 'cookie';

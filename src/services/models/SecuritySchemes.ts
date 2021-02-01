@@ -1,4 +1,4 @@
-import { OpenAPISecurityScheme, Referenced } from '../../types';
+import { OpenAPISecurityScheme, OpenAPISecuritySchemeEnum, Referenced } from '../../types';
 import { SECURITY_SCHEMES_SECTION_PREFIX } from '../../utils/openapi';
 import { OpenAPIParser } from '../OpenAPIParser';
 
@@ -28,27 +28,27 @@ export class SecuritySchemeModel {
     this.sectionId = SECURITY_SCHEMES_SECTION_PREFIX + id;
     this.type = info.type;
     this.description = info.description || '';
-    if (info.type === 'apiKey') {
+    if (info.type === OpenAPISecuritySchemeEnum.apiKey) {
       this.apiKey = {
         name: info.name!,
         in: info.in,
       };
     }
 
-    if (info.type === 'http') {
+    if (info.type === OpenAPISecuritySchemeEnum.http) {
       this.http = {
         scheme: info.scheme!,
         bearerFormat: info.bearerFormat,
       };
     }
 
-    if (info.type === 'openIdConnect') {
+    if (info.type === OpenAPISecuritySchemeEnum.openIdConnect) {
       this.openId = {
         connectUrl: info.openIdConnectUrl!,
       };
     }
 
-    if (info.type === 'oauth2' && info.flows) {
+    if (info.type === OpenAPISecuritySchemeEnum.oauth2 && info.flows) {
       this.flows = info.flows;
     }
   }

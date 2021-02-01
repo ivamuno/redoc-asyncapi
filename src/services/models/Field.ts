@@ -18,23 +18,23 @@ const DEFAULT_SERIALIZATION: Record<
   OpenAPIParameterLocation,
   { explode: boolean; style: OpenAPIParameterStyle }
 > = {
-  path: {
+  [OpenAPIParameterLocation.path]: {
     style: 'simple',
     explode: false,
   },
-  query: {
+  [OpenAPIParameterLocation.query]: {
     style: 'form',
     explode: true,
   },
-  header: {
+  [OpenAPIParameterLocation.header]: {
     style: 'simple',
     explode: false,
   },
-  cookie: {
+  [OpenAPIParameterLocation.cookie]: {
     style: 'form',
     explode: true,
   },
-  channel: {
+  [OpenAPIParameterLocation.channel]: {
     style: 'simple',
     explode: false,
   },

@@ -27,6 +27,7 @@ import { l } from '../../services/Labels';
 import { OptionsContext } from '../OptionsProvider';
 import { FieldModel } from '../../services/models/Field';
 import styled from '../../styled-components';
+import { OpenAPIParameterLocation } from '../../types';
 
 const MAX_PATTERN_LENGTH = 45;
 
@@ -50,7 +51,7 @@ export class FieldDetails extends React.PureComponent<FieldProps, { patternShown
 
     const { schema, description, example, deprecated, examples } = field;
 
-    const rawDefault = !!enumSkipQuotes || field.in === 'header'; // having quotes around header field default values is confusing and inappropriate
+    const rawDefault = !!enumSkipQuotes || field.in === OpenAPIParameterLocation.header; // having quotes around header field default values is confusing and inappropriate
 
     let renderedExamples: JSX.Element | null = null;
 

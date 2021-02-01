@@ -27,14 +27,15 @@ export class TryItOutField extends React.Component<TryItOutFieldProps> {
     );
 
     const displayFormat = schema.displayFormat ? `<${schema.displayFormat}>` : '';
+    const fieldName = `${field.in ?? ''}:${name}`;
     return (
       <>
         <tr className={className}>
           {paramName}
           <TryItOutPropertyDetailsCell>
             <TryItOutUnderInput
-              name={name}
-              className={useForm?.errors[name] ? 'is-invalid' : ''}
+              name={fieldName}
+              className={useForm?.errors[fieldName] ? 'is-invalid' : ''}
               type={'Text'}
               defaultValue={schema?.default}
               placeholder={`${schema.displayType} ${displayFormat}`}
