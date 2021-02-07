@@ -25,6 +25,7 @@ export class ParameterBody extends React.PureComponent<ParameterBodyProps> {
     const bodyContent = body && body.content;
 
     const bodyDescription = body && body.description;
+    console.log('bodyContent', bodyContent);
 
     return (
       <>

@@ -1,1602 +1,428 @@
-{
-  "asyncapi": "2.0.0",
-  "info": {
-    "title": "Gateway",
-    "version": "v3",
-    "description": "\r\nPayments API.\r\n\r\n# Master data\r\n\r\n## Payment methods\r\n\r\n| ID | Key | Description |\r\n| -- | --- | ----------- |\r\n| 1 | Card | Credit or debit cards. |\r\n| 2 | CardRedirect | Credit or debit cards by redirect. |\r\n| 3 | EBank | Electronic bank fund transfers. |\r\n| 4 | Wallet | Wallet payments. |\r\n| 5 | Invoice | Invoice and other offline payments, generally cash payments. |\r\n| 6 | DirectDebit | Mandate based direct debit payments. |\r\n| 7 | Mobile | Mobile or carrier billing based payments. |\r\n| 8 | Prepaid | Prepaid vouchers by redirect. |\r\n\r\n## Payment brands\r\n\r\n| ID | Key | Payment method | Description |\r\n| -- | --- | -------------- | ----------- |\r\n| 1010 | VISA | Card | VISA Credit and Debit cards |\r\n| 1011 | VISAELECTRON | Card | Visa Electron |\r\n| 1012 | DANKORT | Card | Dankort |\r\n| 1013 | VISA_DEBIT | Card | Visa Debit |\r\n| 1014 | VISA_CARTEBANCAIRE | Card | Visa - Carte Bancaire co-branded. |\r\n| 1015 | VPAY | Card | VISA VPAY cards |\r\n| 1017 | DELTA | Card | Delta |\r\n| 1020 | MASTERCARD | Card | Mastercard Credit and Debit cards |\r\n| 1023 | MASTERCARD_DEBIT | Card | Mastercard Debit |\r\n| 1024 | MASTERCARD_CARTEBANCAIRE | Card | Mastercard - Carte Bancaire co-branded. |\r\n| 1030 | AMEX | Card | American Express Credit cards |\r\n| 1040 | DISCOVER | Card | Discover Credit cards |\r\n| 1050 | MAESTRO | Card | Maestro Debit cards |\r\n| 1060 | DINERS | Card | Diners Club Credit cards |\r\n| 1070 | CARTEBANCAIRE | Card | Carte Bancaire Credit and Debit cards |\r\n| 1080 | CARTASI | Card | CartaSi Credit cards |\r\n| 1090 | JCB | Card | JCB Credit cards |\r\n| 1100 | ARGENCARD | Card | Argencard credit cards (AstroPay) |\r\n| 1101 | CABAL | Card | Cabal credit cards (Astropay) |\r\n| 1102 | ELO | Card | Elo credit cards (Astropay) |\r\n| 1103 | HIPERCARD | Card | Hipercards credit cards (Astropay) |\r\n| 1104 | PRESTO | Card | Presto credit cards (Astropay) |\r\n| 1105 | RIPLEY | Card | Ripley credit cards (Astropay) |\r\n| 1106 | TARJETANARANJA | Card | Tarjeta Naranja credit cards (Astropay) |\r\n| 1107 | ASYACARD | Card | Asyacard |\r\n| 1108 | AXESS | Card | Axess |\r\n| 1109 | BONUS | Card | Bonus card |\r\n| 1110 | CARDFINANS | Card | Card Finans |\r\n| 1111 | CARTEBLEUE | Card | Carte Bleue |\r\n| 1112 | MAXIMUM | Card | Maximum |\r\n| 1113 | MERCADOLIVRE | Card | MercadoLivre |\r\n| 1114 | NATIVA | Card | Nativa |\r\n| 1115 | POSTEPAY | Card | Postepay |\r\n| 1116 | SERVIRED | Card | ServiRed |\r\n| 1117 | TARJETASHOPPING | Card | Tarjeta Shopping |\r\n| 1118 | WORLD | Card | World |\r\n| 1119 | CENCOSUD | Card | Cencosud |\r\n| 1200 | UNIONPAY | Card | Union Pay cards |\r\n| 1210 | BCMC | Card | Belgium Bancontact/MisterCash bank transfers by Worldline |\r\n| 2010 | UNIONPAY | CardRedirect | Union Pay international payments |\r\n| 2020 | INICIS | CardRedirect | Korean credit and debit cards by INICIS |\r\n| 2030 | BCMC | CardRedirect | Bancontact/MisterCash |\r\n| 3010 | IDEAL | EBank | Dutch iDeal bank electronic bank transfers |\r\n| 3020 | SOFORT | EBank | Sofort\u00DCberweisung bank transfers |\r\n| 3025 | GIROPAY | EBank | Giropay bank transfers |\r\n| 3030 | EPS | EBank | Austrian bank transfers |\r\n| 3035 | MULTIBANCO | EBank | Multibanco online bank payments (Portugal) |\r\n| 3040 | POLI | EBank | Australian bank transfers |\r\n| 3045 | BPAY | EBank | Bpay online bank payment (Australia) |\r\n| 3060 | P24 | EBank | Polish bank transfers |\r\n| 3070 | PAYTRAIL | EBank | Paytrail |\r\n| 3080 | POSTFINANCE | EBank | Post Finance |\r\n| 3090 | NETBANKING | EBank | Netbanking India by Citrus Pay |\r\n| 3095 | ENETS | EBank | eNets online bank payment (Singapore) |\r\n| 3100 | TRUSTPAY | EBank | Trustpay |\r\n| 3110 | TRUSTLY | EBank | Trustly |\r\n| 3120 | ENTERCASH | EBank | EnterCash |\r\n| 3130 | INTERAC | EBank | Interac Online |\r\n| 3140 | PREPAYMENT | EBank | Prepayment |\r\n| 3200 | BCMC | EBank | Belgium Bancontact/MisterCash bank transfers by Worldline. DEPRECATED (Now is 1210) |\r\n| 3500 | BITCOIN | EBank | Bitcoin |\r\n| 4010 | PAYPAL | Wallet | Paypal wallet payments |\r\n| 4020 | ALIPAY | Wallet | Alipay wallet payments |\r\n| 4030 | YANDEX | Wallet | Yandex wallet payments |\r\n| 4040 | ONECARD | Wallet | Onecard wallet payments |\r\n| 4050 | QIWI | Wallet | QIWI wallet payments |\r\n| 4060 | TENPAY | Wallet | Tenpay wallet payments (China) |\r\n| 4070 | MERCADOPAGO | Wallet | MercadoPago wallet payments |\r\n| 4080 | CASHU | Wallet | CashU prepayment |\r\n| 4090 | WEBMONEY | Wallet | Webmoney wallets (Russia) |\r\n| 4100 | SKRILL | Wallet | Skrill (moneybookers) |\r\n| 4110 | IPARA | Wallet | iPara |\r\n| 4120 | MASTERPASS | Wallet | Masterpass |\r\n| 4130 | MONEYSAFE | Wallet | MoneySafe |\r\n| 4140 | PAYDIREKT | Wallet | PayDirekt |\r\n| 4150 | SHETAB | Wallet | Shetab Basic Info |\r\n| 4160 | PAYBOX | Wallet | P Point / Paybox |\r\n| 4200 | ASTROPAY_CASH | Wallet | Astropay (redirect) |\r\n| 4210 | ASTROPAY_OT | Wallet | Astropay |\r\n| 5010 | KLARNA | Wallet | Klarna invoice payments |\r\n| 5020 | AFTERPAY | Wallet | Afterpay post payments |\r\n| 5030 | LOCALBANKTRANSFER | Wallet | Local Bank Transfer (Brazil) |\r\n| 5040 | TELEINGRESO | Wallet | Teleingreso pre-payment (Spain) |\r\n| 5100 | 7ELEVEN | Wallet | 7-Eleven prepayment by Astropay (Mexico) |\r\n| 5110 | BALOTO | Wallet | Baloto Electronico prepayment by Astropay (Colombia) |\r\n| 5120 | BOLETOBANCARIO | Wallet | Boleto Bancario prepayment by Astropay (Brazil) |\r\n| 5130 | OXXO | Wallet | OXXO prepayment by Astropay (Mexico) |\r\n| 5140 | PAGOFACIL | Wallet | Pago F\u00E1cil prepayment by Astropay (Argentina) |\r\n| 5150 | RAPIPAGO | Wallet | Rapipago prepayment by Astropay (Argentina) |\r\n| 5200 | KONBINI | Wallet | Konbini payments (Japan) |\r\n| 5205 | PAYEASY | Wallet | Pay-easy pre-payment (Japan) |\r\n| 6010 | SEPA | DirectDebit | SEPA (Europe) |\r\n| 6020 | SIGN2PAY | DirectDebit | Sign2Pay |\r\n| 6100 | PAYOLUTION_INS | DirectDebit | Payolution Installments |\r\n| 6110 | PAYOLUTION_ELV | DirectDebit | Payolution ELV |\r\n| 6120 | PAYOLUTION_INVOICE | DirectDebit | Payolution Invoice |\r\n| 7010 | DAOPAY | Mobile | Daopay mobile carrier billing SMS (Mainly europe) |\r\n| 7020 | BOKU | Mobile | BOKU mobile payments (World) |\r\n| 7030 | MMIT | Mobile | MMIT Mobile payments (Nigeria) |\r\n| 8010 | PAYSAFECARD | Prepaid | Paysafecard prepaid voucher payments (German speaking countries and LATAM) |\r\n| 8020 | GIFTCARDS | Prepaid | Intersolve gift cards. |\r\n",
-    "contact": {
-      "name": "Samurai",
-      "url": "https://dev.azure.com/payvision/AceHub",
-      "email": "DevTeamS@payvision.com"
-    }
-  },
-  "servers": {
-    "Development": {
-      "url": "itg-d-mq.adam.payvision:{port}",
-      "protocol": "amqp",
-      "protocolVersion": "0.9.1",
-      "description": "Development and Integration RabbitMQ server.",
-      "variables": {
-        "port": {
-          "enum": ["5672"],
-          "default": "5672",
-          "description": "Secure connection (TLS) is available through port 5672."
-        }
-      },
-      "security": [{ "user-password": [] }]
-    },
-    "Acceptance": {
-      "url": "itg-a-mq.adam.payvision:{port}",
-      "protocol": "amqp",
-      "protocolVersion": "0.9.1",
-      "description": "Acceptance (aka Staging) RabbitMQ server.",
-      "variables": {
-        "port": {
-          "enum": ["5672"],
-          "default": "5672",
-          "description": "Secure connection (TLS) is available through port 5672."
-        }
-      },
-      "security": [{ "user-password": [] }]
-    },
-    "Production": {
-      "url": "itg-p-mq.adam.payvision:{port}",
-      "protocol": "amqp",
-      "protocolVersion": "0.9.1",
-      "description": "Production RabbitMQ server.",
-      "variables": {
-        "port": {
-          "enum": ["5672"],
-          "default": "5672",
-          "description": "Secure connection (TLS) is available through port 5672."
-        }
-      },
-      "security": [{ "user-password": [] }]
-    }
-  },
-  "defaultContentType": "application/json",
-  "channels": {
-    "{transactionType}.{eventType}": {
-      "publish": {
-        "operationId": "transactions",
-        "summary": "Transactions lifecycle",
-        "description": "Publishes transaction events with routingKey \u0060{transactionType}.{eventType}\u0060. See the channel parameters for more detail.",
-        "tags": [],
-        "message": {
-          "payload": { "$ref": "#/components/schemas/iEvent" },
-          "name": "iEvent",
-          "tags": [],
-          "examples": {
-            "example0": {
-              "summary": "Intersolve Payment.Created",
-              "value": {
-                "id": "AceHub.Registered.562d969d-c375-4f3d-900d-ac543899bf1b",
-                "eventType": "Created",
-                "sentTime": "2020-12-02T14:53:17Z",
-                "formatVersion": "1.1.0",
-                "source": "AceHub",
-                "payload": {
-                  "storeId": 1,
-                  "transactionType": "Payment",
-                  "amount": {
-                    "quantity": 0.01,
-                    "currency": "EUR"
-                  },
-                  "account": {
-                    "id": "7000001193684410991"
-                  },
-                  "customer": {
-                    "email": "test@email.com",
-                    "deviceType": null
-                  },
-                  "businessId": "501210019",
-                  "transactionId": "562d969d-c375-4f3d-900d-ac543899bf1b",
-                  "orderId": "c7ea2011-98c5-428c-bf3b-173fc43d5565",
-                  "trackingCode": "AceHubTest__92f1f69c-7e9b-4a67-b052-71cb4381c3be",
-                  "requestTimestamp": "2020-12-02T14:53:16Z",
-                  "status": "Registered",
-                  "method": "Prepaid",
-                  "brand": "GIFTCARDS",
-                  "capture": true
-                }
-              }
-            },
-            "example1": {
-              "summary": "Intersolve Payment.Finished",
-              "value": {
-                "id": "AceHub.Succeeded.562d969d-c375-4f3d-900d-ac543899bf1b",
-                "eventType": "Finished",
-                "sentTime": "2020-12-02T14:53:29Z",
-                "formatVersion": "1.1.0",
-                "source": "AceHub",
-                "payload": {
-                  "account": {
-                    "id": "7000001193684410991",
-                    "accountBrand": "ExternalDev",
-                    "balance": 49.18,
-                    "clientTransactionReference": "1087390979"
-                  },
-                  "businessId": "501210019",
-                  "storeId": 1,
-                  "transactionId": "562d969d-c375-4f3d-900d-ac543899bf1b",
-                  "orderId": "c7ea2011-98c5-428c-bf3b-173fc43d5565",
-                  "trackingCode": "AceHubTest__92f1f69c-7e9b-4a67-b052-71cb4381c3be",
-                  "transactionType": "Payment",
-                  "requestTimestamp": "2020-12-02T14:53:16Z",
-                  "status": "Succeeded",
-                  "method": "Prepaid",
-                  "brand": "GIFTCARDS",
-                  "amount": {
-                    "quantity": 0.01,
-                    "currency": "EUR"
-                  },
-                  "capture": true,
-                  "customer": {
-                    "email": "test@email.com",
-                    "deviceType": null
-                  },
-                  "processChain": [
-                    {
-                      "provider": "Intersolve",
-                      "properties": {
-                        "TransactionId": 310686819,
-                        "UserName": "627901001"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "traits": []
-        },
-        "traits": []
-      },
-      "parameters": {
-        "transactionType": {
-          "description": "\r\nPossible values:\r\n- Payment.\r\n- Capture.\r\n- Cancel.\r\n- Refund.\r\n- Credit.\r\n",
-          "schema": { "$ref": "#/components/schemas/string" }
-        },
-        "eventType": {
-          "description": "\r\nPossible values:\r\n- Created: when a transaction is requested by merchants.\r\n- Updated: is triggered on any change produced on the transaction status but still is not finished.\r\n- Finished: is triggered when the transaction is processed and can\u2019t change its status anymore.\r\n- Denied: when a transaction is finished (it won\u2019t change its status) but was not sent to processor (due to an internal error, fraud prevention, etc.).\r\n",
-          "schema": { "$ref": "#/components/schemas/string" }
-        }
-      },
-      "bindings": {
-        "amqp": {
-          "is": "routingKey",
-          "exchange": {
-            "name": "AceHub.Transactions",
-            "type": "fanout",
-            "durable": true,
-            "autoDelete": false,
-            "vhost": "acehub"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "string": { "type": "string" },
-      "amount": {
-        "required": ["quantity", "currency"],
-        "properties": {
-          "quantity": {
-            "type": "number",
-            "description": "Quantity of the amount."
-          },
-          "currency": {
-            "type": "string",
-            "description": "The currency code of the order line. Format ISO-4217."
-          }
-        }
-      },
-      "card": {
-        "required": ["holderName", "firstSixDigits", "lastFourDigits"],
-        "properties": {
-          "holderName": {
-            "type": "string",
-            "description": "Name of the card holder as printed on the card."
-          },
-          "firstSixDigits": {
-            "type": "string",
-            "description": "First six digits of the card number."
-          },
-          "lastFourDigits": {
-            "type": "string",
-            "description": "Last four digits of the card number."
-          },
-          "expiryMonth": {
-            "type": "string",
-            "description": "Month part of the expiry date. Format MM."
-          },
-          "expiryYear": {
-            "type": "string",
-            "description": "Year part of expiry date. Format YYYY."
-          },
-          "checkEnrollment": {
-            "type": "boolean",
-            "description": "True whether the transaction is a 3DS enrollment operation. It can be null."
-          },
-          "threeDSVersionRequested": {
-            "type": "string",
-            "description": "The 3DS version to be submitted. It is set to 1.0.0 when the transaction is a 3DS1 enrollment operation. It can be\nnull."
-          }
-        }
-      },
-      "bank": {
-        "properties": {
-          "issuerId": {
-            "type": "integer",
-            "description": "Identifier of the issuing bank. This can be used for certain brands like iDEAL."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code of issuing bank. Format ISO-3166-1."
-          },
-          "name": { "type": "string", "description": "Name of the bank." },
-          "accountHolderName": {
-            "type": "string",
-            "description": "Bank account holder name."
-          },
-          "accountNumber": {
-            "type": "string",
-            "description": "The bank account number or IBAN when it is in one field."
-          },
-          "bankCode": { "type": "string", "description": "Bank code." },
-          "mandateId": {
-            "type": "string",
-            "description": "ID of the mandate."
-          },
-          "bic": {
-            "type": "string",
-            "description": "Bank identification code."
-          },
-          "iban": {
-            "type": "string",
-            "description": "IBAN bank account number."
-          },
-          "dateCollection": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date when the payment should be collected. Format YYYY-MM-DD."
-          },
-          "dateMandateSigned": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date when the mandate was signed. Format YYYY-MM-DD."
-          }
-        }
-      },
-      "account": {
-        "required": ["id"],
-        "properties": {
-          "id": { "type": "string", "description": "Account identifier." },
-          "accountBrand": {
-            "type": "string",
-            "description": "The name of the account brand e.g. gift card name such as VVV, Bol.com."
-          },
-          "balance": {
-            "type": "number",
-            "description": "Account remaining amount."
-          },
-          "clientTransactionReference": {
-            "type": "string",
-            "description": "Intersolve side unique tracking code generated by AceHub."
-          },
-          "expiryDate": {
-            "type": "string",
-            "description": "Expiry date of the card , format could vary, depends on the accountBrand. i.e MMYY."
-          }
-        }
-      },
-      "dba": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Doing business as \u2013 name. For applicable providers, used generally as first part of the dynamic descriptor."
-          },
-          "street": {
-            "type": "string",
-            "description": "Street address of merchant. This value is assigned by the payment facilitator or their acquirer. Cannot be space or\nzero filled."
-          },
-          "shortName": {
-            "type": "string",
-            "description": "Short name for \u201CDoing business as\u201D. Can be used for Union Pay as part of the dynamic descriptor."
-          },
-          "city": {
-            "type": "string",
-            "description": "City of the merchant. Used for applicable providers as part of dynamic descriptor."
-          },
-          "zip": {
-            "type": "string",
-            "description": "ZIP of the merchant. Used for applicable providers as part of dynamic descriptor."
-          },
-          "stateCode": {
-            "type": "string",
-            "description": "US state code. Used for applicable providers as part of dynamic descriptor."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code of the merchant. Format ISO-3166-1. Used for applicable providers as part of dynamic descriptor."
-          },
-          "email": {
-            "type": "string",
-            "description": "Email of the merchant. Used for applicable providers as part of dynamic descriptor."
-          },
-          "phoneNumber": {
-            "type": "string",
-            "description": "Phone number of the merchant. Used for applicable providers as part of dynamic descriptor."
-          },
-          "subMerchantId": {
-            "type": "string",
-            "description": "The ID of the sub-merchant."
-          },
-          "website": {
-            "type": "string",
-            "description": "The overriding merchant URL configured in the 3DS server merchant profile."
-          },
-          "merchantCategoryCode": {
-            "type": "integer",
-            "description": "The merchant category code that overrides the default value."
-          }
-        }
-      },
-      "customer": {
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "The ID of a customer given by the merchant."
-          },
-          "givenName": {
-            "type": "string",
-            "description": "Given name of the customer."
-          },
-          "familyName": {
-            "type": "string",
-            "description": "Family name of the customer."
-          },
-          "gender": {
-            "type": "string",
-            "description": "Gender of the customer.\n- M - Male.\n- F - Female."
-          },
-          "birthDate": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Birth date of the customer. Format YYYY-MM-DD. Required for some risk checks."
-          },
-          "phoneNumber": {
-            "type": "string",
-            "description": "Phone number of the customer. Required for some risk checks."
-          },
-          "mobileNumber": {
-            "type": "string",
-            "description": "Mobile number of the customer. Recommended format E.164. Required for some risk checks."
-          },
-          "email": {
-            "type": "string",
-            "description": "Email address of the customer."
-          },
-          "companyName": {
-            "type": "string",
-            "description": "Company name of the customer."
-          },
-          "identificationType": {
-            "type": "string",
-            "description": "Type of (National) identification (Number).\n- 1 \u2013 Passport.\n- 2 \u2013 Driver\u2019s license.\n- 3 \u2013 ID card.\n- 4 \u2013 Tax statement."
-          },
-          "identificationNumber": {
-            "type": "string",
-            "description": "(National) Identification (Number)."
-          },
-          "ipAddress": {
-            "type": "string",
-            "description": "IPV4 or IPV6 address of customer (as registered by merchant)."
-          },
-          "type": {
-            "type": "integer",
-            "description": "Customer type.\n- 1 - Personal.\n- 2 - Company."
-          },
-          "taxNumber": { "type": "string", "description": "Tax number." },
-          "httpUserAgent": {
-            "type": "string",
-            "description": "HTTP user agent as detected by the merchant."
-          },
-          "deviceType": {
-            "type": "string",
-            "description": "Customer\u0027s device type.\n- 1 - Desktop Web.\n- 2 - Desktop App.\n- 3 - Mobile Web.\n- 4 - Mobile App.\n- 5 - Tablet Web.\n- 6 - Tablet App."
-          }
-        }
-      },
-      "billingAddress": {
-        "properties": {
-          "street": {
-            "type": "string",
-            "description": "The name of the street. This is mandatory if the address is given."
-          },
-          "houseNumber": {
-            "type": "string",
-            "description": "The number of the house."
-          },
-          "houseNumberSuffix": {
-            "type": "string",
-            "description": "The suffix of the house number."
-          },
-          "streetInfo": {
-            "type": "string",
-            "description": "Additional street information."
-          },
-          "city": {
-            "type": "string",
-            "description": "The name of the city. This is mandatory if address is given."
-          },
-          "stateCode": {
-            "type": "string",
-            "description": "State code. Format ISO-3166-2."
-          },
-          "zip": {
-            "type": "string",
-            "description": "ZIP code for the billing address."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code. Format ISO-3166-2. This is mandatory if address is given."
-          }
-        }
-      },
-      "shippingInfo": {
-        "properties": {
-          "customer": { "$ref": "#/components/schemas/customer" },
-          "street": {
-            "type": "string",
-            "description": "The name of the street. This is mandatory if the address is given."
-          },
-          "houseNumber": {
-            "type": "string",
-            "description": "The number of the house."
-          },
-          "houseNumberSuffix": {
-            "type": "string",
-            "description": "The suffix of the house number."
-          },
-          "streetInfo": {
-            "type": "string",
-            "description": "Additional street information."
-          },
-          "city": {
-            "type": "string",
-            "description": "The name of the city. This is mandatory if address is given."
-          },
-          "stateCode": {
-            "type": "string",
-            "description": "State code. Format ISO-3166-2."
-          },
-          "zip": {
-            "type": "string",
-            "description": "ZIP code for the billing address."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code. Format ISO-3166-2. This is mandatory if address is given."
-          }
-        }
-      },
-      "token": {
-        "required": ["value", "source"],
-        "properties": {
-          "value": {
-            "type": "string",
-            "description": "The token value provided by the merchant."
-          },
-          "source": {
-            "type": "string",
-            "description": "The source of the token. Valid values:\n- Read: The token has been read modifying payload values.\n- Created: The token has been created among transaction process."
-          }
-        }
-      },
-      "options": {
-        "properties": {
-          "noShipping": {
-            "type": "integer",
-            "description": "PayPal \u2013 Determines whether or not PayPal displays shipping address fields on the experience pages.\nAllowed values:\n- 0 - PayPal displays the shipping address on the PayPal pages.\n- 1 - PayPal does not display shipping address fields at all.\n- 2 - If shipping address wouldn\u0027t be provided, PayPal obtains it from the buyer\u2019s account profile. For digital goods,\nthis field is required and you must set it to 1."
-          },
-          "brandName": {
-            "type": "string",
-            "description": "Name of brand the business wants to indicate. PayPal specific."
-          },
-          "cartBorderColor": {
-            "type": "string",
-            "description": "Cart border color. PayPal specific."
-          },
-          "headerImage": {
-            "type": "string",
-            "description": "Header image. PayPal specific."
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "Total quantity. PayPal specific."
-          },
-          "locale": {
-            "type": "string",
-            "description": "To control the language on the page of the shopper. PayPal specific."
-          },
-          "processingType": {
-            "type": "integer",
-            "description": "Indicates how the transaction is processed. PayPal specific.\n- 0 \u2013 Complete payment on PayPal site.\n- 1 \u2013 Paypal Express."
-          },
-          "minAgeRestriction": {
-            "type": "integer",
-            "description": "Age restriction. Used to restrict payments to customers who are at least the specified number of years old. Supported\nonly by\nsome payment methods (e.g. PaySafeCard)."
-          },
-          "countryRestriction": {
-            "type": "string",
-            "description": "Country restriction used to restrict payments to customers of the specific country. Supported only by some payment\nmethods (e.g.: PaySafeCard). Format ISO-3166-1."
-          }
-        }
-      },
-      "qr": {
-        "required": ["size"],
-        "properties": {
-          "size": {
-            "type": "integer",
-            "description": "Size in pixels of the QR code to generate."
-          }
-        }
-      },
-      "orderLine": {
-        "properties": {
-          "description": {
-            "type": "string",
-            "description": "Line description."
-          },
-          "discountAmount": { "$ref": "#/components/schemas/amount" },
-          "itemAmount": { "$ref": "#/components/schemas/amount" },
-          "productCode": {
-            "type": "string",
-            "description": "The code of the product or service."
-          },
-          "productName": {
-            "type": "string",
-            "description": "The name of the product or service."
-          },
-          "purchaseType": {
-            "type": "string",
-            "description": "The type of the identifier assigned by the payment acceptor that categorized the item being purchased."
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The number of items."
-          },
-          "sequenceNumber": {
-            "type": "integer",
-            "description": "The sequence number of the order line."
-          },
-          "shippingAmount": { "$ref": "#/components/schemas/amount" },
-          "taxPercentage": {
-            "type": "number",
-            "description": "The percentage used for the tax or VAT. The percentage must be formatted using a dot (\u201C.\u201D) as a decimal separator."
-          },
-          "totalAmount": { "$ref": "#/components/schemas/amount" }
-        }
-      },
-      "order": {
-        "properties": {
-          "orderLines": {
-            "type": "array",
-            "description": "Transaction related order lines. In the case of PayPal Digital Goods, one item is mandatory with type=DG.",
-            "uniqueItems": false,
-            "items": { "$ref": "#/components/schemas/orderLine" }
-          }
-        }
-      },
-      "createdEventPayload": {
-        "required": [
-          "businessId",
-          "transactionId",
-          "orderId",
-          "trackingCode",
-          "transactionType",
-          "requestTimestamp"
-        ],
-        "properties": {
-          "businessId": {
-            "type": "string",
-            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
-          },
-          "storeId": {
-            "type": "integer",
-            "description": "Identifier used to indicate a specific sub-account."
-          },
-          "transactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier of the transaction given by AceHub."
-          },
-          "orderId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier grouping all dependent transactions related to this payment."
-          },
-          "initialTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "parentTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "trackingCode": {
-            "type": "string",
-            "description": "Merchant provided unique transaction identifier."
-          },
-          "transactionType": {
-            "type": "string",
-            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
-          },
-          "requestTimestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The time stamp (ISO-8601) when the transaction has been received."
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
-          },
-          "method": {
-            "type": "string",
-            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
-          },
-          "brand": {
-            "type": "string",
-            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
-          },
-          "descriptor": {
-            "type": "string",
-            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
-          },
-          "amount": { "$ref": "#/components/schemas/amount" },
-          "capture": {
-            "type": "boolean",
-            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
-          },
-          "source": {
-            "type": "string",
-            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
-          },
-          "subscriptionType": {
-            "type": "string",
-            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
-          },
-          "languageCode": {
-            "type": "string",
-            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
-          },
-          "invoiceId": {
-            "type": "string",
-            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "purchaseId": {
-            "type": "string",
-            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "card": { "$ref": "#/components/schemas/card" },
-          "bank": { "$ref": "#/components/schemas/bank" },
-          "account": { "$ref": "#/components/schemas/account" },
-          "dba": { "$ref": "#/components/schemas/dba" },
-          "customer": { "$ref": "#/components/schemas/customer" },
-          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
-          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
-          "token": { "$ref": "#/components/schemas/token" },
-          "options": { "$ref": "#/components/schemas/options" },
-          "qr": { "$ref": "#/components/schemas/qr" },
-          "order": { "$ref": "#/components/schemas/order" }
-        }
-      },
-      "createdEvent": {
-        "required": [
-          "id",
-          "eventType",
-          "sentTime",
-          "formatVersion",
-          "source",
-          "payload"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
-          },
-          "eventType": {
-            "type": "string",
-            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
-          },
-          "sentTime": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Specifies the time when the current event has been sent. ISO-8601."
-          },
-          "formatVersion": {
-            "type": "string",
-            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
-          },
-          "source": {
-            "type": "string",
-            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
-          },
-          "payload": { "$ref": "#/components/schemas/createdEventPayload" }
-        }
-      },
-      "threeDSecure": {
-        "properties": {
-          "threeDResult": {
-            "type": "string",
-            "description": "Result of the AVV (CAVV or UCAF) check. See 3D Secure Result."
-          },
-          "enrollmentResult": {
-            "type": "string",
-            "description": "Enrollment result.\n- Y - Yes, consumer enrolled in 3D Secure program and eligible for authentication.\n- N - No, consumer not enrolled in 3D Secure program.\n- U - Unavailable, Directory Server (DS) or Access Control Server (ACS) not available at the time of the request.\n- B - Bypass, 3D Secure program not applied."
-          },
-          "authenticationResult": {
-            "type": "string",
-            "description": "Authentication result.\n- Y - Authenticated (Issuer liability).\n- A - Attempted.\n- N - Failed (Merchant liability).\n- U - Unavailable (Merchant liability).\n- C - Challenge (only 3DS2)."
-          },
-          "version": {
-            "type": "string",
-            "description": "3DS version processed. It can be null."
-          },
-          "flow": {
-            "type": "string",
-            "description": "Defines the different types of flows supported in a 3DS transaction (only 3DS2).\n- Challenge: The customer authentication is needed.\n- Frictionless: The customer authentication is not needed, the transaction will be completed without customer intervention."
-          },
-          "eci": {
-            "type": "integer",
-            "description": "The ECI code given by the authentication server (only 3DS2).\nMastercard:\n- 2 - Authenticated.\n- 1 - Authentication attempted.\n- 0 - Internet transaction (No authenticated or attempted).\nVisa, AMEX and JCB:\n- 5 - Authenticated.\n- 6 - Authentication attempted.\n- 7 - Internet transaction (No authenticated or attempted)."
-          }
-        }
-      },
-      "processedCard": {
-        "required": ["holderName", "firstSixDigits", "lastFourDigits"],
-        "properties": {
-          "brand": {
-            "type": "string",
-            "description": "Card brand according to processing."
-          },
-          "approvalCode": {
-            "type": "string",
-            "description": "The approval code of issuer/supplier."
-          },
-          "avsAuthorizationEntity": {
-            "type": "string",
-            "description": "The code for the entity checking the AVS."
-          },
-          "avsResult": {
-            "type": "string",
-            "description": "Result of the AVS check. See AVS Result."
-          },
-          "cvvResult": {
-            "type": "string",
-            "description": "Result of the CVV check. See CVV Result."
-          },
-          "recurringAdvice": {
-            "type": "string",
-            "description": "For recurring transactions a recurring advice code may be returned by card schemes. See recurring advice code."
-          },
-          "threeDSecure": { "$ref": "#/components/schemas/threeDSecure" },
-          "holderName": {
-            "type": "string",
-            "description": "Name of the card holder as printed on the card."
-          },
-          "firstSixDigits": {
-            "type": "string",
-            "description": "First six digits of the card number."
-          },
-          "lastFourDigits": {
-            "type": "string",
-            "description": "Last four digits of the card number."
-          },
-          "expiryMonth": {
-            "type": "string",
-            "description": "Month part of the expiry date. Format MM."
-          },
-          "expiryYear": {
-            "type": "string",
-            "description": "Year part of expiry date. Format YYYY."
-          },
-          "checkEnrollment": {
-            "type": "boolean",
-            "description": "True whether the transaction is a 3DS enrollment operation. It can be null."
-          },
-          "threeDSVersionRequested": {
-            "type": "string",
-            "description": "The 3DS version to be submitted. It is set to 1.0.0 when the transaction is a 3DS1 enrollment operation. It can be\nnull."
-          }
-        }
-      },
-      "payvisionProcessHopProperties": {
-        "required": ["transactionId", "transactionGuid", "memberId"],
-        "properties": {
-          "transactionId": {
-            "type": "integer",
-            "description": "The card engine transaction identifier."
-          },
-          "transactionGuid": {
-            "type": "string",
-            "description": "The card engine transaction identifier."
-          },
-          "memberId": {
-            "type": "string",
-            "description": "The Card Engine member identifier."
-          }
-        }
-      },
-      "payvisionProcessHop": {
-        "required": ["provider", "properties"],
-        "properties": {
-          "provider": {
-            "type": "string",
-            "description": "Payvision. The provider used to process the transaction."
-          },
-          "properties": {
-            "$ref": "#/components/schemas/payvisionProcessHopProperties"
-          }
-        }
-      },
-      "payOnProcessHopProperties": {
-        "required": ["transactionId", "entityId", "userId"],
-        "properties": {
-          "transactionId": {
-            "type": "string",
-            "description": "Transaction identifier given by PayOn (UUID from PayOn)."
-          },
-          "entityId": {
-            "type": "string",
-            "description": "The account identifier."
-          },
-          "userId": {
-            "type": "string",
-            "description": "The user identifier for the entity. UserId is a secure credential for the webservice between AceHub/PayOn and it varies per account we create at PayOn."
-          }
-        }
-      },
-      "payOnProcessHop": {
-        "required": ["provider", "properties"],
-        "properties": {
-          "provider": {
-            "type": "string",
-            "description": "PayOn. The provider used to process the transaction."
-          },
-          "properties": {
-            "$ref": "#/components/schemas/payOnProcessHopProperties"
-          }
-        }
-      },
-      "ingProcessHopProperties": {
-        "required": ["acquirerId", "transactionId", "merchantId"],
-        "properties": {
-          "acquirerId": {
-            "type": "string",
-            "description": "Clearing institute for the iDeal transaction."
-          },
-          "transactionId": {
-            "type": "string",
-            "description": "Transaction identifier given by iDeal."
-          },
-          "merchantId": {
-            "type": "string",
-            "description": "The merchant identifier. The merchant identifier is either a Acapture Payment facilitator or an ING merchant customer."
-          },
-          "merchantSubId": {
-            "type": "integer",
-            "description": "The merchant subgroup identifier."
-          }
-        }
-      },
-      "ingProcessHop": {
-        "required": ["provider", "properties"],
-        "properties": {
-          "provider": {
-            "type": "string",
-            "description": "ING. The provider used to process the transaction."
-          },
-          "properties": {
-            "$ref": "#/components/schemas/ingProcessHopProperties"
-          }
-        }
-      },
-      "intersolveProcessHopProperties": {
-        "required": ["userName"],
-        "properties": {
-          "transactionId": {
-            "type": "integer",
-            "description": "Transaction identifier given by Intersolve. Only for Payments."
-          },
-          "userName": {
-            "type": "string",
-            "description": "The Intersolve user. Required. For Payments and Refunds."
-          }
-        }
-      },
-      "intersolveProcessHop": {
-        "required": ["provider", "properties"],
-        "properties": {
-          "provider": {
-            "type": "string",
-            "description": "Intersolve. The provider used to process the transaction."
-          },
-          "properties": {
-            "$ref": "#/components/schemas/intersolveProcessHopProperties"
-          }
-        }
-      },
-      "iProcessHop": {
-        "required": ["provider"],
-        "discriminator": {
-          "propertyName": "provider",
-          "mapping": {
-            "Payvision": "#/components/schemas/payvisionProcessHop",
-            "PayOn": "#/components/schemas/payOnProcessHop",
-            "ING": "#/components/schemas/ingProcessHop",
-            "Intersolve": "#/components/schemas/intersolveProcessHop"
-          }
-        },
-        "oneOf": [
-          { "$ref": "#/components/schemas/payvisionProcessHop" },
-          { "$ref": "#/components/schemas/payOnProcessHop" },
-          { "$ref": "#/components/schemas/ingProcessHop" },
-          { "$ref": "#/components/schemas/intersolveProcessHop" }
-        ]
-      },
-      "aceProtectFraudHopProperties": {
-        "required": ["fraudScrubbingId"],
-        "properties": {
-          "fraudScrubbingId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "The identifier returned by AceProtect."
-          }
-        }
-      },
-      "aceProtectFraudHop": {
-        "required": ["provider", "properties"],
-        "properties": {
-          "provider": {
-            "type": "string",
-            "description": "AceProtect. The provider used to process the transaction."
-          },
-          "properties": {
-            "$ref": "#/components/schemas/aceProtectFraudHopProperties"
-          }
-        }
-      },
-      "payOnFraudHopProperties": { "properties": {} },
-      "payOnFraudHop": {
-        "required": ["provider", "properties"],
-        "properties": {
-          "provider": {
-            "type": "string",
-            "description": "PayOn. The provider used to process the transaction."
-          },
-          "properties": {
-            "$ref": "#/components/schemas/payOnFraudHopProperties"
-          }
-        }
-      },
-      "iFraudHop": {
-        "required": ["provider"],
-        "discriminator": {
-          "propertyName": "provider",
-          "mapping": {
-            "AceProtect": "#/components/schemas/aceProtectFraudHop",
-            "PayOn": "#/components/schemas/payOnFraudHop"
-          }
-        },
-        "oneOf": [
-          { "$ref": "#/components/schemas/aceProtectFraudHop" },
-          { "$ref": "#/components/schemas/payOnFraudHop" }
-        ]
-      },
-      "additionalInfoShippingInfoCustomer": {
-        "properties": {
-          "givenName": {
-            "type": "string",
-            "description": "Given name of the customer address."
-          },
-          "familyName": {
-            "type": "string",
-            "description": "Family name of the customer address."
-          }
-        }
-      },
-      "additionalInfoShippingInfo": {
-        "properties": {
-          "customer": {
-            "$ref": "#/components/schemas/additionalInfoShippingInfoCustomer"
-          },
-          "street": {
-            "type": "string",
-            "description": "The name of the street."
-          },
-          "street2": {
-            "type": "string",
-            "description": "The extra information of the street."
-          },
-          "city": { "type": "string", "description": "The name of the city." },
-          "stateCode": { "type": "string", "description": "The state code." },
-          "countryCode": {
-            "type": "string",
-            "description": "The country code."
-          },
-          "zip": {
-            "type": "string",
-            "description": "ZIP code for the shipping address."
-          },
-          "status": { "type": "string", "description": "The address status." }
-        }
-      },
-      "additionalInfoCustomer": {
-        "properties": {
-          "phone": {
-            "type": "string",
-            "description": "The phone of the customer."
-          },
-          "email": {
-            "type": "string",
-            "description": "The email of the customer."
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the customer."
-          }
-        }
-      },
-      "additionalInfo": {
-        "properties": {
-          "shippingAddress": {
-            "$ref": "#/components/schemas/additionalInfoShippingInfo"
-          },
-          "customer": { "$ref": "#/components/schemas/additionalInfoCustomer" }
-        }
-      },
-      "updatedEventPayload": {
-        "required": [
-          "businessId",
-          "transactionId",
-          "orderId",
-          "trackingCode",
-          "transactionType",
-          "requestTimestamp",
-          "processChain"
-        ],
-        "properties": {
-          "businessId": {
-            "type": "string",
-            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
-          },
-          "storeId": {
-            "type": "integer",
-            "description": "Identifier used to indicate a specific sub-account."
-          },
-          "transactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier of the transaction given by AceHub."
-          },
-          "orderId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier grouping all dependent transactions related to this payment."
-          },
-          "initialTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "parentTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "trackingCode": {
-            "type": "string",
-            "description": "Merchant provided unique transaction identifier."
-          },
-          "transactionType": {
-            "type": "string",
-            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
-          },
-          "requestTimestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The time stamp (ISO-8601) when the transaction has been received."
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
-          },
-          "method": {
-            "type": "string",
-            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
-          },
-          "brand": {
-            "type": "string",
-            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
-          },
-          "descriptor": {
-            "type": "string",
-            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
-          },
-          "amount": { "$ref": "#/components/schemas/amount" },
-          "capture": {
-            "type": "boolean",
-            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
-          },
-          "source": {
-            "type": "string",
-            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
-          },
-          "subscriptionType": {
-            "type": "string",
-            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
-          },
-          "languageCode": {
-            "type": "string",
-            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
-          },
-          "invoiceId": {
-            "type": "string",
-            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "purchaseId": {
-            "type": "string",
-            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "card": { "$ref": "#/components/schemas/processedCard" },
-          "bank": { "$ref": "#/components/schemas/bank" },
-          "account": { "$ref": "#/components/schemas/account" },
-          "dba": { "$ref": "#/components/schemas/dba" },
-          "customer": { "$ref": "#/components/schemas/customer" },
-          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
-          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
-          "token": { "$ref": "#/components/schemas/token" },
-          "options": { "$ref": "#/components/schemas/options" },
-          "qr": { "$ref": "#/components/schemas/qr" },
-          "order": { "$ref": "#/components/schemas/order" },
-          "processChain": {
-            "type": "array",
-            "description": "Process information gathered from all hops made to process the transaction.",
-            "uniqueItems": false,
-            "items": { "$ref": "#/components/schemas/iProcessHop" }
-          },
-          "fraudScrubbing": {
-            "type": "array",
-            "description": "Chain used to calculate the transaction fraud score.",
-            "uniqueItems": false,
-            "items": { "$ref": "#/components/schemas/iFraudHop" }
-          },
-          "additionalInfo": { "$ref": "#/components/schemas/additionalInfo" }
-        }
-      },
-      "updatedEvent": {
-        "required": [
-          "id",
-          "eventType",
-          "sentTime",
-          "formatVersion",
-          "source",
-          "payload"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
-          },
-          "eventType": {
-            "type": "string",
-            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
-          },
-          "sentTime": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Specifies the time when the current event has been sent. ISO-8601."
-          },
-          "formatVersion": {
-            "type": "string",
-            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
-          },
-          "source": {
-            "type": "string",
-            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
-          },
-          "payload": { "$ref": "#/components/schemas/updatedEventPayload" }
-        }
-      },
-      "finishedEventPayload": {
-        "required": [
-          "businessId",
-          "transactionId",
-          "orderId",
-          "trackingCode",
-          "transactionType",
-          "requestTimestamp",
-          "processChain"
-        ],
-        "properties": {
-          "businessId": {
-            "type": "string",
-            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
-          },
-          "storeId": {
-            "type": "integer",
-            "description": "Identifier used to indicate a specific sub-account."
-          },
-          "transactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier of the transaction given by AceHub."
-          },
-          "orderId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier grouping all dependent transactions related to this payment."
-          },
-          "initialTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "parentTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "trackingCode": {
-            "type": "string",
-            "description": "Merchant provided unique transaction identifier."
-          },
-          "transactionType": {
-            "type": "string",
-            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
-          },
-          "requestTimestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The time stamp (ISO-8601) when the transaction has been received."
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
-          },
-          "method": {
-            "type": "string",
-            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
-          },
-          "brand": {
-            "type": "string",
-            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
-          },
-          "descriptor": {
-            "type": "string",
-            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
-          },
-          "amount": { "$ref": "#/components/schemas/amount" },
-          "capture": {
-            "type": "boolean",
-            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
-          },
-          "source": {
-            "type": "string",
-            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
-          },
-          "subscriptionType": {
-            "type": "string",
-            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
-          },
-          "languageCode": {
-            "type": "string",
-            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
-          },
-          "invoiceId": {
-            "type": "string",
-            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "purchaseId": {
-            "type": "string",
-            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "card": { "$ref": "#/components/schemas/processedCard" },
-          "bank": { "$ref": "#/components/schemas/bank" },
-          "account": { "$ref": "#/components/schemas/account" },
-          "dba": { "$ref": "#/components/schemas/dba" },
-          "customer": { "$ref": "#/components/schemas/customer" },
-          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
-          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
-          "token": { "$ref": "#/components/schemas/token" },
-          "options": { "$ref": "#/components/schemas/options" },
-          "qr": { "$ref": "#/components/schemas/qr" },
-          "order": { "$ref": "#/components/schemas/order" },
-          "processChain": {
-            "type": "array",
-            "description": "Process information gathered from all hops made to process the transaction.",
-            "uniqueItems": false,
-            "items": { "$ref": "#/components/schemas/iProcessHop" }
-          },
-          "fraudScrubbing": {
-            "type": "array",
-            "description": "Chain used to calculate the transaction fraud score.",
-            "uniqueItems": false,
-            "items": { "$ref": "#/components/schemas/iFraudHop" }
-          },
-          "additionalInfo": { "$ref": "#/components/schemas/additionalInfo" }
-        }
-      },
-      "finishedEvent": {
-        "required": [
-          "id",
-          "eventType",
-          "sentTime",
-          "formatVersion",
-          "source",
-          "payload"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
-          },
-          "eventType": {
-            "type": "string",
-            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
-          },
-          "sentTime": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Specifies the time when the current event has been sent. ISO-8601."
-          },
-          "formatVersion": {
-            "type": "string",
-            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
-          },
-          "source": {
-            "type": "string",
-            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
-          },
-          "payload": { "$ref": "#/components/schemas/finishedEventPayload" }
-        }
-      },
-      "rejection": {
-        "properties": {
-          "reason": {
-            "type": "string",
-            "description": "The message explaining why the transaction was rejected."
-          },
-          "validator": {
-            "type": "string",
-            "description": "The identification of the system that rejects the transaction."
-          }
-        }
-      },
-      "error": {
-        "required": ["code", "description"],
-        "properties": {
-          "code": { "type": "integer", "description": "The error code." },
-          "description": {
-            "type": "string",
-            "description": "Error code on detailed level."
-          },
-          "detailedDescription": {
-            "type": "string",
-            "description": "Human-friendly message explaining the error."
-          }
-        }
-      },
-      "deniedEventPayload": {
-        "required": [
-          "businessId",
-          "transactionId",
-          "orderId",
-          "trackingCode",
-          "transactionType",
-          "requestTimestamp",
-          "processChain"
-        ],
-        "properties": {
-          "businessId": {
-            "type": "string",
-            "description": "Unique identifier of the merchant within AceHub. It should match the CRM account ID."
-          },
-          "storeId": {
-            "type": "integer",
-            "description": "Identifier used to indicate a specific sub-account."
-          },
-          "transactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier of the transaction given by AceHub."
-          },
-          "orderId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier grouping all dependent transactions related to this payment."
-          },
-          "initialTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the initial payment of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "parentTransactionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Identifier of the parent transaction of a dependent transaction. Only applicable for the following transaction types:\nCapture, Cancel or Refund.\nRequired on:\n- Capture.\n- Cancel.\n- Refund."
-          },
-          "trackingCode": {
-            "type": "string",
-            "description": "Merchant provided unique transaction identifier."
-          },
-          "transactionType": {
-            "type": "string",
-            "description": "Type of the processing transaction.\nPossible transaction type values:\n- Payment.\n- Capture.\n- Cancel.\n- Refund.\n- Credit."
-          },
-          "requestTimestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The time stamp (ISO-8601) when the transaction has been received."
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the transaction at the sending time. \u0027Registered\u0027."
-          },
-          "method": {
-            "type": "string",
-            "description": "The payment method. See Payment Methods.\nFor dependent transactions it will be used the method of the initial transaction."
-          },
-          "brand": {
-            "type": "string",
-            "description": "The payment brand. See Brands.\nFor dependent transaction it will be used the initial transaction brand.\nCard block will contain the card brand used for processing depending on the BIN number present since first processing.\nFor payment cards, brand should not be provided by the merchant. Therefore, if specified, the card brand may differ for\nthis brand."
-          },
-          "descriptor": {
-            "type": "string",
-            "description": "Description of the order as it would appear for the customer on for example (if applicable) the customer\u2019s bank\nstatement.\nIt may be changed after processing."
-          },
-          "amount": { "$ref": "#/components/schemas/amount" },
-          "capture": {
-            "type": "boolean",
-            "description": "True when the payment will be captured or alternative payment, false when is an authorization.\nRequired only for payments."
-          },
-          "source": {
-            "type": "string",
-            "description": "The source of the transaction.\nOptional.\nEC - eCommerce.\nMO - Mobile order.\nTO - Telephone order."
-          },
-          "subscriptionType": {
-            "type": "string",
-            "description": "Type of transaction.\nOptional, if TransactionType = Payment or Credit. Otherwise NA.\n- SINGLE - Default transaction type, single, non-recurring transaction.\n- FIRST - First transaction of a recurrent sequence of transactions.\n- RECURRING - Second and subsequent transactions in a recurrent sequence.\n- LAST - Last transaction of a recurrent sequence. Used optionally for SEPA direct debit.\n- SCHEDULED_COF."
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country code (ISO-3166-1)\nOptional, if TransactionType = Payment or Credit. Otherwise NA."
-          },
-          "languageCode": {
-            "type": "string",
-            "description": "Language code (ISO-639-1)\nOptional, if TransactionType = Payment. Otherwise NA."
-          },
-          "invoiceId": {
-            "type": "string",
-            "description": "A reference to the invoice/order that the merchant has given.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "purchaseId": {
-            "type": "string",
-            "description": "A reference to the purchase within the Merchant\u0027s system.\nOptional, if TransactionType = Payment or Capture. Otherwise NA."
-          },
-          "card": { "$ref": "#/components/schemas/processedCard" },
-          "bank": { "$ref": "#/components/schemas/bank" },
-          "account": { "$ref": "#/components/schemas/account" },
-          "dba": { "$ref": "#/components/schemas/dba" },
-          "customer": { "$ref": "#/components/schemas/customer" },
-          "billingAddress": { "$ref": "#/components/schemas/billingAddress" },
-          "shippingAddress": { "$ref": "#/components/schemas/shippingInfo" },
-          "token": { "$ref": "#/components/schemas/token" },
-          "options": { "$ref": "#/components/schemas/options" },
-          "qr": { "$ref": "#/components/schemas/qr" },
-          "order": { "$ref": "#/components/schemas/order" },
-          "processChain": {
-            "type": "array",
-            "description": "Process information gathered from all hops made to process the transaction.",
-            "uniqueItems": false,
-            "items": { "$ref": "#/components/schemas/iProcessHop" }
-          },
-          "fraudScrubbing": {
-            "type": "array",
-            "description": "Chain used to calculate the transaction fraud score.",
-            "uniqueItems": false,
-            "items": { "$ref": "#/components/schemas/iFraudHop" }
-          },
-          "rejection": { "$ref": "#/components/schemas/rejection" },
-          "error": { "$ref": "#/components/schemas/error" },
-          "additionalInfo": { "$ref": "#/components/schemas/additionalInfo" }
-        }
-      },
-      "deniedEvent": {
-        "required": [
-          "id",
-          "eventType",
-          "sentTime",
-          "formatVersion",
-          "source",
-          "payload"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier of the current event that allows disregard repeated consumptions of the same event."
-          },
-          "eventType": {
-            "type": "string",
-            "description": "Identifies the type of event that is related to a specific event payload.\nPossible values:\n- Created.\n- Denied.\n- Updated.\n- Finished."
-          },
-          "sentTime": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Specifies the time when the current event has been sent. ISO-8601."
-          },
-          "formatVersion": {
-            "type": "string",
-            "description": "Semantic version that defines the version used to serialize the event payload. This version is \u00271.0.0\u0027."
-          },
-          "source": {
-            "type": "string",
-            "description": "Identifier of the source that is sending the event. \u0027AceHub\u0027."
-          },
-          "payload": { "$ref": "#/components/schemas/deniedEventPayload" }
-        }
-      },
-      "iEvent": {
-        "required": ["eventType"],
-        "discriminator": {
-          "propertyName": "eventType",
-          "mapping": {
-            "Created": "#/components/schemas/createdEvent",
-            "Updated": "#/components/schemas/updatedEvent",
-            "Finished": "#/components/schemas/finishedEvent",
-            "Denied": "#/components/schemas/deniedEvent"
-          }
-        },
-        "oneOf": [
-          { "$ref": "#/components/schemas/createdEvent" },
-          { "$ref": "#/components/schemas/updatedEvent" },
-          { "$ref": "#/components/schemas/finishedEvent" },
-          { "$ref": "#/components/schemas/deniedEvent" }
-        ]
-      }
-    },
-    "messages": {},
-    "securitySchemes": {
-      "user-password": {
-        "type": "userPassword",
-        "description": "RabbitMQ user and password."
-      }
-    },
-    "parameters": {},
-    "correlationIds": {},
-    "serverBindings": {},
-    "channelBindings": {},
-    "operationBindings": {},
-    "messageBindings": {},
-    "operationTraits": {},
-    "messageTraits": {}
-  },
-  "tags": []
-}
+---
+asyncapi: 2.0.0
+info:
+  title: Cats example
+  description: The cats API description
+  version: '1.0'
+  contact: {}
+tags:
+- name: cats
+  description: Everything about your cats.
+x-tagGroups:
+- name: pets
+  tags:
+  - cats
+servers:
+  cats-server:
+    url: server.p-url:{port}
+    protocol: amqp
+    protocolVersion: 0.9.1
+    description: Allows you to connect using the AMQP protocol to our RabbitMQ server.
+    security:
+    - user-password: []
+    variables:
+      port:
+        description: Secure connection (TLS) is available through port 5672.
+        default: '5672'
+        enum:
+        - '5672'
+    bindings:
+      amqp: {}
+components:
+  securitySchemes:
+    user-password:
+      type: userPassword
+  schemas:
+    CreateCatReplyCommand:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          format: uuid
+          description: Identify a flow
+        messageId:
+          type: string
+          format: uuid
+          description: Identify a request
+        messageType:
+          type: string
+          description: Type of message
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          format: X.Y.Z
+          description: Message Version
+        payload:
+          type: object
+          description: Message payload
+      required:
+      - correlationId
+      - messageId
+      - messageType
+      - timestamp
+      - version
+      - payload
+      discriminator:
+        propertyName: messageType
+        mapping:
+          CreateCatReplySuccessCommand: "#/components/schemas/CreateCatReplySuccessCommand"
+          CreateCatReplyErrorCommand: "#/components/schemas/CreateCatReplyErrorCommand"
+    CreateCatCommand:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          format: uuid
+          description: Identify a flow
+        messageId:
+          type: string
+          format: uuid
+          description: Identify a request
+        messageType:
+          type: string
+          description: Type of message
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          format: X.Y.Z
+          description: Message Version
+        payload:
+          type: object
+          description: Message payload
+      required:
+      - correlationId
+      - messageId
+      - messageType
+      - timestamp
+      - version
+      - payload
+    ExtraModel:
+      type: object
+      properties:
+        one:
+          type: string
+        two:
+          type: number
+      required:
+      - one
+      - two
+    BreadCoonDto:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+      - name
+    LettersEnum:
+      type: string
+      enum:
+      - A
+      - B
+      - C
+    TagDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name
+      required:
+      - name
+    CreateCatDto:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: number
+          minimum: 1
+          maximum: 200
+        _breed:
+          discriminator:
+            propertyName: name
+            mapping:
+              MaineCoonDto: "#/components/schemas/MaineCoonDto"
+              BritishShorthairCatDto: "#/components/schemas/BritishShorthairCatDto"
+          allOf:
+          - "$ref": "#/components/schemas/BreadCoonDto"
+        tags:
+          type: array
+          items:
+            type: string
+        createdAt:
+          format: date-time
+          type: string
+        urls:
+          type: array
+          items:
+            type: string
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              isReadonly:
+                type: string
+        enum:
+          "$ref": "#/components/schemas/LettersEnum"
+        enumArr:
+          type: array
+          items:
+            "$ref": "#/components/schemas/LettersEnum"
+        tag:
+          description: tag
+          allOf:
+          - "$ref": "#/components/schemas/TagDto"
+      required:
+      - name
+      - age
+      - _breed
+      - tags
+      - createdAt
+      - urls
+      - options
+      - enum
+      - enumArr
+    CatCreatedEvent:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          format: uuid
+          description: Identify a flow
+        messageId:
+          type: string
+          format: uuid
+          description: Identify a request
+        messageType:
+          type: string
+          description: Type of message
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          format: X.Y.Z
+          description: Message Version
+        payload:
+          description: Message payload
+          allOf:
+          - "$ref": "#/components/schemas/CreateCatDto"
+      required:
+      - correlationId
+      - messageId
+      - messageType
+      - timestamp
+      - version
+      - payload
+    MaineCoonDto:
+      type: object
+      properties:
+        name:
+          type: string
+        weight:
+          type: number
+      required:
+      - name
+    BritishShorthairCatDto:
+      type: object
+      properties:
+        name:
+          type: string
+        height:
+          type: number
+      required:
+      - name
+    CreateCatReplySuccessCommand:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          format: uuid
+          description: Identify a flow
+        messageId:
+          type: string
+          format: uuid
+          description: Identify a request
+        messageType:
+          type: string
+          description: Type of message
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          format: X.Y.Z
+          description: Message Version
+        payload:
+          type: object
+          description: Message payload
+      required:
+      - correlationId
+      - messageId
+      - messageType
+      - timestamp
+      - version
+      - payload
+    CreateCatReplyErrorCommand:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          format: uuid
+          description: Identify a flow
+        messageId:
+          type: string
+          format: uuid
+          description: Identify a request
+        messageType:
+          type: string
+          description: Type of message
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          format: X.Y.Z
+          description: Message Version
+        payload:
+          type: object
+          description: Message payload
+      required:
+      - correlationId
+      - messageId
+      - messageType
+      - timestamp
+      - version
+      - payload
+defaultContentType: application/json
+channels:
+  cats-pub-channel:cat-routing-key:
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: cats-pub-channel
+          durable: true
+          autoDelete: false
+          vhost: cats
+    publish:
+      tags:
+      - name: Cats RPC
+      summary: Create Cat Response
+      description: Description for Create Cat Response operation
+      message:
+        name: Create Cat Reply Command
+        payload:
+          "$ref": "#/components/schemas/CreateCatReplyCommand"
+          examples:
+            CreateCatReplySuccessCommand:
+              value:
+                correlationId: 53312466-e448-432d-8149-29269b5ac522
+                messageId: 309881db-1971-4c63-b905-9ffb7229f979
+                messageType: CreateCatReplySuccessCommand
+                timestamp: '2020-12-17T03:29:00'
+                version: 1.0.1
+                payload:
+                  identifier: pet_001
+            CreateCatReplyErrorCommand:
+              value:
+                correlationId: 77baeaec-9416-437f-a88f-6a3686ff3a4a
+                messageId: b26f52c0-9a15-41ed-a4df-68e332203737
+                messageType: CreateCatReplyErrorCommand
+                timestamp: '2020-12-21T03:31:00'
+                version: 1.0.1
+                payload:
+                  errorCode: '500'
+                  errorMessage: Bad Request
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: true
+          timestamp: true
+          ack: false
+  cats-sub-channel:
+    bindings:
+      amqp:
+        is: queue
+        queue:
+          name: cats-sub-channel
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: cats
+    subscribe:
+      tags:
+      - name: Cats RPC
+      summary: Create Cat Request
+      description: Description for Create Cat Request operation
+      message:
+        name: Create Cat Command
+        payload:
+          "$ref": "#/components/schemas/CreateCatCommand"
+          examples:
+            British:
+              value:
+                correlationId: 53312466-e448-432d-8149-29269b5ac522
+                messageId: 309881db-1971-4c63-b905-9ffb7229f979
+                messageType: CreateCatCommand
+                timestamp: '2020-12-17T03:24:00'
+                version: 1.0.1
+                payload:
+                  name: Yuumi
+                  breed:
+                    name: British Shorthair
+                    height: 99
+            Maine:
+              value:
+                correlationId: 77baeaec-9416-437f-a88f-6a3686ff3a4a
+                messageId: b26f52c0-9a15-41ed-a4df-68e332203737
+                messageType: CreateCatCommand
+                timestamp: '2020-12-21T03:24:00'
+                version: 1.0.1
+                payload:
+                  name: Kitty
+                  breed:
+                    name: Maine Coon
+                    weight: 10
+      bindings:
+        amqp:
+          deliveryMode: 2
+          mandatory: true
+          timestamp: true
+          ack: false
+  cats-pub-events:cat-routing-key:
+    bindings:
+      kafka: {}
+    publish:
+      tags:
+      - name: Cats Events
+      summary: Publish Cats Events
+      message:
+        name: Cat Event
+        payload:
+          "$ref": "#/components/schemas/CatCreatedEvent"
+          examples:
+            CatCreated:
+              value:
+                correlationId: 53312466-e448-432d-8149-29269b5ac522
+                messageType: CatCreated
+                timestamp: '2020-12-17T03:29:00'
+                version: 1.0.1
+                payload:
+                  name: Kitty
+                  breed:
+                    name: Maine Coon
+                    weight: 10
+                  identifier: pet_001
+      bindings:
+        kafka:
+          groupId:
+            type: string
+            pattern: "^[A-Z]{10}[0-5]$"
+          clientId:
+            type: string
+            pattern: "^[a-z]{22}$"

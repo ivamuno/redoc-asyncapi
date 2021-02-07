@@ -1,6 +1,6 @@
 {
   "name": "redoc-asyncapi",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "ReDoc for AsyncAPI",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
     "node": ">=6.9",
     "npm": ">=3.0.0"
   },
-  "author": "Roman Hotsiy <gotsijroman@gmail.com>",
+  "author": "Iván Muñoz Mozo",
   "license": "MIT",
   "keywords": [
     "OpenAPI",
