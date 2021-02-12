@@ -6,13 +6,13 @@ import styled, { css, ResolvedThemeInterface } from '../../styled-components';
 
 export const OperationBadge = styled.span.attrs((props: { type: string }) => ({
   className: `operation-type ${props.type}`,
-}))<{ type: string }>`
+})) <{ type: string }>`
   width: 9ex;
   display: inline-block;
   height: ${(props) => props.theme.typography.code.fontSize};
   line-height: ${(props) => props.theme.typography.code.fontSize};
   background-color: #333;
-  border-radius: 3px;
+  border-radius: ${(props) => props.theme.border.radius};
   background-repeat: no-repeat;
   background-position: 6px 4px;
   font-size: 7px;
@@ -136,7 +136,7 @@ export const MenuItemLabel = styled.label.attrs((props: MenuItemLabelType) => ({
   className: classnames('-depth' + props.depth, {
     active: props.active,
   }),
-}))<MenuItemLabelType>`
+})) <MenuItemLabelType>`
   cursor: pointer;
   color: ${(props) =>
     props.active ? props.theme.sidebar.activeTextColor : props.theme.sidebar.textColor};

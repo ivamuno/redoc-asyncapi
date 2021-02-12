@@ -8,10 +8,6 @@ info:
 tags:
 - name: cats
   description: Everything about your cats.
-x-tagGroups:
-- name: pets
-  tags:
-  - cats
 servers:
   cats-server:
     url: server.p-url:{port}
@@ -69,37 +65,6 @@ components:
         mapping:
           CreateCatReplySuccessCommand: "#/components/schemas/CreateCatReplySuccessCommand"
           CreateCatReplyErrorCommand: "#/components/schemas/CreateCatReplyErrorCommand"
-    CreateCatCommand:
-      type: object
-      properties:
-        correlationId:
-          type: string
-          format: uuid
-          description: Identify a flow
-        messageId:
-          type: string
-          format: uuid
-          description: Identify a request
-        messageType:
-          type: string
-          description: Type of message
-        timestamp:
-          type: string
-          format: date-time
-        version:
-          type: string
-          format: X.Y.Z
-          description: Message Version
-        payload:
-          type: object
-          description: Message payload
-      required:
-      - correlationId
-      - messageId
-      - messageType
-      - timestamp
-      - version
-      - payload
     ExtraModel:
       type: object
       properties:
@@ -186,6 +151,38 @@ components:
       - options
       - enum
       - enumArr
+    CreateCatCommand:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          format: uuid
+          description: Identify a flow
+        messageId:
+          type: string
+          format: uuid
+          description: Identify a request
+        messageType:
+          type: string
+          description: Type of message
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          format: X.Y.Z
+          description: Message Version
+        payload:
+          description: Message payload
+          allOf:
+          - "$ref": "#/components/schemas/CreateCatDto"
+      required:
+      - correlationId
+      - messageId
+      - messageType
+      - timestamp
+      - version
+      - payload
     CatCreatedEvent:
       type: object
       properties:
@@ -236,6 +233,14 @@ components:
           type: number
       required:
       - name
+    CreateCatReplySuccessCommandPayload:
+      type: object
+      properties:
+        identifier:
+          type: string
+          format: uuid
+      required:
+      - identifier
     CreateCatReplySuccessCommand:
       type: object
       properties:
@@ -258,8 +263,9 @@ components:
           format: X.Y.Z
           description: Message Version
         payload:
-          type: object
           description: Message payload
+          allOf:
+          - "$ref": "#/components/schemas/CreateCatReplySuccessCommandPayload"
       required:
       - correlationId
       - messageId
@@ -267,6 +273,18 @@ components:
       - timestamp
       - version
       - payload
+    CreateCatReplyErrorCommandPayload:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        errorDetails:
+          type: object
+      required:
+      - errorCode
+      - errorMessage
     CreateCatReplyErrorCommand:
       type: object
       properties:
@@ -289,8 +307,9 @@ components:
           format: X.Y.Z
           description: Message Version
         payload:
-          type: object
           description: Message payload
+          allOf:
+          - "$ref": "#/components/schemas/CreateCatReplyErrorCommandPayload"
       required:
       - correlationId
       - messageId

@@ -27,7 +27,7 @@ export const StyledDropdown = styled(Dropdown)`
     position: relative;
     width: auto;
     background: white;
-    color: #263238;
+    color: ${(props) => props.theme.dropdown.color};
     font-family: ${(props) => props.theme.typography.headings.fontFamily};
     font-size: 0.929em;
     line-height: 1.5em;
@@ -54,7 +54,7 @@ export const StyledDropdown = styled(Dropdown)`
       width: 100%;
       line-height: 1;
       vertical-align: middle;
-      color: #263238;
+      color: ${(props) => props.theme.dropdown.color};
       left: 0;
       transition: color 0.25s ease, text-shadow 0.25s ease;
     }
@@ -91,7 +91,7 @@ export const StyledDropdown = styled(Dropdown)`
 
     .dropdown-option {
       font-size: 0.9em;
-      color: #263238;
+      color: ${(props) => props.theme.dropdown.color};
       cursor: pointer;
       padding: 0.4em;
       background-color: #ffffff;

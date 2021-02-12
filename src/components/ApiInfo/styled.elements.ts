@@ -22,6 +22,10 @@ export const DownloadButton = styled.a`
   text-decoration: none;
   cursor: pointer;
 
+  &:hover {
+    background-color: ${(props) => props.theme.donwloadButton.hover.color};
+  }
+
   ${extensionsHook('DownloadButton')};
 `;
 
