@@ -1,6 +1,6 @@
 import { darken, desaturate, lighten, readableColor, transparentize } from 'polished';
 
-const defaultTheme: ThemeInterface = {
+let defaultTheme: ThemeInterface = {
   spacing: {
     unit: 5,
     sectionHorizontal: ({ spacing }) => spacing.unit * 8,
