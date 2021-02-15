@@ -19,14 +19,14 @@ export const SearchInput = styled.input.attrs(() => ({
   border: 0;
   border-bottom: 1px solid
     ${({ theme }) =>
-      (getLuminance(theme.sidebar.backgroundColor) > 0.5 ? darken : lighten)(
+      (getLuminance(theme.sidebar.level0Items.backgroundColor) > 0.5 ? darken : lighten)(
         0.1,
-        theme.sidebar.backgroundColor,
+        theme.sidebar.level0Items.backgroundColor,
       )};
   font-family: ${({ theme }) => theme.typography.fontFamily};
   font-weight: bold;
   font-size: 13px;
-  color: ${(props) => props.theme.sidebar.textColor};
+  color: ${(props) => props.theme.sidebar.level0Items.color};
   background-color: transparent;
   outline: none;
 `;
@@ -51,18 +51,18 @@ export const SearchIcon = styled((props: { className?: string }) => (
   width: 0.9em;
 
   path {
-    fill: ${(props) => props.theme.sidebar.textColor};
+    fill: ${(props) => props.theme.sidebar.level0Items.color};
   }
 `;
 
 export const SearchResultsBox = styled.div`
   padding: ${(props) => props.theme.spacing.unit}px 0;
-  background-color: ${({ theme }) => darken(0.05, theme.sidebar.backgroundColor)}};
-  color: ${(props) => props.theme.sidebar.textColor};
+  background-color: ${({ theme }) => darken(0.05, theme.sidebar.level0Items.backgroundColor)}};
+  color: ${(props) => props.theme.sidebar.level0Items.color};
   min-height: 150px;
   max-height: 250px;
-  border-top: ${({ theme }) => darken(0.1, theme.sidebar.backgroundColor)}};
-  border-bottom: ${({ theme }) => darken(0.1, theme.sidebar.backgroundColor)}};
+  border-top: ${({ theme }) => darken(0.1, theme.sidebar.level0Items.backgroundColor)}};
+  border-bottom: ${({ theme }) => darken(0.1, theme.sidebar.level0Items.backgroundColor)}};
   margin-top: 10px;
   line-height: 1.4;
   font-size: 0.9em;
@@ -73,7 +73,7 @@ export const SearchResultsBox = styled.div`
 
     &:hover,
     &.active {
-      background-color: ${({ theme }) => darken(0.1, theme.sidebar.backgroundColor)};
+      background-color: ${({ theme }) => darken(0.1, theme.sidebar.level0Items.backgroundColor)};
     }
 
     > svg {

@@ -1,6 +1,6 @@
 import { darken, desaturate, lighten, readableColor, transparentize } from 'polished';
 
-let defaultTheme: ThemeInterface = {
+const defaultTheme: ThemeInterface = {
   spacing: {
     unit: 5,
     sectionHorizontal: ({ spacing }) => spacing.unit * 8,
@@ -139,23 +139,57 @@ let defaultTheme: ThemeInterface = {
       }
     },
   },
-  sidebar: {
-    width: '260px',
-    backgroundColor: '#fafafa',
-    textColor: '#333333',
-    activeTextColor: (theme) =>
-      theme.sidebar.textColor !== defaultTheme.sidebar!.textColor
-        ? theme.sidebar.textColor
-        : theme.colors.primary.main,
-    groupItems: {
+  sidebar: {    
+    level0Items: {
+      backgroundColor: '#fafafa',
+      color: '#000000',
+      active: {
+        color: '#000000',
+        backgroundColor: '#fafafa'
+      },
+      hover: {
+        color: '#000000',
+        backgroundColor: '#fafafa'
+      },
       textTransform: 'uppercase',
+      arrow: {
+        size: '1.5em',
+        color: '#000000',
+      },
     },
     level1Items: {
-      textTransform: 'none',
+      backgroundColor: ({sidebar}) => sidebar.level0Items.backgroundColor,
+      color: ({sidebar}) => sidebar.level0Items.color,
+      active: {
+        color: ({sidebar}) => sidebar.level0Items.active.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.active.backgroundColor
+      },
+      hover: {
+        color: ({sidebar}) => sidebar.level0Items.hover.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.hover.backgroundColor
+      },
+      textTransform: ({sidebar}) => sidebar.level0Items.textTransform,
+      arrow: {
+        size: ({sidebar}) => sidebar.level0Items.arrow.size,
+        color: ({sidebar}) => sidebar.level0Items.arrow.color
+      },
     },
-    arrow: {
-      size: '1.5em',
-      color: (theme) => theme.sidebar.textColor,
+    level2Items: {
+      backgroundColor: ({sidebar}) => sidebar.level0Items.backgroundColor,
+      color: ({sidebar}) => sidebar.level0Items.color,
+      active: {
+        color: ({sidebar}) => sidebar.level0Items.active.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.active.backgroundColor
+      },
+      hover: {
+        color: ({sidebar}) => sidebar.level0Items.hover.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.hover.backgroundColor
+      },
+      textTransform: ({sidebar}) => sidebar.level0Items.textTransform,
+      arrow: {
+        size: ({sidebar}) => sidebar.level0Items.arrow.size,
+        color: ({sidebar}) => sidebar.level0Items.arrow.color
+      },
     },
   },
   logo: {
@@ -196,7 +230,7 @@ let defaultTheme: ThemeInterface = {
   }
 };
 
-let payvisionTheme: ThemeInterface = {
+const payvisionTheme: ThemeInterface = {
   spacing: {
     unit: 5,
     sectionHorizontal: ({ spacing }) => spacing.unit * 8,
@@ -337,21 +371,56 @@ let payvisionTheme: ThemeInterface = {
   },
   sidebar: {
     width: '260px',
-    backgroundColor: '#fafafa',
-    textColor: '#000000',
-    activeTextColor: (theme) =>
-      theme.sidebar.textColor !== defaultTheme.sidebar!.textColor
-        ? theme.sidebar.textColor
-        : theme.colors.primary.main,
-    groupItems: {
+    level0Items: {
+      backgroundColor: 'white',
+      color: '#FF7D6E',
+      active: {
+        color: ({sidebar}) => sidebar.level0Items.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.backgroundColor
+      },
+      hover: {
+        color: ({sidebar}) => sidebar.level0Items.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.backgroundColor
+      },
       textTransform: 'uppercase',
+      arrow: {
+        size: '1.5em',
+        color: ({sidebar}) => sidebar.level0Items.color,
+      },
     },
     level1Items: {
+      backgroundColor: ({sidebar}) => sidebar.level0Items.backgroundColor,
+      color: ({sidebar}) => sidebar.level0Items.color,
+      active: {
+        color: ({sidebar}) => sidebar.level0Items.active.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.active.backgroundColor
+      },
+      hover: {
+        color: ({sidebar}) => sidebar.level0Items.hover.color,
+        backgroundColor: ({sidebar}) => sidebar.level0Items.hover.backgroundColor
+      },
       textTransform: 'none',
+      arrow: {
+        size: ({sidebar}) => sidebar.level0Items.arrow.size,
+        color: ({sidebar}) => sidebar.level0Items.arrow.color
+      },
     },
-    arrow: {
-      size: '1.5em',
-      color: (theme) => theme.sidebar.textColor,
+    level2Items: {
+      backgroundColor: ({sidebar}) => sidebar.level0Items.backgroundColor,
+      color: '#465a64',
+      active: {
+        color: 'white',
+        backgroundColor: (theme) => theme.colors.primary.main
+      },
+      hover: {
+        color: '#000000',
+        backgroundColor: '#f2f2e9'
+      },
+      textTransform: 'none',
+      arrow: {
+        size: ({sidebar}) => sidebar.level1Items.arrow.size,
+        color: (theme) => theme.sidebar.level2Items.color,
+      },
     },
   },
   logo: {
@@ -452,6 +521,24 @@ export interface FontSettings {
   color: string;
 }
 
+export interface SidebarItemSetttings {
+  backgroundColor: string;
+  color: string;
+  active: {
+    backgroundColor: string;
+    color: string;
+  };
+  hover: {
+    backgroundColor: string;
+    color: string;
+  };
+  textTransform: string;
+  arrow: {
+    size: string;
+    color: string;
+  };
+}
+
 export interface ResolvedThemeInterface {
   spacing: {
     unit: number;
@@ -548,19 +635,9 @@ export interface ResolvedThemeInterface {
   };
   sidebar: {
     width: string;
-    backgroundColor: string;
-    textColor: string;
-    activeTextColor: string;
-    groupItems: {
-      textTransform: string;
-    };
-    level1Items: {
-      textTransform: string;
-    };
-    arrow: {
-      size: string;
-      color: string;
-    };
+    level0Items: SidebarItemSetttings;
+    level1Items: SidebarItemSetttings;
+    level2Items: SidebarItemSetttings;
   };
   logo: {
     maxHeight: string;

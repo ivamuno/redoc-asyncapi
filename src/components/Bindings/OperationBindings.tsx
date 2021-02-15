@@ -9,7 +9,7 @@ export interface OperationBindingsProps {
 const normalizeBindingStrategy = [
   {
     amqp: amqpBindings => {
-      let bindings: any[] = [];
+      const bindings: any[] = [];
       for (const [key, value] of Object.entries(amqpBindings)) {
         let textValue = value;
         if (key === 'deliveryMode') {
@@ -21,7 +21,7 @@ const normalizeBindingStrategy = [
       }
     },
     kafka: kafkaBindings => {
-      let bindings: any[] = [];
+      const bindings: any[] = [];
       for (const [key, value] of Object.entries(kafkaBindings)) {
         bindings.push({ key: key, value: JSON.stringify(value) });
       }
