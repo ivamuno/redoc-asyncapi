@@ -1,4 +1,3 @@
-// import { transparentize } from 'polished';
 import * as React from 'react';
 import { Bindings } from './Bindings';
 
