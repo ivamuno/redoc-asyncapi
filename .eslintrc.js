@@ -28,7 +28,8 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/ban-types': ['error', { types: { object: false }, extendDefaults: true }],
-    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-var-requires': 'off',    
+    '@typescript-eslint/no-empty-interface': ['error', { 'allowSingleExtends': true }],
 
     'react/prop-types': 'off',
 

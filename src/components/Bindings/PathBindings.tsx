@@ -1,4 +1,3 @@
-// import { transparentize } from 'polished';
 import * as React from 'react';
 import { Bindings } from './Bindings';
 
@@ -8,8 +7,8 @@ export interface PathBindingsProps {
 
 const normalizeBindingStrategy = {
   ['amqp']: amqpBindings => {
-    let bindings: any[] = [];
-    let bindingObject = amqpBindings.is === 'routingKey' ? amqpBindings.exchange : amqpBindings.queue;
+    const bindings: any[] = [];
+    const bindingObject = amqpBindings.is === 'routingKey' ? amqpBindings.exchange : amqpBindings.queue;
     bindings.push({ key: 'is', value: amqpBindings.is === 'routingKey' ? 'exchange' : 'queue' });
     for (const [key, value] of Object.entries(bindingObject)) {
       bindings.push({ key: key, value: value });

@@ -1,4 +1,3 @@
----
 asyncapi: 2.0.0
 info:
   title: Cats example
@@ -8,10 +7,6 @@ info:
 tags:
 - name: cats
   description: Everything about your cats.
-x-tagGroups:
-- name: pets
-  tags:
-  - cats
 servers:
   cats-server:
     url: server.p-url:{port}

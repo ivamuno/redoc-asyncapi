@@ -1,4 +1,3 @@
-// import { transparentize } from 'polished';
 import * as React from 'react';
 import { Bindings } from './Bindings';
 
@@ -9,7 +8,7 @@ export interface OperationBindingsProps {
 const normalizeBindingStrategy = [
   {
     amqp: amqpBindings => {
-      let bindings: any[] = [];
+      const bindings: any[] = [];
       for (const [key, value] of Object.entries(amqpBindings)) {
         let textValue = value;
         if (key === 'deliveryMode') {
