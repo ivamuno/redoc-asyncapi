@@ -141,7 +141,7 @@ let defaultTheme: ThemeInterface = {
       visited: ({ typography }) => typography.links.color,
       hover: {
         color: ({ typography }) => lighten(0.2, typography.links.color),
-        textDecoration: 'inherit'
+        textDecoration: 'none currentcolor solid'
       }
     },
   },
@@ -235,7 +235,7 @@ let defaultTheme: ThemeInterface = {
       border: {
         color: '#ccc',
       },
-      backgroundColor: 'inherit'
+      backgroundColor: 'transparent'
     }
   }
 };
