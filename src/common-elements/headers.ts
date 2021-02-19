@@ -23,14 +23,14 @@ export const H1 = styled.h1`
 export const H2 = styled.h2`
   ${headerCommonMixin(2)};
   color: ${({ theme }) => theme.colors.secondary.main};
-
+  font-weight: ${({ theme }) => theme.typography.headings.fontWeightBold};
   ${extensionsHook('H2')};
 `;
 
 export const H3 = styled.h2`
   ${headerCommonMixin(3)};
   color: black;
-
+  font-weight: ${({ theme }) => theme.typography.headings.fontWeightBold};
   ${extensionsHook('H3')};
 `;
 

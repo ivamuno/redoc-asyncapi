@@ -118,6 +118,7 @@ let defaultTheme: ThemeInterface = {
     headings: {
       fontFamily: 'Montserrat, sans-serif',
       fontWeight: '400',
+      fontWeightBold: '600',
       lineHeight: '1.6em',
     },
     code: {
@@ -139,7 +140,11 @@ let defaultTheme: ThemeInterface = {
       }
     },
   },
-  sidebar: {    
+  sidebar: {   
+    fontSize: '0.8em',
+    fontWeight: '600',
+    padding: '12.5px',
+    opacity: '0.7',
     level0Items: {
       backgroundColor: '#fafafa',
       color: '#000000',
@@ -308,12 +313,12 @@ const payvisionTheme: ThemeInterface = {
       get: '#ffc882',
       post: '#af9bff',
       put: '#95507c',
-      options: '#947014',
-      patch: '#bf581d',
-      delete: '#cc3333',
-      basic: '#707070',
-      link: '#07818F',
-      head: '#A23DAD',
+      options: '#c8ffe1',
+      patch: '#ff7d6e',
+      delete: '#be3c50',
+      basic: '#465a64',
+      link: '#00cd78',
+      head: '#b9dcff',
       pub: '#3237be',
       sub: '#007364',
     },
@@ -347,7 +352,8 @@ const payvisionTheme: ThemeInterface = {
     optimizeSpeed: true,
     headings: {
       fontFamily: 'Founders, sans-serif',
-      fontWeight: '400',
+      fontWeight: '300',
+      fontWeightBold: '600',
       lineHeight: '1.6em',
     },
     code: {
@@ -370,7 +376,11 @@ const payvisionTheme: ThemeInterface = {
     },
   },
   sidebar: {
+    fontSize: '14px',
+    fontWeight: '600',
+    padding: '10px',
     width: '260px',
+    opacity: '1',
     level0Items: {
       backgroundColor: 'white',
       color: '#FF7D6E',
@@ -399,7 +409,7 @@ const payvisionTheme: ThemeInterface = {
         color: ({sidebar}) => sidebar.level0Items.hover.color,
         backgroundColor: ({sidebar}) => sidebar.level0Items.hover.backgroundColor
       },
-      textTransform: 'none',
+      textTransform: 'uppercase',
       arrow: {
         size: ({sidebar}) => sidebar.level0Items.arrow.size,
         color: ({sidebar}) => sidebar.level0Items.arrow.color
@@ -442,7 +452,7 @@ const payvisionTheme: ThemeInterface = {
   dropdown: {
     color: (theme) => theme.colors.primary.main,
     focus: {
-      boxShadow: 'none',
+      boxShadow: `0px 0px 0px 0px ${(props) => props.theme.colors.primary.main}`,
       backgroundColor: '#b9dcff'
     }
   },
@@ -621,6 +631,7 @@ export interface ResolvedThemeInterface {
     headings: {
       fontFamily: string;
       fontWeight: string;
+      fontWeightBold: string;
       lineHeight: string;
     };
     links: {
@@ -635,6 +646,10 @@ export interface ResolvedThemeInterface {
   };
   sidebar: {
     width: string;
+    fontSize: string;
+    fontWeight: string;
+    padding: string;
+    opacity: string;
     level0Items: SidebarItemSetttings;
     level1Items: SidebarItemSetttings;
     level2Items: SidebarItemSetttings;

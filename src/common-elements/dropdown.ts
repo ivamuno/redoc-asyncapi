@@ -20,7 +20,7 @@ export const StyledDropdown = styled(Dropdown)`
     min-width: 100px;
     outline: none;
     display: inline-block;
-    border-radius: 2px;
+    border-radius: ${(props) => props.theme.border.radius};;
     border: 1px solid rgba(38, 50, 56, 0.5);
     vertical-align: bottom;
     padding: 2px 0px 2px 6px;
@@ -37,7 +37,8 @@ export const StyledDropdown = styled(Dropdown)`
     &:focus-within {
       border: 1px solid ${(props) => props.theme.colors.primary.main};
       color: ${(props) => props.theme.colors.primary.main};
-      box-shadow: 0px 0px 0px 1px ${(props) => props.theme.colors.primary.main};
+      box-shadow: ${(props) => props.theme.dropdown.focus.boxShadow};
+      background-color: ${(props) => props.theme.dropdown.focus.backgroundColor};
     }
     .dropdown-selector {
       display: inline-flex;

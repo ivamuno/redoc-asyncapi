@@ -95,8 +95,9 @@ export const MenuItemLi = styled.li<{ depth: number }>`
 
 export const menuItemDepth = {
   0: css`
-    opacity: 0.7;
-    font-size: 0.8em;
+    opacity: ${({ theme }) => theme.sidebar.opacity};
+    font-size: ${({ theme }) => theme.sidebar.fontSize};
+    font-weight: ${({ theme }) => theme.sidebar.fontWeight};
     padding-bottom: 0;
     cursor: default;
     text-transform: ${({ theme }) => theme.sidebar.level0Items.textTransform};
@@ -105,7 +106,8 @@ export const menuItemDepth = {
     }
   `,
   1: css`
-    font-size: 0.929em;
+    font-size: ${({ theme }) => theme.sidebar.fontSize};
+    font-weight: ${({ theme }) => theme.sidebar.fontWeight};
     text-transform: ${({ theme }) => theme.sidebar.level1Items.textTransform};
     &:hover {
       color: ${(props) => props.theme.sidebar.level1Items.hover.color};
@@ -138,7 +140,7 @@ export const MenuItemLabel = styled.label.attrs((props: MenuItemLabelType) => ({
       ? props.theme.sidebar[`level${props.depth}Items`].active.color
       : props.theme.sidebar[`level${props.depth}Items`].color};
   margin: 0;
-  padding: 12.5px ${(props) => props.theme.spacing.unit * 4}px;
+  padding: ${(props) => props.theme.sidebar.padding} ${(props) => props.theme.spacing.unit * 4}px;
   ${({ depth, type, theme }) =>
     (type === 'section' && depth > 1 && 'padding-left: ' + theme.spacing.unit * 8 + 'px;') || ''}
   display: flex;
