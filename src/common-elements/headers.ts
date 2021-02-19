@@ -6,9 +6,15 @@ const headerFontSize = {
   3: '1.27em',
 };
 
+const headerFontWeight = {
+  1: css`font-weight: ${({ theme }) => theme.typography.headings.h1.fontWeight};`,
+  2: css`font-weight: ${({ theme }) => theme.typography.headings.h2.fontWeight};`,
+  3: css`font-weight: ${({ theme }) => theme.typography.headings.h2.fontWeight};`,
+};
+
 export const headerCommonMixin = (level) => css`
   font-family: ${({ theme }) => theme.typography.headings.fontFamily};
-  font-weight: ${({ theme }) => theme.typography.headings.fontWeight};
+  ${headerFontWeight[level]}
   font-size: ${headerFontSize[level]};
   line-height: ${({ theme }) => theme.typography.headings.lineHeight};
 `;
@@ -16,21 +22,18 @@ export const headerCommonMixin = (level) => css`
 export const H1 = styled.h1`
   ${headerCommonMixin(1)};
   color: ${({ theme }) => theme.colors.primary.main};
-
   ${extensionsHook('H1')};
 `;
 
 export const H2 = styled.h2`
   ${headerCommonMixin(2)};
   color: ${({ theme }) => theme.colors.secondary.main};
-  font-weight: ${({ theme }) => theme.typography.headings.fontWeightBold};
   ${extensionsHook('H2')};
 `;
 
 export const H3 = styled.h2`
   ${headerCommonMixin(3)};
   color: black;
-  font-weight: ${({ theme }) => theme.typography.headings.fontWeightBold};
   ${extensionsHook('H3')};
 `;
 

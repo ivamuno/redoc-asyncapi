@@ -118,7 +118,12 @@ let defaultTheme: ThemeInterface = {
     headings: {
       fontFamily: 'Montserrat, sans-serif',
       fontWeight: '400',
-      fontWeightBold: '600',
+      h1: {
+        fontWeight: ({ typography }) => typography.headings.fontWeight,
+      },
+      h2: {
+        fontWeight: ({ typography }) => typography.headings.fontWeight,
+      },
       lineHeight: '1.6em',
     },
     code: {
@@ -217,7 +222,7 @@ let defaultTheme: ThemeInterface = {
     color: '#263238',
     focus: {
       boxShadow: `0px 0px 0px 1px ${(props) => props.theme.colors.primary.main}`,
-      backgroundColor: 'white'
+      backgroundColor: 'transparent'
     }
   },
   donwloadButton: {
@@ -353,7 +358,9 @@ const payvisionTheme: ThemeInterface = {
     headings: {
       fontFamily: 'Founders, sans-serif',
       fontWeight: '300',
-      fontWeightBold: '600',
+      h2: {
+        fontWeight: '600',
+      },
       lineHeight: '1.6em',
     },
     code: {
@@ -631,7 +638,12 @@ export interface ResolvedThemeInterface {
     headings: {
       fontFamily: string;
       fontWeight: string;
-      fontWeightBold: string;
+      h1: {
+        fontWeight: string;
+      }
+      h2: {
+        fontWeight: string;
+      }
       lineHeight: string;
     };
     links: {
