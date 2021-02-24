@@ -145,68 +145,72 @@ const defaultTheme: ThemeInterface = {
       }
     },
   },
-  sidebar: {   
+  sidebar: {
     width: '260px',
     backgroundColor: '#fafafa',
     textColor: '#333333',
+    activeTextColor: (theme) =>
+      theme.sidebar.textColor !== defaultTheme.sidebar!.textColor
+        ? theme.sidebar.textColor
+        : theme.colors.primary.main,
     groupItems: {
-      backgroundColor: ({sidebar}) => sidebar.backgroundColor,
-      color: ({sidebar}) => sidebar.textColor,
+      backgroundColor: 'transparent',
+      color: ({ sidebar }) => sidebar.textColor,
       fontSize: '0.8em',
       fontWeight: 'inherit',
       opacity: '0.7',
       active: {
-        color: '#000000',
-        backgroundColor: '#fafafa'
+        color: ({ sidebar }) => sidebar.groupItems.color,
+        backgroundColor: ({ sidebar }) => sidebar.backgroundColor
       },
       hover: {
-        color: '#000000',
-        backgroundColor: '#fafafa'
+        color: ({ sidebar }) => sidebar.groupItems.color,
+        backgroundColor: ({ sidebar }) => sidebar.groupItems.backgroundColor
       },
       textTransform: 'uppercase',
       arrow: {
-        size: ({sidebar}) => sidebar.arrow.size,
-        color: ({sidebar}) => sidebar.arrow.color
+        size: ({ sidebar }) => sidebar.arrow.size,
+        color: ({ sidebar }) => sidebar.arrow.color
       },
     },
     level1Items: {
-      backgroundColor: ({sidebar}) => sidebar.groupItems.backgroundColor,
-      color: ({sidebar}) => sidebar.groupItems.color,
+      backgroundColor: ({ sidebar }) => sidebar.groupItems.backgroundColor,
+      color: ({ sidebar }) => sidebar.groupItems.color,
       fontSize: '0.929em',
       fontWeight: 'inherit',
       opacity: '1',
       active: {
-        color: ({sidebar}) => sidebar.groupItems.active.color,
-        backgroundColor: ({sidebar}) => sidebar.groupItems.active.backgroundColor
+        color: ({ sidebar }) => sidebar.activeTextColor,
+        backgroundColor: (theme) => darken(0.05, theme.sidebar.backgroundColor)
       },
       hover: {
-        color: ({sidebar}) => sidebar.groupItems.hover.color,
-        backgroundColor: ({sidebar}) => sidebar.groupItems.hover.backgroundColor
+        color: ({ sidebar }) => sidebar.activeTextColor,
+        backgroundColor: ({ sidebar }) => sidebar.level1Items.active.backgroundColor
       },
       textTransform: 'none',
       arrow: {
-        size: ({sidebar}) => sidebar.arrow.size,
-        color: ({sidebar}) => sidebar.arrow.color
+        size: ({ sidebar }) => sidebar.arrow.size,
+        color: ({ sidebar }) => sidebar.arrow.color
       },
     },
     level2Items: {
-      backgroundColor: ({sidebar}) => sidebar.groupItems.backgroundColor,
-      color: ({sidebar}) => sidebar.groupItems.color,
+      backgroundColor: ({ sidebar }) => sidebar.level1Items.backgroundColor,
+      color: ({ sidebar }) => sidebar.textColor,
       fontSize: 'inherit',
       fontWeight: 'inherit',
       opacity: '1',
       active: {
-        color: ({sidebar}) => sidebar.groupItems.active.color,
-        backgroundColor: ({sidebar}) => sidebar.groupItems.active.backgroundColor
+        color: ({ sidebar }) => sidebar.level2Items.color,
+        backgroundColor: (theme) => darken(0.1, theme.sidebar.backgroundColor)
       },
       hover: {
-        color: ({sidebar}) => sidebar.groupItems.hover.color,
-        backgroundColor: ({sidebar}) => sidebar.groupItems.hover.backgroundColor
+        color: ({ sidebar }) => sidebar.level2Items.color,
+        backgroundColor: ({ sidebar }) => sidebar.level2Items.active.backgroundColor
       },
       textTransform: 'none',
       arrow: {
-        size: ({sidebar}) => sidebar.arrow.size,
-        color: ({sidebar}) => sidebar.arrow.color
+        size: ({ sidebar }) => sidebar.arrow.size,
+        color: ({ sidebar }) => sidebar.arrow.color
       },
     },
     arrow: {
@@ -439,8 +443,8 @@ export interface ResolvedThemeInterface {
     level1Items: SidebarItemSetttings;
     level2Items: SidebarItemSetttings;
     arrow: {
-      size: string;	
-      color: string;	
+      size: string;
+      color: string;
     };
   };
   logo: {

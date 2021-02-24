@@ -77,6 +77,7 @@ const payvisionTheme: ThemeInterface = {
       backgroundColor: 'white',
       color: '#FF7D6E',
       fontSize: 'medium',
+      fontWeight: '500',
       active: {
         color: ({ sidebar }) => sidebar.groupItems.color,
         backgroundColor: ({ sidebar }) => sidebar.groupItems.backgroundColor
@@ -91,15 +92,28 @@ const payvisionTheme: ThemeInterface = {
         color: ({ sidebar }) => sidebar.groupItems.color,
       },
     },
-    level2Items: {
+    level1Items: {
       color: '#465a64',
       fontSize: 'medium',
       active: {
-        color: 'white',
-        backgroundColor: (theme) => theme.colors.primary.main
+        color: ({ sidebar }) => sidebar.level1Items.color,
+        backgroundColor: '#f3f3f3'
       },
       hover: {
-        color: '#000000',
+        color: ({ sidebar }) => sidebar.level1Items.color,
+        backgroundColor: ({ sidebar }) => sidebar.level1Items.active.backgroundColor
+      },
+      textTransform: 'none'
+    },
+    level2Items: {
+      color: ({ sidebar }) => sidebar.level1Items.color,
+      fontSize: 'small',
+      active: {
+        color: 'white',
+        backgroundColor: ({ colors }) => colors.primary.main,
+      },
+      hover: {
+        color: ({ sidebar }) => sidebar.level1Items.color,
         backgroundColor: '#f2f2e9'
       },
       textTransform: 'none'
