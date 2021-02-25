@@ -155,16 +155,16 @@ const defaultTheme: ThemeInterface = {
         : theme.colors.primary.main,
     groupItems: {
       backgroundColor: 'transparent',
-      textColor: ({ sidebar }) => sidebar.textColor,
+      color: ({ sidebar }) => sidebar.textColor,
       fontSize: '0.8em',
       fontWeight: 'inherit',
       opacity: '0.7',
       active: {
-        color: ({ sidebar }) => sidebar.groupItems.textColor,
+        color: ({ sidebar }) => sidebar.groupItems.color,
         backgroundColor: ({ sidebar }) => sidebar.backgroundColor
       },
       hover: {
-        color: ({ sidebar }) => sidebar.groupItems.textColor,
+        color: ({ sidebar }) => sidebar.groupItems.color,
         backgroundColor: ({ sidebar }) => sidebar.groupItems.backgroundColor
       },
       textTransform: 'uppercase',
@@ -175,7 +175,7 @@ const defaultTheme: ThemeInterface = {
     },
     level1Items: {
       backgroundColor: 'transparent',
-      textColor: ({ sidebar }) => sidebar.groupItems.textColor,
+      color: ({ sidebar }) => sidebar.groupItems.color,
       fontSize: '0.929em',
       fontWeight: 'inherit',
       opacity: '1',
@@ -195,16 +195,16 @@ const defaultTheme: ThemeInterface = {
     },
     level2Items: {
       backgroundColor: 'transparent',
-      textColor: ({ sidebar }) => sidebar.textColor,
+      color: ({ sidebar }) => sidebar.textColor,
       fontSize: 'inherit',
       fontWeight: 'inherit',
       opacity: '1',
       active: {
-        color: ({ sidebar }) => sidebar.level2Items.textColor,
+        color: ({ sidebar }) => sidebar.level2Items.color,
         backgroundColor: (theme) => darken(0.1, theme.sidebar.backgroundColor)
       },
       hover: {
-        color: ({ sidebar }) => sidebar.level2Items.textColor,
+        color: ({ sidebar }) => sidebar.level2Items.color,
         backgroundColor: ({ sidebar }) => sidebar.level2Items.active.backgroundColor
       },
       textTransform: 'none',
@@ -315,7 +315,7 @@ export interface FontSettings {
 
 export interface SidebarItemSetttings {
   backgroundColor: string;
-  textColor: string;
+  color: string;
   fontSize: string;
   fontWeight: string;
   opacity: string;
