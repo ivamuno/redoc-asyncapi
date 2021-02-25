@@ -224,12 +224,19 @@ const defaultTheme: ThemeInterface = {
     gutter: '2px',
   },
   rightPanel: {
-    backgroundColor: '#263238',
+    backgroundColor: '#3d434a', //'#263238',
     width: '40%',
-    textColor: '#ffffff',
+    textColor: '#ffffff'
   },
   codeBlock: {
     backgroundColor: ({ rightPanel }) => darken(0.1, rightPanel.backgroundColor),
+    colors: {
+      symbol: ({rightPanel}) => rightPanel.textColor,
+      property: ({codeBlock}) => codeBlock.colors.symbol,
+      string: '#B9DCFF', //'#a0fbaa',
+      boolean: '#FFC882', //#e64441',
+      number: '#00CD78' //'#4a8bb3'
+    }
   },
   border: {
     radius: '2px',
@@ -459,6 +466,13 @@ export interface ResolvedThemeInterface {
   };
   codeBlock: {
     backgroundColor: string;
+    colors: {
+      symbol: string;
+      property: string;
+      string: string;
+      boolean: string;
+      number: string;
+    };
   };
   border: {
     radius: string;
