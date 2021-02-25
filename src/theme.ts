@@ -155,16 +155,16 @@ const defaultTheme: ThemeInterface = {
         : theme.colors.primary.main,
     groupItems: {
       backgroundColor: 'transparent',
-      color: ({ sidebar }) => sidebar.textColor,
+      textColor: ({ sidebar }) => sidebar.textColor,
       fontSize: '0.8em',
       fontWeight: 'inherit',
       opacity: '0.7',
       active: {
-        color: ({ sidebar }) => sidebar.groupItems.color,
+        color: ({ sidebar }) => sidebar.groupItems.textColor,
         backgroundColor: ({ sidebar }) => sidebar.backgroundColor
       },
       hover: {
-        color: ({ sidebar }) => sidebar.groupItems.color,
+        color: ({ sidebar }) => sidebar.groupItems.textColor,
         backgroundColor: ({ sidebar }) => sidebar.groupItems.backgroundColor
       },
       textTransform: 'uppercase',
@@ -174,8 +174,8 @@ const defaultTheme: ThemeInterface = {
       },
     },
     level1Items: {
-      backgroundColor: ({ sidebar }) => sidebar.groupItems.backgroundColor,
-      color: ({ sidebar }) => sidebar.groupItems.color,
+      backgroundColor: 'transparent',
+      textColor: ({ sidebar }) => sidebar.groupItems.textColor,
       fontSize: '0.929em',
       fontWeight: 'inherit',
       opacity: '1',
@@ -194,17 +194,17 @@ const defaultTheme: ThemeInterface = {
       },
     },
     level2Items: {
-      backgroundColor: ({ sidebar }) => sidebar.level1Items.backgroundColor,
-      color: ({ sidebar }) => sidebar.textColor,
+      backgroundColor: 'transparent',
+      textColor: ({ sidebar }) => sidebar.textColor,
       fontSize: 'inherit',
       fontWeight: 'inherit',
       opacity: '1',
       active: {
-        color: ({ sidebar }) => sidebar.level2Items.color,
+        color: ({ sidebar }) => sidebar.level2Items.textColor,
         backgroundColor: (theme) => darken(0.1, theme.sidebar.backgroundColor)
       },
       hover: {
-        color: ({ sidebar }) => sidebar.level2Items.color,
+        color: ({ sidebar }) => sidebar.level2Items.textColor,
         backgroundColor: ({ sidebar }) => sidebar.level2Items.active.backgroundColor
       },
       textTransform: 'none',
@@ -315,7 +315,7 @@ export interface FontSettings {
 
 export interface SidebarItemSetttings {
   backgroundColor: string;
-  color: string;
+  textColor: string;
   fontSize: string;
   fontWeight: string;
   opacity: string;

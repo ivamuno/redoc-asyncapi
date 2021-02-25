@@ -26,7 +26,7 @@ export const SearchInput = styled.input.attrs(() => ({
   font-family: ${({ theme }) => theme.typography.fontFamily};
   font-weight: bold;
   font-size: 13px;
-  color: ${(props) => props.theme.sidebar.groupItems.color};
+  color: ${(props) => props.theme.sidebar.groupItems.textColor};
   background-color: transparent;
   outline: none;
 `;
@@ -51,14 +51,14 @@ export const SearchIcon = styled((props: { className?: string }) => (
   width: 0.9em;
 
   path {
-    fill: ${(props) => props.theme.sidebar.groupItems.color};
+    fill: ${(props) => props.theme.sidebar.groupItems.textColor};
   }
 `;
 
 export const SearchResultsBox = styled.div`
   padding: ${(props) => props.theme.spacing.unit}px 0;
   background-color: ${({ theme }) => darken(0.05, theme.sidebar.groupItems.backgroundColor)}};
-  color: ${(props) => props.theme.sidebar.groupItems.color};
+  color: ${(props) => props.theme.sidebar.groupItems.textColor};
   min-height: 150px;
   max-height: 250px;
   border-top: ${({ theme }) => darken(0.1, theme.sidebar.groupItems.backgroundColor)}};

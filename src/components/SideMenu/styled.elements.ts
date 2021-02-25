@@ -202,7 +202,7 @@ export const RedocAttribution = styled.div`
   a,
   a:visited,
   a:hover {
-    color: ${theme.sidebar.groupItems.color} !important;
+    color: ${theme.sidebar.groupItems.textColor} !important;
     border-top: 1px solid ${darken(0.1, theme.sidebar.groupItems.backgroundColor)};
     padding: ${theme.spacing.unit}px 0;
     display: block;
