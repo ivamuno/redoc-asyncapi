@@ -6,7 +6,7 @@ import { StyledComponent } from 'styled-components';
 
 export const linksCss = css`
   a {
-    text-decoration: none;
+    text-decoration: ${(props) => props.theme.typography.links.textDecoration};
     color: ${(props) => props.theme.typography.links.color};
 
     &:visited {
@@ -15,6 +15,7 @@ export const linksCss = css`
 
     &:hover {
       color: ${(props) => props.theme.typography.links.hover};
+      text-decoration: ${(props) => props.theme.typography.links.hover.textDecoration};
     }
   }
 `;
@@ -141,7 +142,7 @@ export const StyledMarkdownBlock = styled(
 
   table tr {
     background-color: #fff;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid ${({ theme }) => theme.markdown.table.border.color};
 
     &:nth-child(2n) {
       background-color: ${({ theme }) => theme.schema.nestedBackground};
@@ -157,6 +158,7 @@ export const StyledMarkdownBlock = styled(
   table th {
     text-align: left;
     font-weight: bold;
+    background-color: ${({ theme }) => theme.markdown.table.backgroundColor};
   }
 
   ${linkifyMixin('.share-link')};

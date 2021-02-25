@@ -152,7 +152,7 @@ export default (env: { playground?: boolean; bench?: boolean } = {}, { mode }) =
     ignore(/json-schema-ref-parser\/lib\/dereference\.js/),
     ignore(/^\.\/SearchWorker\.worker$/),
     new CopyWebpackPlugin({
-      patterns: ['demo/asyncapi.yaml'],
+      patterns: ['demo/openapi.yaml'],
     }),
   ],
 });

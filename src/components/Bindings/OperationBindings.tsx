@@ -20,7 +20,7 @@ const normalizeBindingStrategy = [
       }
     },
     kafka: kafkaBindings => {
-      let bindings: any[] = [];
+      const bindings: any[] = [];
       for (const [key, value] of Object.entries(kafkaBindings)) {
         bindings.push({ key: key, value: JSON.stringify(value) });
       }

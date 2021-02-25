@@ -29,7 +29,8 @@ try {
 
 const BANNER = `ReDoc2 - OpenAPI/Swagger/AsyncAPI-generated API Reference Documentation
 -------------------------------------------------------------
-  Version: ${VERSION}`;
+  Version: ${VERSION}
+  Repo: https://github.com/ivamuno/redoc-asyncapi`;
 
 export default (env: { standalone?: boolean } = {}, { mode }) => ({
   entry: env.standalone ? ['./src/polyfills.ts', './src/standalone.tsx'] : './src/index.ts',
