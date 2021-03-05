@@ -38,7 +38,6 @@ export const StyledDropdown = styled(Dropdown)`
       border: 1px solid ${(props) => props.theme.colors.primary.main};
       color: ${(props) => props.theme.colors.primary.main};
       box-shadow: ${(props) => props.theme.dropdown.focus.boxShadow};
-      background-color: ${(props) => props.theme.dropdown.focus.backgroundColor};
     }
     .dropdown-selector {
       display: inline-flex;

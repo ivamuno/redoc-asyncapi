@@ -119,10 +119,16 @@ const defaultTheme: ThemeInterface = {
       fontFamily: 'Montserrat, sans-serif',
       fontWeight: '400',
       h1: {
+        fontSize: '1.85714em',
         fontWeight: ({ typography }) => typography.headings.fontWeight,
       },
       h2: {
+        fontSize: '1.57143em',
         fontWeight: ({ typography }) => typography.headings.fontWeight,
+      },
+      h3: {
+        fontSize: '1.27em',
+        fontWeight: ({ typography }) => typography.headings.h2.fontWeight,
       },
       lineHeight: '1.6em',
     },
@@ -229,13 +235,18 @@ const defaultTheme: ThemeInterface = {
     textColor: '#ffffff'
   },
   codeBlock: {
+    fontSize: ({typography}) => typography.code.fontSize,
+    fontFamily: ({typography}) => typography.code.fontFamily,
     backgroundColor: ({ rightPanel }) => darken(0.1, rightPanel.backgroundColor),
+    border:{
+      radius: '5px',
+    },
     colors: {
       symbol: ({rightPanel}) => rightPanel.textColor,
       property: ({codeBlock}) => codeBlock.colors.symbol,
-      string: '#B9DCFF', //'#a0fbaa',
-      boolean: '#FFC882', //#e64441',
-      number: '#00CD78' //'#4a8bb3'
+      string: '#a0fbaa',
+      boolean: '#e64441',
+      number: '#4a8bb3'
     }
   },
   border: {
@@ -244,8 +255,7 @@ const defaultTheme: ThemeInterface = {
   dropdown: {
     color: '#263238',
     focus: {
-      boxShadow: `0px 0px 0px 1px ${(props) => props.theme.colors.primary.main}`,
-      backgroundColor: 'transparent'
+      boxShadow: `0px 0px 0px 1px ${(props) => props.theme.colors.primary.main}`
     }
   },
   donwloadButton: {
@@ -424,11 +434,17 @@ export interface ResolvedThemeInterface {
       fontFamily: string;
       fontWeight: string;
       h1: {
+        fontSize: string;
         fontWeight: string;
-      }
+      };
       h2: {
+        fontSize: string;
         fontWeight: string;
-      }
+      };
+      h3: {
+        fontSize: string;
+        fontWeight: string;
+      };
       lineHeight: string;
     };
     links: {
@@ -466,6 +482,11 @@ export interface ResolvedThemeInterface {
   };
   codeBlock: {
     backgroundColor: string;
+    fontSize: string;
+    fontFamily: string;
+    border: {
+      radius: string;
+    };
     colors: {
       symbol: string;
       property: string;
@@ -480,7 +501,6 @@ export interface ResolvedThemeInterface {
   dropdown: {
     color: string;
     focus: {
-      backgroundColor: string;
       boxShadow: string;
     }
   };

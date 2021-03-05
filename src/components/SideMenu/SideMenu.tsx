@@ -26,7 +26,7 @@ export class SideMenu extends React.Component<{ menu: MenuStore; className?: str
         <MenuItems items={store.items} onActivate={this.activate} root={true} />
         <RedocAttribution>
           <a target="_blank" rel="noopener noreferrer" href="https://github.com/Redocly/redoc">
-            Powered by ReDoc (v 0.2.0)
+            Powered by ReDoc (v 0.3.1)
           </a>
         </RedocAttribution>
       </PerfectScrollbarWrap>
