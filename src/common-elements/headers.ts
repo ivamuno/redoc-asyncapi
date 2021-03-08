@@ -1,21 +1,21 @@
 import styled, { css, extensionsHook } from '../styled-components';
 
 const headerFontSize = {
-  1: '1.85714em',
-  2: '1.57143em',
-  3: '1.27em',
+  1: css`font-size: ${({ theme }) => theme.typography.headings.h1.fontSize};`,
+  2: css`font-size: ${({ theme }) => theme.typography.headings.h2.fontSize};`,
+  3: css`font-size: ${({ theme }) => theme.typography.headings.h3.fontSize};`,
 };
 
 const headerFontWeight = {
   1: css`font-weight: ${({ theme }) => theme.typography.headings.h1.fontWeight};`,
   2: css`font-weight: ${({ theme }) => theme.typography.headings.h2.fontWeight};`,
-  3: css`font-weight: ${({ theme }) => theme.typography.headings.h2.fontWeight};`,
+  3: css`font-weight: ${({ theme }) => theme.typography.headings.h3.fontWeight};`,
 };
 
 export const headerCommonMixin = (level) => css`
   font-family: ${({ theme }) => theme.typography.headings.fontFamily};
   ${headerFontWeight[level]}
-  font-size: ${headerFontSize[level]};
+  ${headerFontSize[level]}
   line-height: ${({ theme }) => theme.typography.headings.lineHeight};
 `;
 

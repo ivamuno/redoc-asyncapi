@@ -25,7 +25,7 @@ export const Tabs = styled(ReactTabs)`
       margin: 0
         ${({ theme }) => `${theme.spacing.unit}px ${theme.spacing.unit}px ${theme.spacing.unit}px`};
       border: 1px solid ${({ theme }) => darken(0.05, theme.codeBlock.backgroundColor)};
-      border-radius: 5px;
+      border-radius: ${({ theme }) => theme.codeBlock.border.radius};
       min-width: 60px;
       font-size: 0.9em;
       font-weight: bold;
