@@ -9,7 +9,7 @@ export const ClickablePropertyNameCell = styled(PropertyNameCell)`
     background-color: transparent;
     border: 0;
     outline: 0;
-    font-size: 13px;
+    font-size: ${(props) => props.theme.typography.code.fontSize};
     font-family: ${(props) => props.theme.typography.code.fontFamily};
     cursor: pointer;
     padding: 0;
@@ -58,12 +58,14 @@ export const RequiredLabel = styled(FieldLabel.withComponent('div'))`
 
 export const RecursiveLabel = styled(FieldLabel)`
   color: ${({ theme }) => theme.colors.warning.main};
-  font-size: 13px;
+  font-size: ${(props) => props.theme.typography.code.fontSize};
+  font-family: ${(props) => props.theme.typography.code.fontFamily};
 `;
 
 export const NullableLabel = styled(FieldLabel)`
   color: #0e7c86;
-  font-size: 13px;
+  font-size: ${(props) => props.theme.typography.code.fontSize};
+  font-family: ${(props) => props.theme.typography.code.fontFamily};
 `;
 
 export const PatternLabel = styled(FieldLabel)`

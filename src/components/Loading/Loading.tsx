@@ -14,15 +14,18 @@ const LoadingMessage = styled.div<{ color: string }>`
 
 export interface LoadingProps {
   color: string;
+  spinner?: string;
 }
 
 export class Loading extends React.PureComponent<LoadingProps> {
   render() {
     return (
-      <div style={{ textAlign: 'center' }}>
-        <LoadingMessage color={this.props.color}>Loading ...</LoadingMessage>
-        <Spinner color={this.props.color} />
-      </div>
+      this.props.spinner !== undefined
+        ? (<div dangerouslySetInnerHTML={{ __html: this.props.spinner }} />)
+        : (<div style={{ textAlign: 'center' }}>
+          <LoadingMessage color={this.props.color}>Loading ...</LoadingMessage>
+          <Spinner color={this.props.color} />
+        </div>)
     );
   }
 }

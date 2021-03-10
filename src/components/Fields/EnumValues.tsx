@@ -83,7 +83,8 @@ export class EnumValues extends React.PureComponent<EnumValuesProps, EnumValuesS
 const ToggleButton = styled.span`
   color: ${(props) => props.theme.colors.primary.main};
   vertical-align: middle;
-  font-size: 13px;
+  font-size: ${(props) => props.theme.typography.code.fontSize};
+  font-family: ${(props) => props.theme.typography.code.fontFamily};
   line-height: 20px;
   padding: 0 5px;
   cursor: pointer;

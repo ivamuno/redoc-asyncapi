@@ -20,14 +20,14 @@ export const StyledDropdown = styled(Dropdown)`
     min-width: 100px;
     outline: none;
     display: inline-block;
-    border-radius: 2px;
+    border-radius: ${(props) => props.theme.border.radius};;
     border: 1px solid rgba(38, 50, 56, 0.5);
     vertical-align: bottom;
     padding: 2px 0px 2px 6px;
     position: relative;
     width: auto;
     background: white;
-    color: #263238;
+    color: ${(props) => props.theme.dropdown.color};
     font-family: ${(props) => props.theme.typography.headings.fontFamily};
     font-size: 0.929em;
     line-height: 1.5em;
@@ -37,7 +37,7 @@ export const StyledDropdown = styled(Dropdown)`
     &:focus-within {
       border: 1px solid ${(props) => props.theme.colors.primary.main};
       color: ${(props) => props.theme.colors.primary.main};
-      box-shadow: 0px 0px 0px 1px ${(props) => props.theme.colors.primary.main};
+      box-shadow: ${(props) => props.theme.dropdown.focus.boxShadow};
     }
     .dropdown-selector {
       display: inline-flex;
@@ -54,7 +54,7 @@ export const StyledDropdown = styled(Dropdown)`
       width: 100%;
       line-height: 1;
       vertical-align: middle;
-      color: #263238;
+      color: ${(props) => props.theme.dropdown.color};
       left: 0;
       transition: color 0.25s ease, text-shadow 0.25s ease;
     }
@@ -91,7 +91,7 @@ export const StyledDropdown = styled(Dropdown)`
 
     .dropdown-option {
       font-size: 0.9em;
-      color: #263238;
+      color: ${(props) => props.theme.dropdown.color};
       cursor: pointer;
       padding: 0.4em;
       background-color: #ffffff;

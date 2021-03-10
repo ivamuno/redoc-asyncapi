@@ -16,7 +16,8 @@ import {
 
 const TypeName = styled.span`
   color: ${(props) => props.theme.schema.typeNameColor};
-  font-size: 13px;
+  font-size: ${(props) => props.theme.typography.code.fontSize};
+  font-family: ${(props) => props.theme.typography.code.fontFamily};
 `;
 
 const BindingsHeader = styled(UnderlinedHeader)`

@@ -171,7 +171,6 @@ function convertAsyncAPIOperation2OpenAPIOperation(
   defaultContentType?: string,
   security?: OpenAPISecurityRequirement[],
 ): OpenAPIOperation {
-  let requestBody: Referenced<OpenAPIRequestBody>;
   let asyncOpMessage = asyncOp.message as AsyncMessageObject;
   const asyncOpMessageRef = asyncOp.message as Referenced<OpenAPIRequestBody>;
   if (asyncOpMessageRef) {
@@ -192,7 +191,7 @@ function convertAsyncAPIOperation2OpenAPIOperation(
     examples: asyncOpMessage.examples || payloadBody.examples,
     example: payloadBody.example,
   };
-  requestBody = {
+  const requestBody: Referenced<OpenAPIRequestBody> = {
     content: {
       [contentTypeName]: contentType,
     },

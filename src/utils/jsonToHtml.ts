@@ -106,7 +106,7 @@ function objectToHTML(json, maxExpandLevel: number) {
     const key = keys[i];
     hasContents = true;
     output += '<li><div class="hoverable ' + collapsed + '">';
-    output += '<span class="property token string">"' + htmlEncode(key) + '"</span>: ';
+    output += '<span class="property token string">"' + htmlEncode(key) + '"</span>' + punctuation(': ');
     output += valueToHTML(json[key], maxExpandLevel);
     if (i < length - 1) {
       output += punctuation(',');

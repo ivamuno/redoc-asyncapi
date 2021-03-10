@@ -6,8 +6,8 @@ export const jsonStyles = css`
     pointer-events: none;
   }
 
-  font-family: ${(props) => props.theme.typography.code.fontFamily};
-  font-size: ${(props) => props.theme.typography.code.fontSize};
+  font-family: ${(props) => props.theme.codeBlock.fontFamily};
+  font-size: ${(props) => props.theme.codeBlock.fontSize};
 
   white-space: ${({ theme }) => (theme.typography.code.wrap ? 'pre-wrap' : 'pre')};
   contain: content;
@@ -50,7 +50,7 @@ export const jsonStyles = css`
   .collapser {
     background-color: transparent;
     border: 0;
-    color: #fff;
+    color: ${({ theme }) => theme.codeBlock.colors.symbol};
     font-family: ${(props) => props.theme.typography.code.fontFamily};
     font-size: ${(props) => props.theme.typography.code.fontSize};
     padding-right: 6px;

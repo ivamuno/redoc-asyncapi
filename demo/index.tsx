@@ -16,7 +16,7 @@ const demos = [
   { value: 'https://docs.graphhopper.com/openapi.json', label: 'GraphHopper' },
 ];
 
-const DEFAULT_SPEC = 'asyncapi.yaml';
+const DEFAULT_SPEC = 'openapi.yaml';
 
 class DemoApp extends React.Component<
   {},
