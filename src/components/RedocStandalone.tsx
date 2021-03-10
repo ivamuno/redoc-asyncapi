@@ -55,7 +55,7 @@ export class RedocStandalone extends React.PureComponent<RedocStandaloneProps> {
             !loading ? (
               <Redoc store={store!} />
             ) : hideLoading ? null : (
-              <Loading color={normalizedOpts.theme.colors.primary.main} />
+              <Loading color={normalizedOpts.theme.colors.primary.main} spinner={normalizedOpts.spinner} />
             )
           }
         </StoreBuilder>

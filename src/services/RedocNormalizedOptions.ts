@@ -42,6 +42,8 @@ export interface RedocRawOptions {
   maxDisplayedEnumValues?: number;
   ignoreNamedSchemas?: string[] | string;
   hideSchemaPattern?: boolean;
+
+  spinner?: string;
 }
 
 function argValueToBoolean(val?: string | boolean, defaultValue?: boolean): boolean {
@@ -197,6 +199,8 @@ export class RedocNormalizedOptions {
   ignoreNamedSchemas: Set<string>;
   hideSchemaPattern: boolean;
 
+  spinner?: string;
+
   constructor(raw: RedocRawOptions, defaults: RedocRawOptions = {}) {
     raw = { ...defaults, ...raw };
     const hook = raw.theme && raw.theme.extensionsHook;
@@ -257,5 +261,6 @@ export class RedocNormalizedOptions {
       : raw.ignoreNamedSchemas?.split(',').map((s) => s.trim());
     this.ignoreNamedSchemas = new Set(ignoreNamedSchemas);
     this.hideSchemaPattern = argValueToBoolean(raw.hideSchemaPattern);
+    this.spinner = raw.spinner;
   }
 }
