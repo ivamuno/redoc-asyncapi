@@ -47,7 +47,7 @@
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>ReDoc</title>
     <!-- needed for adaptive design -->
@@ -67,7 +67,7 @@
   </head>
   <body>
     <redoc spec-url='http://petstore.swagger.io/v2/swagger.json'></redoc>
-    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/redoc-asyncapi/bundles/redoc.standalone.js"> </script>
   </body>
 </html>
 ```
