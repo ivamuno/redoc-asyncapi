@@ -1,12 +1,13 @@
 import { Lambda, observe } from 'mobx';
 
-import { OpenAPISpec } from '../types';
+import type { OpenAPISpec } from '../types';
 import { loadAndBundleSpec } from '../utils/loadAndBundleSpec';
 import { history } from './HistoryService';
 import { MarkerService } from './MarkerService';
 import { MenuStore } from './MenuStore';
 import { SpecStore } from './models';
-import { RedocNormalizedOptions, RedocRawOptions } from './RedocNormalizedOptions';
+import { RedocNormalizedOptions } from './RedocNormalizedOptions';
+import type { RedocRawOptions } from './RedocNormalizedOptions';
 import { ScrollService } from './ScrollService';
 import { SearchStore } from './SearchStore';
 
@@ -14,23 +15,12 @@ import { SchemaDefinition } from '../components/SchemaDefinition/SchemaDefinitio
 import { SecurityDefs } from '../components/SecuritySchemes/SecuritySchemes';
 import {
   SCHEMA_DEFINITION_JSX_NAME,
-  SECURITY_DEFINITIONS_COMPONENT_NAME,
   SECURITY_DEFINITIONS_JSX_NAME,
+  OLD_SECURITY_DEFINITIONS_JSX_NAME,
 } from '../utils/openapi';
 
 import { IS_BROWSER } from '../utils';
-
-export interface StoreState {
-  menu: {
-    activeItemIdx: number;
-  };
-  spec: {
-    url?: string;
-    data: any;
-  };
-  searchIndex: any;
-  options: RedocRawOptions;
-}
+import type { StoreState } from './types';
 
 export async function createStore(
   spec: object,
@@ -89,7 +79,7 @@ export class AppStore {
         this.search.indexItems(this.menu.items);
       }
 
-      this.disposer = observe(this.menu, 'activeItemIdx', (change) => {
+      this.disposer = observe(this.menu, 'activeItemIdx', change => {
         this.updateMarkOnMenu(change.newValue as number);
       });
     }
@@ -145,7 +135,10 @@ export class AppStore {
 
     if (idx === -1 && IS_BROWSER) {
       const $description = document.querySelector('[data-role="redoc-description"]');
+      const $summary = document.querySelector('[data-role="redoc-summary"]');
+
       if ($description) elements.push($description);
+      if ($summary) elements.push($summary);
     }
 
     this.marker.addOnly(elements);
@@ -155,13 +148,13 @@ export class AppStore {
 
 const DEFAULT_OPTIONS: RedocRawOptions = {
   allowedMdComponents: {
-    [SECURITY_DEFINITIONS_COMPONENT_NAME]: {
+    [SECURITY_DEFINITIONS_JSX_NAME]: {
       component: SecurityDefs,
       propsSelector: (store: AppStore) => ({
         securitySchemes: store.spec.securitySchemes,
       }),
     },
-    [SECURITY_DEFINITIONS_JSX_NAME]: {
+    [OLD_SECURITY_DEFINITIONS_JSX_NAME]: {
       component: SecurityDefs,
       propsSelector: (store: AppStore) => ({
         securitySchemes: store.spec.securitySchemes,

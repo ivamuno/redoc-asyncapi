@@ -1,11 +1,5 @@
 import * as lunr from 'lunr';
-
-try {
-  // tslint:disable-next-line
-  require('core-js/es/promise'); // bundle into worker
-} catch (_) {
-  // nope
-}
+import type { SearchResult } from './types';
 
 /* just for better typings */
 export default class Worker {
@@ -16,17 +10,6 @@ export default class Worker {
   load = load;
   dispose = dispose;
   fromExternalJS = fromExternalJS;
-}
-
-export interface SearchDocument {
-  title: string;
-  description: string;
-  id: string;
-}
-
-export interface SearchResult<T = string> {
-  meta: T;
-  score: number;
 }
 
 let store: any[] = [];
@@ -47,14 +30,17 @@ function initEmpty() {
 
   builder.pipeline.add(lunr.trimmer, lunr.stopWordFilter, lunr.stemmer);
 
-  index = new Promise((resolve) => {
+  index = new Promise(resolve => {
     resolveIndex = resolve;
   });
 }
 
 initEmpty();
 
-const expandTerm = (term) => '*' + lunr.stemmer(new lunr.Token(term, {})) + '*';
+const expandTerm = term => {
+  const token = lunr.trimmer(new lunr.Token(term, {}));
+  return '*' + lunr.stemmer(token) + '*';
+};
 
 export function add<T>(title: string, description: string, meta?: T) {
   const ref = store.push(meta) - 1;
@@ -104,11 +90,11 @@ export async function search<Meta = string>(
     return [];
   }
 
-  let searchResults = (await index).query((t) => {
+  let searchResults = (await index).query(t => {
     q.trim()
       .toLowerCase()
       .split(/\s+/)
-      .forEach((term) => {
+      .forEach(term => {
         if (term.length === 1) return;
         const exp = expandTerm(term);
         t.term(exp, {});
@@ -119,5 +105,5 @@ export async function search<Meta = string>(
     searchResults = searchResults.slice(0, limit);
   }
 
-  return searchResults.map((res) => ({ meta: store[res.ref], score: res.score }));
+  return searchResults.map(res => ({ meta: store[res.ref], score: res.score }));
 }

@@ -15,7 +15,6 @@ export interface ParameterBodyProps {
 }
 
 export class ParameterBody extends React.PureComponent<ParameterBodyProps> {
-
   render() {
     const { body } = this.props;
     if (body === undefined) {
@@ -23,12 +22,11 @@ export class ParameterBody extends React.PureComponent<ParameterBodyProps> {
     }
 
     const bodyContent = body && body.content;
+
     const bodyDescription = body && body.description;
 
     return (
-      <>
-        {bodyContent && <BodyContent content={bodyContent} description={bodyDescription} />}
-      </>
+      <>{bodyContent && <BodyContent content={bodyContent} description={bodyDescription} />}</>
     );
   }
 }

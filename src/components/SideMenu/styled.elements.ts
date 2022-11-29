@@ -1,19 +1,18 @@
-import * as classnames from 'classnames';
+import { default as classnames } from 'classnames';
 import { darken } from 'polished';
 
 import { deprecatedCss, ShelfIcon } from '../../common-elements';
-import styled, { css } from '../../styled-components';
-import { SidebarItemSetttings } from '../../theme';
+import styled, { css, media, ResolvedThemeInterface } from '../../styled-components';
 
 export const OperationBadge = styled.span.attrs((props: { type: string }) => ({
   className: `operation-type ${props.type}`,
-})) <{ type: string }>`
+}))<{ type: string }>`
   width: 9ex;
   display: inline-block;
-  height: ${(props) => props.theme.typography.code.fontSize};
-  line-height: ${(props) => props.theme.typography.code.fontSize};
+  height: ${props => props.theme.typography.code.fontSize};
+  line-height: ${props => props.theme.typography.code.fontSize};
   background-color: #333;
-  border-radius: ${(props) => props.theme.border.radius};
+  border-radius: 3px;
   background-repeat: no-repeat;
   background-position: 6px 4px;
   font-size: 7px;
@@ -27,63 +26,81 @@ export const OperationBadge = styled.span.attrs((props: { type: string }) => ({
   margin-top: 2px;
 
   &.get {
-    background-color: ${(props) => props.theme.colors.http.get};
+    background-color: ${props => props.theme.colors.http.get};
   }
 
   &.post {
-    background-color: ${(props) => props.theme.colors.http.post};
+    background-color: ${props => props.theme.colors.http.post};
   }
 
   &.put {
-    background-color: ${(props) => props.theme.colors.http.put};
+    background-color: ${props => props.theme.colors.http.put};
   }
 
   &.options {
-    background-color: ${(props) => props.theme.colors.http.options};
+    background-color: ${props => props.theme.colors.http.options};
   }
 
   &.patch {
-    background-color: ${(props) => props.theme.colors.http.patch};
+    background-color: ${props => props.theme.colors.http.patch};
   }
 
   &.delete {
-    background-color: ${(props) => props.theme.colors.http.delete};
+    background-color: ${props => props.theme.colors.http.delete};
   }
 
   &.pub {
-    background-color: ${(props) => props.theme.colors.http.pub};
+    background-color: ${props => props.theme.colors.http.pub};
   }
 
   &.sub {
-    background-color: ${(props) => props.theme.colors.http.sub};
+    background-color: ${props => props.theme.colors.http.sub};
   }
 
   &.basic {
-    background-color: ${(props) => props.theme.colors.http.basic};
+    background-color: ${props => props.theme.colors.http.basic};
   }
 
   &.link {
-    background-color: ${(props) => props.theme.colors.http.link};
+    background-color: ${props => props.theme.colors.http.link};
   }
 
   &.head {
-    background-color: ${(props) => props.theme.colors.http.head};
+    background-color: ${props => props.theme.colors.http.head};
   }
 
   &.hook {
-    background-color: ${(props) => props.theme.colors.primary.main};
+    background-color: ${props => props.theme.colors.primary.main};
   }
 `;
+
+function menuItemActive(
+  depth,
+  { theme }: { theme: ResolvedThemeInterface },
+  option: string,
+): string {
+  if (depth > 1) {
+    return theme.sidebar.level1Items[option];
+  } else if (depth === 1) {
+    return theme.sidebar.groupItems[option];
+  } else {
+    return '';
+  }
+}
 
 export const MenuItemUl = styled.ul<{ expanded: boolean }>`
   margin: 0;
   padding: 0;
 
+  &:first-child {
+    padding-bottom: 32px;
+  }
+
   & & {
     font-size: 0.929em;
   }
 
-  ${(props) => (props.expanded ? '' : 'display: none;')};
+  ${props => (props.expanded ? '' : 'display: none;')};
 `;
 
 export const MenuItemLi = styled.li<{ depth: number }>`
@@ -91,43 +108,22 @@ export const MenuItemLi = styled.li<{ depth: number }>`
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0;
-  ${(props) => (props.depth === 0 ? 'margin-top: 15px' : '')};
+  ${props => (props.depth === 0 ? 'margin-top: 15px' : '')};
 `;
 
 export const menuItemDepth = {
   0: css`
-    opacity: ${({ theme }) => theme.sidebar.groupItems.opacity};
-    font-size: ${({ theme }) => theme.sidebar.groupItems.fontSize};
-    font-weight: ${({ theme }) => theme.sidebar.groupItems.fontWeight};
+    opacity: 0.7;
+    text-transform: ${({ theme }) => theme.sidebar.groupItems.textTransform};
+    font-size: 0.8em;
     padding-bottom: 0;
     cursor: default;
-    text-transform: ${({ theme }) => theme.sidebar.groupItems.textTransform};
-    &:hover {
-      color: ${(props) => props.theme.sidebar.groupItems.hover.color};
-    }
   `,
   1: css`
-    opacity: ${({ theme }) => theme.sidebar.level1Items.opacity};
-    font-size: ${({ theme }) => theme.sidebar.level1Items.fontSize};
-    font-weight: ${({ theme }) => theme.sidebar.level1Items.fontWeight};
+    font-size: 0.929em;
     text-transform: ${({ theme }) => theme.sidebar.level1Items.textTransform};
-    &:hover {
-      color: ${(props) => props.theme.sidebar.level1Items.hover.color};
-    }
-  `,
-  2: css`
-    opacity: ${({ theme }) => theme.sidebar.level2Items.opacity};
-    font-size: ${({ theme }) => theme.sidebar.level2Items.fontSize};
-    font-weight: ${({ theme }) => theme.sidebar.level2Items.fontWeight};
-    text-transform: ${({ theme }) => theme.sidebar.level2Items.textTransform};
-    &:hover {
-      color: ${(props) => props.theme.sidebar.level2Items.hover.color};
-    }
   `,
 };
-
-const getLevelSettings = (sidebar: any, depth: number): SidebarItemSetttings =>
-  (depth === 0 ? sidebar.groupItems : sidebar[`level${depth}Items`]) as SidebarItemSetttings;
 
 export interface MenuItemLabelType {
   depth: number;
@@ -141,43 +137,37 @@ export const MenuItemLabel = styled.label.attrs((props: MenuItemLabelType) => ({
   className: classnames('-depth' + props.depth, {
     active: props.active,
   }),
-})) <MenuItemLabelType>`
+}))<MenuItemLabelType>`
   cursor: pointer;
-  color: ${(props) =>
+  color: ${props =>
     props.active
-      ? getLevelSettings(props.theme.sidebar, props.depth).active.color
-      : getLevelSettings(props.theme.sidebar, props.depth).color};
+      ? menuItemActive(props.depth, props, 'activeTextColor')
+      : props.theme.sidebar.textColor};
   margin: 0;
-  padding: 12.5px ${(props) => props.theme.spacing.unit * 4}px;
+  padding: 12.5px ${props => props.theme.spacing.unit * 4}px;
   ${({ depth, type, theme }) =>
     (type === 'section' && depth > 1 && 'padding-left: ' + theme.spacing.unit * 8 + 'px;') || ''}
   display: flex;
   justify-content: space-between;
-  font-family: ${(props) => props.theme.typography.headings.fontFamily};
-  ${(props) => menuItemDepth[props.depth]};
-  background-color: ${(props) =>
+  font-family: ${props => props.theme.typography.headings.fontFamily};
+  ${props => menuItemDepth[props.depth]};
+  background-color: ${props =>
     props.active
-      ? getLevelSettings(props.theme.sidebar, props.depth).active.backgroundColor
-      : getLevelSettings(props.theme.sidebar, props.depth).backgroundColor};
+      ? menuItemActive(props.depth, props, 'activeBackgroundColor')
+      : props.theme.sidebar.backgroundColor};
 
-  ${(props) => (props.deprecated && deprecatedCss) || ''};
+  ${props => (props.deprecated && deprecatedCss) || ''};
 
   &:hover {
-    color: ${(props) =>
-    props.active
-      ? getLevelSettings(props.theme.sidebar, props.depth).active.color
-      : getLevelSettings(props.theme.sidebar, props.depth).hover.color};
-    background-color: ${(props) =>
-    props.active
-      ? getLevelSettings(props.theme.sidebar, props.depth).active.backgroundColor
-      : getLevelSettings(props.theme.sidebar, props.depth).hover.backgroundColor};
+    color: ${props => menuItemActive(props.depth, props, 'activeTextColor')};
+    background-color: ${props => menuItemActive(props.depth, props, 'activeBackgroundColor')};
   }
 
   ${ShelfIcon} {
-    height: ${(props) => getLevelSettings(props.theme.sidebar, props.depth).arrow.size};
-    width: ${(props) => getLevelSettings(props.theme.sidebar, props.depth).arrow.size};
+    height: ${({ theme }) => theme.sidebar.arrow.size};
+    width: ${({ theme }) => theme.sidebar.arrow.size};
     polygon {
-      fill: ${(props) => getLevelSettings(props.theme.sidebar, props.depth).arrow.color};
+      fill: ${({ theme }) => theme.sidebar.arrow.color};
     }
   }
 `;
@@ -185,27 +175,39 @@ export const MenuItemLabel = styled.label.attrs((props: MenuItemLabelType) => ({
 export const MenuItemTitle = styled.span<{ width?: string }>`
   display: inline-block;
   vertical-align: middle;
-  width: ${(props) => (props.width ? props.width : 'auto')};
+  width: ${props => (props.width ? props.width : 'auto')};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 export const RedocAttribution = styled.div`
-  ${({ theme }) => `
-  font-size: 0.8em;
-  margin-top: ${theme.spacing.unit * 2}px;
-  padding: 0 ${theme.spacing.unit * 4}px;
-  text-align: left;
+  ${({ theme }) => css`
+    font-size: 0.8em;
+    margin-top: ${theme.spacing.unit * 2}px;
+    text-align: center;
+    position: fixed;
+    width: ${theme.sidebar.width};
+    bottom: 0;
+    background: ${theme.sidebar.backgroundColor};
 
-  opacity: 0.7;
-
-  a,
-  a:visited,
-  a:hover {
-    color: ${theme.sidebar.groupItems.color} !important;
-    border-top: 1px solid ${darken(0.1, theme.sidebar.groupItems.backgroundColor)};
-    padding: ${theme.spacing.unit}px 0;
-    display: block;
+    a,
+    a:visited,
+    a:hover {
+      color: ${theme.sidebar.textColor} !important;
+      padding: ${theme.spacing.unit}px 0;
+      border-top: 1px solid ${darken(0.1, theme.sidebar.backgroundColor)};
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `};
+  img {
+    width: 15px;
+    margin-right: 5px;
   }
-`};
+
+  ${media.lessThan('small')`
+    width: 100%;
+  `};
 `;

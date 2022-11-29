@@ -26,8 +26,8 @@ const normalizeBindingStrategy = [
       }
 
       return bindings;
-    }
-  }
+    },
+  },
 ];
 
 export class OperationBindings extends React.PureComponent<OperationBindingsProps> {
@@ -39,7 +39,7 @@ export class OperationBindings extends React.PureComponent<OperationBindingsProp
 
     const protocolKey = protocolsKeys[0];
     const normalizeBinding = normalizeBindingStrategy[protocolKey];
-    if (!normalizeBinding){
+    if (!normalizeBinding) {
       return null;
     }
 

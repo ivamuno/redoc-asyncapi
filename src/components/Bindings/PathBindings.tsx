@@ -8,7 +8,8 @@ export interface PathBindingsProps {
 const normalizeBindingStrategy = {
   ['amqp']: amqpBindings => {
     const bindings: any[] = [];
-    const bindingObject = amqpBindings.is === 'routingKey' ? amqpBindings.exchange : amqpBindings.queue;
+    const bindingObject =
+      amqpBindings.is === 'routingKey' ? amqpBindings.exchange : amqpBindings.queue;
     bindings.push({ key: 'is', value: amqpBindings.is === 'routingKey' ? 'exchange' : 'queue' });
     for (const [key, value] of Object.entries(bindingObject)) {
       bindings.push({ key: key, value: value });
@@ -16,7 +17,9 @@ const normalizeBindingStrategy = {
 
     return bindings;
   },
-  ['kafka']: _kafkaBindings => { return []; }
+  ['kafka']: _kafkaBindings => {
+    return [];
+  },
 };
 
 export class PathBindings extends React.PureComponent<PathBindingsProps> {
@@ -34,6 +37,12 @@ export class PathBindings extends React.PureComponent<PathBindingsProps> {
     }
 
     const bindings = normalizeBinding(this.props.bindings[protocolKey]);
-    return <Bindings bindingGroupHeader="Channel Bindings" bindingGroupName={protocolKey} bindings={bindings} />;
+    return (
+      <Bindings
+        bindingGroupHeader="Channel Bindings"
+        bindingGroupName={protocolKey}
+        bindings={bindings}
+      />
+    );
   }
 }

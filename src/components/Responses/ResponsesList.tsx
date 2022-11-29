@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { l } from '../../services/Labels';
 import { ResponseModel } from '../../services/models';
 import styled from '../../styled-components';
 import { ResponseView } from './Response';
@@ -26,8 +27,8 @@ export class ResponsesList extends React.PureComponent<ResponseListProps> {
 
     return (
       <div>
-        <ResponsesHeader>{isCallback ? 'Callback responses' : 'Responses'}</ResponsesHeader>
-        {responses.map((response) => {
+        <ResponsesHeader>{isCallback ? l('callbackResponses') : l('responses')}</ResponsesHeader>
+        {responses.map(response => {
           return <ResponseView key={response.code} response={response} />;
         })}
       </div>

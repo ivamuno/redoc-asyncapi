@@ -1,12 +1,11 @@
 import * as React from 'react';
 
-import { IMenuItem } from '../../services/MenuStore';
-import { SearchStore } from '../../services/SearchStore';
+import type { IMenuItem, SearchResult } from '../../services/types';
+import type { SearchStore } from '../../services/SearchStore';
+import type { MarkerService } from '../../services/MarkerService';
+
 import { MenuItem } from '../SideMenu/MenuItem';
-
-import { MarkerService } from '../../services/MarkerService';
-import { SearchResult } from '../../services/SearchWorker.worker';
-
+import { OptionsContext } from '../OptionsProvider';
 import { bind, debounce } from 'decko';
 import { PerfectScrollbarWrap } from '../../common-elements/perfect-scrollbar';
 import {
@@ -16,6 +15,7 @@ import {
   SearchResultsBox,
   SearchWrap,
 } from './styled.elements';
+import { l } from '../../services/Labels';
 
 export interface SearchBoxProps {
   search: SearchStore<string>;
@@ -28,6 +28,7 @@ export interface SearchBoxProps {
 
 export interface SearchBoxState {
   results: SearchResult[];
+  noResults: boolean;
   term: string;
   activeItemIdx: number;
 }
@@ -35,10 +36,13 @@ export interface SearchBoxState {
 export class SearchBox extends React.PureComponent<SearchBoxProps, SearchBoxState> {
   activeItemRef: MenuItem | null = null;
 
+  static contextType = OptionsContext;
+
   constructor(props) {
     super(props);
     this.state = {
       results: [],
+      noResults: false,
       term: '',
       activeItemIdx: -1,
     };
@@ -47,6 +51,7 @@ export class SearchBox extends React.PureComponent<SearchBoxProps, SearchBoxStat
   clearResults(term: string) {
     this.setState({
       results: [],
+      noResults: false,
       term,
     });
     this.props.marker.unmark();
@@ -55,6 +60,7 @@ export class SearchBox extends React.PureComponent<SearchBoxProps, SearchBoxStat
   clear = () => {
     this.setState({
       results: [],
+      noResults: false,
       term: '',
       activeItemIdx: -1,
     });
@@ -95,6 +101,7 @@ export class SearchBox extends React.PureComponent<SearchBoxProps, SearchBoxStat
   setResults(results: SearchResult[], term: string) {
     this.setState({
       results,
+      noResults: results.length === 0,
     });
     this.props.marker.mark(term);
   }
@@ -102,14 +109,15 @@ export class SearchBox extends React.PureComponent<SearchBoxProps, SearchBoxStat
   @bind
   @debounce(400)
   searchCallback(searchTerm: string) {
-    this.props.search.search(searchTerm).then((res) => {
+    this.props.search.search(searchTerm).then(res => {
       this.setResults(res, searchTerm);
     });
   }
 
   search = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { minCharacterLengthToInitSearch } = this.context;
     const q = event.target.value;
-    if (q.length < 3) {
+    if (q.length < minCharacterLengthToInitSearch) {
       this.clearResults(q);
       return;
     }
@@ -124,12 +132,13 @@ export class SearchBox extends React.PureComponent<SearchBoxProps, SearchBoxStat
 
   render() {
     const { activeItemIdx } = this.state;
-    const results = this.state.results.map((res) => ({
-      item: this.props.getItemById(res.meta)!,
-      score: res.score,
-    }));
-
-    results.sort((a, b) => b.score - a.score);
+    const results = this.state.results
+      .filter(res => this.props.getItemById(res.meta))
+      .map(res => ({
+        item: this.props.getItemById(res.meta)!,
+        score: res.score,
+      }))
+      .sort((a, b) => b.score - a.score);
 
     return (
       <SearchWrap role="search">
@@ -166,6 +175,9 @@ export class SearchBox extends React.PureComponent<SearchBoxProps, SearchBoxStat
             </SearchResultsBox>
           </PerfectScrollbarWrap>
         )}
+        {this.state.term && this.state.noResults ? (
+          <SearchResultsBox data-role="search:results">{l('noResultsFound')}</SearchResultsBox>
+        ) : null}
       </SearchWrap>
     );
   }

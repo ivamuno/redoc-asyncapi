@@ -11,22 +11,22 @@ export const SearchWrap = styled.div`
 export const SearchInput = styled.input.attrs(() => ({
   className: 'search-input',
 }))`
-  width: calc(100% - ${(props) => props.theme.spacing.unit * 8}px);
+  width: calc(100% - ${props => props.theme.spacing.unit * 8}px);
   box-sizing: border-box;
-  margin: 0 ${(props) => props.theme.spacing.unit * 4}px;
-  padding: 5px ${(props) => props.theme.spacing.unit * 2}px 5px
-    ${(props) => props.theme.spacing.unit * 4}px;
+  margin: 0 ${props => props.theme.spacing.unit * 4}px;
+  padding: 5px ${props => props.theme.spacing.unit * 2}px 5px
+    ${props => props.theme.spacing.unit * 4}px;
   border: 0;
   border-bottom: 1px solid
     ${({ theme }) =>
-      (getLuminance(theme.sidebar.groupItems.backgroundColor) > 0.5 ? darken : lighten)(
+      (getLuminance(theme.sidebar.backgroundColor) > 0.5 ? darken : lighten)(
         0.1,
-        theme.sidebar.groupItems.backgroundColor,
+        theme.sidebar.backgroundColor,
       )};
   font-family: ${({ theme }) => theme.typography.fontFamily};
   font-weight: bold;
   font-size: 13px;
-  color: ${(props) => props.theme.sidebar.groupItems.color};
+  color: ${props => props.theme.sidebar.textColor};
   background-color: transparent;
   outline: none;
 `;
@@ -46,26 +46,30 @@ export const SearchIcon = styled((props: { className?: string }) => (
   className: 'search-icon',
 })`
   position: absolute;
-  left: ${(props) => props.theme.spacing.unit * 4}px;
+  left: ${props => props.theme.spacing.unit * 4}px;
   height: 1.8em;
   width: 0.9em;
 
   path {
-    fill: ${(props) => props.theme.sidebar.groupItems.color};
+    fill: ${props => props.theme.sidebar.textColor};
   }
 `;
 
 export const SearchResultsBox = styled.div`
-  padding: ${(props) => props.theme.spacing.unit}px 0;
-  background-color: ${({ theme }) => darken(0.05, theme.sidebar.groupItems.backgroundColor)}};
-  color: ${(props) => props.theme.sidebar.groupItems.color};
+  padding: ${props => props.theme.spacing.unit}px 0;
+  background-color: ${({ theme }) => darken(0.05, theme.sidebar.backgroundColor)}};
+  color: ${props => props.theme.sidebar.textColor};
   min-height: 150px;
   max-height: 250px;
-  border-top: ${({ theme }) => darken(0.1, theme.sidebar.groupItems.backgroundColor)}};
-  border-bottom: ${({ theme }) => darken(0.1, theme.sidebar.groupItems.backgroundColor)}};
+  border-top: ${({ theme }) => darken(0.1, theme.sidebar.backgroundColor)}};
+  border-bottom: ${({ theme }) => darken(0.1, theme.sidebar.backgroundColor)}};
   margin-top: 10px;
   line-height: 1.4;
   font-size: 0.9em;
+  
+  li {
+    background-color: inherit;
+  }
 
   ${MenuItemLabel} {
     padding-top: 6px;
@@ -73,7 +77,7 @@ export const SearchResultsBox = styled.div`
 
     &:hover,
     &.active {
-      background-color: ${({ theme }) => darken(0.1, theme.sidebar.groupItems.backgroundColor)};
+      background-color: ${({ theme }) => darken(0.1, theme.sidebar.backgroundColor)};
     }
 
     > svg {
@@ -85,9 +89,9 @@ export const SearchResultsBox = styled.div`
 export const ClearIcon = styled.i`
   position: absolute;
   display: inline-block;
-  width: ${(props) => props.theme.spacing.unit * 2}px;
+  width: ${props => props.theme.spacing.unit * 2}px;
   text-align: center;
-  right: ${(props) => props.theme.spacing.unit * 4}px;
+  right: ${props => props.theme.spacing.unit * 4}px;
   line-height: 2em;
   vertical-align: middle;
   margin-right: 2px;

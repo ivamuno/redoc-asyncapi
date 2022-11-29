@@ -1,4 +1,12 @@
-import * as JsonSchemaRefParser from 'json-schema-ref-parser';
+import type { Source, Document } from '@redocly/openapi-core';
+// eslint-disable-next-line import/no-internal-modules
+import type { ResolvedConfig } from '@redocly/openapi-core/lib/config';
+
+// eslint-disable-next-line import/no-internal-modules
+import { bundle } from '@redocly/openapi-core/lib/bundle';
+// eslint-disable-next-line import/no-internal-modules
+import { Config } from '@redocly/openapi-core/lib/config/config';
+
 /* tslint:disable-next-line:no-implicit-dependencies */
 import { convertObj } from 'swagger2openapi';
 import { OpenAPIParser } from '../services/OpenAPIParser';
@@ -7,6 +15,7 @@ import {
   AsyncChannelObject,
   AsyncMessageObject,
   AsyncOperationObject,
+  OpenAPIExample,
   OpenAPIMediaType,
   OpenAPIOperation,
   OpenAPIParameter,
@@ -19,22 +28,52 @@ import {
   OpenAPISpec,
   Referenced,
 } from '../types';
+import { IS_BROWSER } from './dom';
+import * as JsonSchemaRefParser from 'json-schema-ref-parser';
 
 export async function loadAndBundleSpec(specUrlOrObject: object | string): Promise<OpenAPISpec> {
-  const parser = new JsonSchemaRefParser();
-  const spec = (await parser.bundle(specUrlOrObject, {
-    resolve: { http: { withCredentials: false } },
-  } as object)) as any;
+  let spec;
+  try {
+    const parser = new JsonSchemaRefParser();
+    spec = (await parser.bundle(specUrlOrObject, {
+      resolve: { http: { withCredentials: false } },
+    } as object)) as any;
 
-  if (spec.asyncapi !== undefined) {
+    if (spec.asyncapi) {
+      spec.swagger = '2.0';
+      specUrlOrObject = spec;
+    }
+  } catch (error) {
+    console.error('loadAndBundleSpec.error', error);
+  }
+
+  const config = new Config({} as ResolvedConfig);
+  const bundleOpts = {
+    config,
+    base: IS_BROWSER ? window.location.href : process.cwd(),
+  };
+
+  if (IS_BROWSER) {
+    config.resolve.http.customFetch = global.fetch;
+  }
+
+  if (typeof specUrlOrObject === 'object' && specUrlOrObject !== null) {
+    bundleOpts['doc'] = {
+      source: { absoluteRef: '' } as Source,
+      parsed: specUrlOrObject,
+    } as Document;
+  } else {
+    bundleOpts['ref'] = specUrlOrObject;
+  }
+
+  const {
+    bundle: { parsed },
+  } = await bundle(bundleOpts);
+  if (parsed.asyncapi !== undefined) {
     return convertAsyncAPI2OpenAPI(new OpenAPIParser(spec as OpenAPISpec), spec);
   }
 
-  if (spec.swagger !== undefined) {
-    return convertSwagger2OpenAPI(spec);
-  }
-
-  return spec;
+  return parsed.swagger !== undefined ? convertSwagger2OpenAPI(parsed) : parsed;
 }
 
 function convertSwagger2OpenAPI(spec: any): Promise<OpenAPISpec> {
@@ -56,7 +95,7 @@ function convertAsyncAPI2OpenAPI(parser: OpenAPIParser, spec: OpenAPISpec): Prom
       const asyncApiServers = spec.servers as Record<string, OpenAPIServer>;
       let openApiServers: OpenAPIServer[] = [];
       if (asyncApiServers) {
-        openApiServers = Object.keys(asyncApiServers).map((key) => {
+        openApiServers = Object.keys(asyncApiServers).map(key => {
           const server = asyncApiServers[key] as OpenAPIServer;
           server.name = key;
           return server;
@@ -73,7 +112,7 @@ function convertAsyncAPI2OpenAPI(parser: OpenAPIParser, spec: OpenAPISpec): Prom
         spec.servers as OpenAPIServer[],
       );
       const channelsKeys: string[] = Object.keys(channels);
-      channelsKeys.forEach((key) => {
+      channelsKeys.forEach(key => {
         const channel: AsyncChannelObject = channels[key];
         const path: OpenAPIPath = convertAsyncAPIChannel2OpenAPIPath(
           parser,
@@ -91,6 +130,7 @@ function convertAsyncAPI2OpenAPI(parser: OpenAPIParser, spec: OpenAPISpec): Prom
       return reject(err);
     }
 
+    console.log('spec', spec);
     resolve(spec);
   });
 }
@@ -103,11 +143,11 @@ function convertAsyncAPISecurity2OpenAPISecurity(
   }
 
   const securityRecords: Record<string, string[]> = {};
-  servers.forEach((server) => {
+  servers.forEach(server => {
     const serverSecurity: OpenAPISecurityRequirement[] = server.security || [];
     if (serverSecurity) {
-      serverSecurity.forEach((security) => {
-        Object.keys(security).forEach((securityReqKey) => {
+      serverSecurity.forEach(security => {
+        Object.keys(security).forEach(securityReqKey => {
           if (!Object.keys(securityRecords).includes(securityReqKey)) {
             securityRecords[securityReqKey] = serverSecurity[securityReqKey];
           }
@@ -135,10 +175,10 @@ function convertAsyncAPIChannel2OpenAPIPath(
         in: 'channel',
         description: param.description,
         schema: param.schema,
-        required: true
-      } as OpenAPIParameter
+        required: true,
+      } as OpenAPIParameter;
     }),
-    bindings: derefBindings(parser, channel.bindings)
+    bindings: derefBindings(parser, channel.bindings),
   };
 
   if (channel.publish) {
@@ -173,7 +213,7 @@ function convertAsyncAPIOperation2OpenAPIOperation(
   let asyncOpMessage = asyncOp.message as AsyncMessageObject;
   const asyncOpMessageRef = asyncOp.message as Referenced<OpenAPIRequestBody>;
   if (asyncOpMessageRef) {
-    asyncOpMessage = parser.deref(asyncOpMessageRef);
+    asyncOpMessage = parser.deref(asyncOpMessageRef).resolved;
   }
 
   const payloadRef = asyncOpMessage.payload?.$ref;
@@ -187,10 +227,11 @@ function convertAsyncAPIOperation2OpenAPIOperation(
   const contentTypeName = asyncOpMessage.schemaFormat || defaultContentType || 'application/json';
   const contentType: OpenAPIMediaType = {
     schema: schema,
-    examples: asyncOpMessage.examples || payloadBody.examples,
+    examples:
+      (asyncOpMessage.examples as { [name: string]: OpenAPIExample }) || payloadBody.examples,
     example: payloadBody.example,
   };
-  const requestBody: Referenced<OpenAPIRequestBody> = {
+  const requestBody = {
     content: {
       [contentTypeName]: contentType,
     },
@@ -198,7 +239,7 @@ function convertAsyncAPIOperation2OpenAPIOperation(
 
   const operationBindings: Record<string, any> = derefBindings(parser, asyncOp.bindings) || {};
   const messageBindings: Record<string, any> = derefBindings(parser, asyncOpMessage.bindings) || {};
-  Object.keys(messageBindings).forEach((b) => {
+  Object.keys(messageBindings).forEach(b => {
     const operationBinding = operationBindings[b];
     if (operationBinding) {
       operationBindings[b] = Object.assign(operationBindings[b], messageBindings[b]);
@@ -208,7 +249,7 @@ function convertAsyncAPIOperation2OpenAPIOperation(
     operationId: asyncOp.operationId,
     summary: asyncOp.summary,
     description: asyncOp.description,
-    tags: asyncOp.tags?.map((t) => t.name),
+    tags: asyncOp.tags?.map(t => t.name),
     externalDocs: asyncOp.externalDocs,
     security: security,
     bindings: operationBindings,
@@ -220,13 +261,10 @@ function convertAsyncAPIOperation2OpenAPIOperation(
   return openAPIOp;
 }
 
-function derefBindings(
-  parser: OpenAPIParser,
-  bindings: any
-): any {
+function derefBindings(parser: OpenAPIParser, bindings: any): any {
   const channelBindingsRef = bindings as Referenced<AsyncBindingsObject>;
   if (channelBindingsRef as OpenAPIRef) {
-    return parser.deref(channelBindingsRef);
+    return parser.deref(channelBindingsRef).resolved;
   }
 
   return bindings;

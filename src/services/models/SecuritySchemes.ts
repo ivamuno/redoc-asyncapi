@@ -1,12 +1,13 @@
-import { OpenAPISecurityScheme, Referenced } from '../../types';
-import { SECURITY_SCHEMES_SECTION_PREFIX } from '../../utils/openapi';
-import { OpenAPIParser } from '../OpenAPIParser';
+import type { OpenAPISecurityScheme, Referenced } from '../../types';
+import { SECURITY_SCHEMES_SECTION_PREFIX } from '../../utils';
+import type { OpenAPIParser } from '../OpenAPIParser';
 
 export class SecuritySchemeModel {
   id: string;
   sectionId: string;
   type: OpenAPISecurityScheme['type'];
   description: string;
+  displayName: string;
   apiKey?: {
     name: string;
     in: OpenAPISecurityScheme['in'];
@@ -23,10 +24,11 @@ export class SecuritySchemeModel {
   };
 
   constructor(parser: OpenAPIParser, id: string, scheme: Referenced<OpenAPISecurityScheme>) {
-    const info = parser.deref(scheme);
+    const { resolved: info } = parser.deref(scheme);
     this.id = id;
     this.sectionId = SECURITY_SCHEMES_SECTION_PREFIX + id;
     this.type = info.type;
+    this.displayName = info['x-displayName'] || id;
     this.description = info.description || '';
     if (info.type === 'apiKey') {
       this.apiKey = {
@@ -60,7 +62,7 @@ export class SecuritySchemesModel {
   constructor(parser: OpenAPIParser) {
     const schemes = (parser.spec.components && parser.spec.components.securitySchemes) || {};
     this.schemes = Object.keys(schemes).map(
-      (name) => new SecuritySchemeModel(parser, name, schemes[name]),
+      name => new SecuritySchemeModel(parser, name, schemes[name]),
     );
   }
 }

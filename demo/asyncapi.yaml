@@ -5,8 +5,8 @@ info:
   version: '1.0'
   contact: {}
 tags:
-- name: cats
-  description: Everything about your cats.
+  - name: cats
+    description: Everything about your cats.
 servers:
   cats-server:
     url: server.p-url:{port}
@@ -14,13 +14,13 @@ servers:
     protocolVersion: 0.9.1
     description: Allows you to connect using the AMQP protocol to our RabbitMQ server.
     security:
-    - user-password: []
+      - user-password: []
     variables:
       port:
         description: Secure connection (TLS) is available through port 5672.
         default: '5672'
         enum:
-        - '5672'
+          - '5672'
     bindings:
       amqp: {}
 components:
@@ -53,17 +53,17 @@ components:
           type: object
           description: Message payload
       required:
-      - correlationId
-      - messageId
-      - messageType
-      - timestamp
-      - version
-      - payload
+        - correlationId
+        - messageId
+        - messageType
+        - timestamp
+        - version
+        - payload
       discriminator:
         propertyName: messageType
         mapping:
-          CreateCatReplySuccessCommand: "#/components/schemas/CreateCatReplySuccessCommand"
-          CreateCatReplyErrorCommand: "#/components/schemas/CreateCatReplyErrorCommand"
+          CreateCatReplySuccessCommand: '#/components/schemas/CreateCatReplySuccessCommand'
+          CreateCatReplyErrorCommand: '#/components/schemas/CreateCatReplyErrorCommand'
     CreateCatCommand:
       type: object
       properties:
@@ -89,12 +89,12 @@ components:
           type: object
           description: Message payload
       required:
-      - correlationId
-      - messageId
-      - messageType
-      - timestamp
-      - version
-      - payload
+        - correlationId
+        - messageId
+        - messageType
+        - timestamp
+        - version
+        - payload
     ExtraModel:
       type: object
       properties:
@@ -103,21 +103,21 @@ components:
         two:
           type: number
       required:
-      - one
-      - two
+        - one
+        - two
     BreadCoonDto:
       type: object
       properties:
         name:
           type: string
       required:
-      - name
+        - name
     LettersEnum:
       type: string
       enum:
-      - A
-      - B
-      - C
+        - A
+        - B
+        - C
     TagDto:
       type: object
       properties:
@@ -125,7 +125,7 @@ components:
           type: string
           description: name
       required:
-      - name
+        - name
     CreateCatDto:
       type: object
       properties:
@@ -139,10 +139,10 @@ components:
           discriminator:
             propertyName: name
             mapping:
-              MaineCoonDto: "#/components/schemas/MaineCoonDto"
-              BritishShorthairCatDto: "#/components/schemas/BritishShorthairCatDto"
+              MaineCoonDto: '#/components/schemas/MaineCoonDto'
+              BritishShorthairCatDto: '#/components/schemas/BritishShorthairCatDto'
           allOf:
-          - "$ref": "#/components/schemas/BreadCoonDto"
+            - '$ref': '#/components/schemas/BreadCoonDto'
         tags:
           type: array
           items:
@@ -162,25 +162,25 @@ components:
               isReadonly:
                 type: string
         enum:
-          "$ref": "#/components/schemas/LettersEnum"
+          '$ref': '#/components/schemas/LettersEnum'
         enumArr:
           type: array
           items:
-            "$ref": "#/components/schemas/LettersEnum"
+            '$ref': '#/components/schemas/LettersEnum'
         tag:
           description: tag
           allOf:
-          - "$ref": "#/components/schemas/TagDto"
+            - '$ref': '#/components/schemas/TagDto'
       required:
-      - name
-      - age
-      - _breed
-      - tags
-      - createdAt
-      - urls
-      - options
-      - enum
-      - enumArr
+        - name
+        - age
+        - _breed
+        - tags
+        - createdAt
+        - urls
+        - options
+        - enum
+        - enumArr
     CatCreatedEvent:
       type: object
       properties:
@@ -205,14 +205,14 @@ components:
         payload:
           description: Message payload
           allOf:
-          - "$ref": "#/components/schemas/CreateCatDto"
+            - '$ref': '#/components/schemas/CreateCatDto'
       required:
-      - correlationId
-      - messageId
-      - messageType
-      - timestamp
-      - version
-      - payload
+        - correlationId
+        - messageId
+        - messageType
+        - timestamp
+        - version
+        - payload
     MaineCoonDto:
       type: object
       properties:
@@ -221,7 +221,7 @@ components:
         weight:
           type: number
       required:
-      - name
+        - name
     BritishShorthairCatDto:
       type: object
       properties:
@@ -230,7 +230,7 @@ components:
         height:
           type: number
       required:
-      - name
+        - name
     CreateCatReplySuccessCommand:
       type: object
       properties:
@@ -256,12 +256,12 @@ components:
           type: object
           description: Message payload
       required:
-      - correlationId
-      - messageId
-      - messageType
-      - timestamp
-      - version
-      - payload
+        - correlationId
+        - messageId
+        - messageType
+        - timestamp
+        - version
+        - payload
     CreateCatReplyErrorCommand:
       type: object
       properties:
@@ -287,12 +287,12 @@ components:
           type: object
           description: Message payload
       required:
-      - correlationId
-      - messageId
-      - messageType
-      - timestamp
-      - version
-      - payload
+        - correlationId
+        - messageId
+        - messageType
+        - timestamp
+        - version
+        - payload
 defaultContentType: application/json
 channels:
   cats-pub-channel:cat-routing-key:
@@ -306,13 +306,13 @@ channels:
           vhost: cats
     publish:
       tags:
-      - name: Cats RPC
+        - name: Cats RPC
       summary: Create Cat Response
       description: Description for Create Cat Response operation
       message:
         name: Create Cat Reply Command
         payload:
-          "$ref": "#/components/schemas/CreateCatReplyCommand"
+          '$ref': '#/components/schemas/CreateCatReplyCommand'
           examples:
             CreateCatReplySuccessCommand:
               value:
@@ -351,13 +351,13 @@ channels:
           vhost: cats
     subscribe:
       tags:
-      - name: Cats RPC
+        - name: Cats RPC
       summary: Create Cat Request
       description: Description for Create Cat Request operation
       message:
         name: Create Cat Command
         payload:
-          "$ref": "#/components/schemas/CreateCatCommand"
+          '$ref': '#/components/schemas/CreateCatCommand'
           examples:
             British:
               value:
@@ -394,12 +394,12 @@ channels:
       kafka: {}
     publish:
       tags:
-      - name: Cats Events
+        - name: Cats Events
       summary: Publish Cats Events
       message:
         name: Cat Event
         payload:
-          "$ref": "#/components/schemas/CatCreatedEvent"
+          '$ref': '#/components/schemas/CatCreatedEvent'
           examples:
             CatCreated:
               value:
@@ -417,7 +417,7 @@ channels:
         kafka:
           groupId:
             type: string
-            pattern: "^[A-Z]{10}[0-5]$"
+            pattern: '^[A-Z]{10}[0-5]$'
           clientId:
             type: string
-            pattern: "^[a-z]{22}$"
+            pattern: '^[a-z]{22}$'

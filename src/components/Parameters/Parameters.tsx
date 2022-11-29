@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ParametersGroup } from './ParametersGroup';
+
 import { FieldModel } from '../../services/models';
 
 function safePush(obj, prop, item) {
@@ -18,7 +19,7 @@ const PARAM_PLACES = ['path', 'query', 'cookie', 'header', 'channel'];
 export class Parameters extends React.PureComponent<ParametersProps> {
   orderParams(params: FieldModel[]): Record<string, FieldModel[]> {
     const res = {};
-    params.forEach((param) => {
+    params.forEach(param => {
       safePush(res, param.in, param);
     });
     return res;
@@ -36,7 +37,7 @@ export class Parameters extends React.PureComponent<ParametersProps> {
 
     return (
       <>
-        {paramsPlaces.map((place) => (
+        {paramsPlaces.map(place => (
           <ParametersGroup key={place} place={place} parameters={paramsMap[place]} />
         ))}
       </>

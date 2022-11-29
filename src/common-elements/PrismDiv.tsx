@@ -48,9 +48,7 @@ export const PrismDiv = styled.div`
     color: hsl(30, 20%, 50%);
   }
 
-  .ellipsis,
   .token.punctuation {
-    color: ${({ theme }) => theme.codeBlock.colors.symbol};
     opacity: 0.7;
   }
 
@@ -63,11 +61,11 @@ export const PrismDiv = styled.div`
   .token.number,
   .token.constant,
   .token.symbol {
-    color: ${({ theme }) => theme.codeBlock.colors.number};
+    color: #4a8bb3;
   }
 
   .token.boolean {
-    color: ${({ theme }) => theme.codeBlock.colors.boolean};
+    color: #e64441;
   }
 
   .token.selector,
@@ -76,7 +74,7 @@ export const PrismDiv = styled.div`
   .token.char,
   .token.builtin,
   .token.inserted {
-    color: ${({ theme }) => theme.codeBlock.colors.string};
+    color: #a0fbaa;
     & + a,
     & + a:visited {
       color: #4ed2ba;
@@ -85,7 +83,7 @@ export const PrismDiv = styled.div`
   }
 
   .token.property.string {
-    color: ${({ theme }) => theme.codeBlock.colors.property};
+    color: white;
   }
 
   .token.operator,

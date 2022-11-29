@@ -1,8 +1,8 @@
 import * as styledComponents from 'styled-components';
 
-import { ResolvedThemeInterface } from './theme';
+import type { ResolvedThemeInterface } from './theme';
 
-export { ResolvedThemeInterface };
+export type { ResolvedThemeInterface };
 
 const {
   default: styled,
@@ -10,13 +10,13 @@ const {
   createGlobalStyle,
   keyframes,
   ThemeProvider,
-} = styledComponents as styledComponents.ThemedStyledComponentsModule<ResolvedThemeInterface>;
+} = styledComponents as unknown as styledComponents.ThemedStyledComponentsModule<ResolvedThemeInterface>;
 
 export const media = {
   lessThan(breakpoint, print?: boolean, extra?: string) {
     return (...args) => css`
-      @media ${print ? 'print, ' : ''} screen and (max-width: ${(props) =>
-      props.theme.breakpoints[breakpoint]})${extra || ''} {
+      @media ${print ? 'print, ' : ''} screen and (max-width: ${props =>
+          props.theme.breakpoints[breakpoint]}) ${extra || ''} {
         ${(css as any)(...args)};
       }
     `;
@@ -24,7 +24,7 @@ export const media = {
 
   greaterThan(breakpoint) {
     return (...args) => css`
-      @media (min-width: ${(props) => props.theme.breakpoints[breakpoint]}) {
+      @media (min-width: ${props => props.theme.breakpoints[breakpoint]}) {
         ${(css as any)(...args)};
       }
     `;
@@ -32,9 +32,9 @@ export const media = {
 
   between(firstBreakpoint, secondBreakpoint) {
     return (...args) => css`
-      @media (min-width: ${(props) => props.theme.breakpoints[firstBreakpoint]}) and (max-width: ${(
-          props,
-        ) => props.theme.breakpoints[secondBreakpoint]}) {
+      @media (min-width: ${props =>
+          props.theme.breakpoints[firstBreakpoint]}) and (max-width: ${props =>
+          props.theme.breakpoints[secondBreakpoint]}) {
         ${(css as any)(...args)};
       }
     `;
@@ -45,7 +45,7 @@ export { css, createGlobalStyle, keyframes, ThemeProvider };
 export default styled;
 
 export function extensionsHook(styledName: string) {
-  return (props) => {
+  return props => {
     if (!props.theme.extensionsHook) {
       return;
     }

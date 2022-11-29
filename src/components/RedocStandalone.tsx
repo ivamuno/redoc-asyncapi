@@ -1,7 +1,10 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
-import { RedocNormalizedOptions, RedocRawOptions } from '../services/RedocNormalizedOptions';
+import {
+  argValueToBoolean,
+  RedocNormalizedOptions,
+  RedocRawOptions,
+} from '../services/RedocNormalizedOptions';
 import { ErrorBoundary } from './ErrorBoundary';
 import { Loading } from './Loading/Loading';
 import { Redoc } from './Redoc/Redoc';
@@ -14,52 +17,41 @@ export interface RedocStandaloneProps {
   onLoaded?: (e?: Error) => any;
 }
 
-export class RedocStandalone extends React.PureComponent<RedocStandaloneProps> {
-  errorBoundary = React.createRef<ErrorBoundary>();
+declare let __webpack_nonce__: string;
 
-  static propTypes = {
-    spec: (props, _, componentName) => {
-      if (!props.spec && !props.specUrl) {
-        return new Error(
-          `One of props 'spec' or 'specUrl' was not specified in '${componentName}'.`,
-        );
-      }
-      return null;
-    },
+export const RedocStandalone = function (props: RedocStandaloneProps) {
+  const errorBoundary = React.createRef<ErrorBoundary>();
+  const { spec, specUrl, options = {}, onLoaded } = props;
+  const hideLoading = argValueToBoolean(options.hideLoading, false);
 
-    specUrl: (props, _, componentName) => {
-      if (!props.spec && !props.specUrl) {
-        return new Error(
-          `One of props 'spec' or 'specUrl' was not specified in '${componentName}'.`,
-        );
-      }
-      return null;
-    },
-    options: PropTypes.any,
-    onLoaded: PropTypes.any,
-  };
-
-  render() {
-    const { spec, specUrl, options = {}, onLoaded } = this.props;
-    const hideLoading = options.hideLoading !== undefined;
-
-    const normalizedOpts = new RedocNormalizedOptions(options);
-    if (this.errorBoundary.current?.state.error) {
-      this.errorBoundary.current?.setState({ error: undefined });
-    }
-
-    return (
-      <ErrorBoundary ref={this.errorBoundary}>
-        <StoreBuilder spec={spec} specUrl={specUrl} options={options} onLoaded={onLoaded}>
-          {({ loading, store }) =>
-            !loading ? (
-              <Redoc store={store!} />
-            ) : hideLoading ? null : (
-              <Loading color={normalizedOpts.theme.colors.primary.main} spinner={normalizedOpts.spinner} />
-            )
-          }
-        </StoreBuilder>
-      </ErrorBoundary>
-    );
+  const normalizedOpts = new RedocNormalizedOptions(options);
+  if (errorBoundary.current?.state.error) {
+    errorBoundary.current?.setState({ error: undefined });
   }
-}
+
+  if (normalizedOpts.nonce !== undefined) {
+    try {
+      // eslint-disable-next-line  @typescript-eslint/no-unused-vars
+      __webpack_nonce__ = normalizedOpts.nonce;
+    } catch {} // If we have exception, Webpack was not used to run this.
+  }
+
+  return (
+    <ErrorBoundary ref={errorBoundary}>
+      <StoreBuilder
+        spec={spec ? { ...spec } : undefined}
+        specUrl={specUrl}
+        options={options}
+        onLoaded={onLoaded}
+      >
+        {({ loading, store }) =>
+          !loading ? (
+            <Redoc store={store!} />
+          ) : hideLoading ? null : (
+            <Loading color={normalizedOpts.theme.colors.primary.main} />
+          )
+        }
+      </StoreBuilder>
+    </ErrorBoundary>
+  );
+};

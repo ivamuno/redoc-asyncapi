@@ -26,8 +26,8 @@ export interface StickySidebarState {
 const stickyfill = Stickyfill && Stickyfill();
 
 const StyledStickySidebar = styled.div<{ open?: boolean }>`
-  width: ${(props) => props.theme.sidebar.width};
-  background-color: ${(props) => props.theme.sidebar.groupItems.backgroundColor};
+  width: ${props => props.theme.sidebar.width};
+  background-color: ${props => props.theme.sidebar.backgroundColor};
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -44,8 +44,8 @@ const StyledStickySidebar = styled.div<{ open?: boolean }>`
     position: fixed;
     z-index: 20;
     width: 100%;
-    background: ${({ theme }) => theme.sidebar.groupItems.backgroundColor};
-    display: ${(props) => (props.open ? 'flex' : 'none')};
+    background: ${({ theme }) => theme.sidebar.backgroundColor};
+    display: ${props => (props.open ? 'flex' : 'none')};
   `};
 
   @media print {
@@ -56,8 +56,8 @@ const StyledStickySidebar = styled.div<{ open?: boolean }>`
 const FloatingButton = styled.div`
   outline: none;
   user-select: none;
-  background-color: #f2f2f2;
-  color: ${(props) => props.theme.colors.primary.main};
+  background-color: ${({ theme }) => theme.fab.backgroundColor};
+  color: ${props => props.theme.colors.primary.main};
   display: none;
   cursor: pointer;
   position: fixed;
@@ -74,6 +74,9 @@ const FloatingButton = styled.div`
   width: 60px;
   height: 60px;
   padding: 0 20px;
+  svg {
+    color: ${({ theme }) => theme.fab.color};
+  }
 
   @media print {
     display: none;
@@ -134,15 +137,17 @@ export class StickyResponsiveSidebar extends React.Component<
             height: `calc(100vh - ${top})`,
           }}
           // tslint:disable-next-line
-          ref={(el) => {
+          ref={el => {
             this.stickyElement = el as any;
           }}
         >
           {this.props.children}
         </StyledStickySidebar>
-        <FloatingButton onClick={this.toggleNavMenu}>
-          <AnimatedChevronButton open={open} />
-        </FloatingButton>
+        {!this.context.hideFab && (
+          <FloatingButton onClick={this.toggleNavMenu}>
+            <AnimatedChevronButton open={open} />
+          </FloatingButton>
+        )}
       </>
     );
   }

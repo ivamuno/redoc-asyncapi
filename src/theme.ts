@@ -19,9 +19,6 @@ const defaultTheme: ThemeInterface = {
       dark: ({ colors }) => darken(colors.tonalOffset, colors.primary.main),
       contrastText: ({ colors }) => readableColor(colors.primary.main),
     },
-    secondary: {
-      main: 'black'
-    },
     success: {
       main: '#1d8127',
       light: ({ colors }) => lighten(colors.tonalOffset * 2, colors.success.main),
@@ -89,21 +86,21 @@ const defaultTheme: ThemeInterface = {
     },
   },
   schema: {
-    linesColor: (theme) =>
+    linesColor: theme =>
       lighten(
         theme.colors.tonalOffset,
         desaturate(theme.colors.tonalOffset, theme.colors.primary.main),
       ),
     defaultDetailsWidth: '75%',
-    typeNameColor: (theme) => theme.colors.text.secondary,
-    typeTitleColor: (theme) => theme.schema.typeNameColor,
-    requireLabelColor: (theme) => theme.colors.error.main,
+    typeNameColor: theme => theme.colors.text.secondary,
+    typeTitleColor: theme => theme.schema.typeNameColor,
+    requireLabelColor: theme => theme.colors.error.main,
     labelsTextSize: '0.9em',
     nestingSpacing: '1em',
     nestedBackground: '#fafafa',
     arrow: {
       size: '1.1em',
-      color: (theme) => theme.colors.text.secondary,
+      color: theme => theme.colors.text.secondary,
     },
   },
   typography: {
@@ -118,18 +115,6 @@ const defaultTheme: ThemeInterface = {
     headings: {
       fontFamily: 'Montserrat, sans-serif',
       fontWeight: '400',
-      h1: {
-        fontSize: '1.85714em',
-        fontWeight: ({ typography }) => typography.headings.fontWeight,
-      },
-      h2: {
-        fontSize: '1.57143em',
-        fontWeight: ({ typography }) => typography.headings.fontWeight,
-      },
-      h3: {
-        fontSize: '1.27em',
-        fontWeight: ({ typography }) => typography.headings.h2.fontWeight,
-      },
       lineHeight: '1.6em',
     },
     code: {
@@ -143,85 +128,33 @@ const defaultTheme: ThemeInterface = {
     },
     links: {
       color: ({ colors }) => colors.primary.main,
-      textDecoration: 'none',
       visited: ({ typography }) => typography.links.color,
-      hover: {
-        color: ({ typography }) => lighten(0.2, typography.links.color),
-        textDecoration: 'none currentcolor solid'
-      }
+      hover: ({ typography }) => lighten(0.2, typography.links.color),
+      textDecoration: 'auto',
+      hoverTextDecoration: 'auto',
     },
   },
   sidebar: {
     width: '260px',
     backgroundColor: '#fafafa',
     textColor: '#333333',
-    activeTextColor: (theme) =>
+    activeTextColor: theme =>
       theme.sidebar.textColor !== defaultTheme.sidebar!.textColor
         ? theme.sidebar.textColor
         : theme.colors.primary.main,
     groupItems: {
-      backgroundColor: 'transparent',
-      color: ({ sidebar }) => sidebar.textColor,
-      fontSize: '0.8em',
-      fontWeight: 'inherit',
-      opacity: '0.7',
-      active: {
-        color: ({ sidebar }) => sidebar.groupItems.color,
-        backgroundColor: ({ sidebar }) => sidebar.backgroundColor
-      },
-      hover: {
-        color: ({ sidebar }) => sidebar.groupItems.color,
-        backgroundColor: ({ sidebar }) => sidebar.groupItems.backgroundColor
-      },
+      activeBackgroundColor: theme => darken(0.1, theme.sidebar.backgroundColor),
+      activeTextColor: theme => theme.sidebar.activeTextColor,
       textTransform: 'uppercase',
-      arrow: {
-        size: ({ sidebar }) => sidebar.arrow.size,
-        color: ({ sidebar }) => sidebar.arrow.color
-      },
     },
     level1Items: {
-      backgroundColor: 'transparent',
-      color: ({ sidebar }) => sidebar.groupItems.color,
-      fontSize: '0.929em',
-      fontWeight: 'inherit',
-      opacity: '1',
-      active: {
-        color: ({ sidebar }) => sidebar.activeTextColor,
-        backgroundColor: (theme) => darken(0.05, theme.sidebar.backgroundColor)
-      },
-      hover: {
-        color: ({ sidebar }) => sidebar.activeTextColor,
-        backgroundColor: ({ sidebar }) => sidebar.level1Items.active.backgroundColor
-      },
+      activeBackgroundColor: theme => darken(0.05, theme.sidebar.backgroundColor),
+      activeTextColor: theme => theme.sidebar.activeTextColor,
       textTransform: 'none',
-      arrow: {
-        size: ({ sidebar }) => sidebar.arrow.size,
-        color: ({ sidebar }) => sidebar.arrow.color
-      },
-    },
-    level2Items: {
-      backgroundColor: 'transparent',
-      color: ({ sidebar }) => sidebar.textColor,
-      fontSize: 'inherit',
-      fontWeight: 'inherit',
-      opacity: '1',
-      active: {
-        color: ({ sidebar }) => sidebar.level2Items.color,
-        backgroundColor: (theme) => darken(0.1, theme.sidebar.backgroundColor)
-      },
-      hover: {
-        color: ({ sidebar }) => sidebar.level2Items.color,
-        backgroundColor: ({ sidebar }) => sidebar.level2Items.active.backgroundColor
-      },
-      textTransform: 'none',
-      arrow: {
-        size: ({ sidebar }) => sidebar.arrow.size,
-        color: ({ sidebar }) => sidebar.arrow.color
-      },
     },
     arrow: {
       size: '1.5em',
-      color: '#000000'
+      color: theme => theme.sidebar.textColor,
     },
   },
   logo: {
@@ -232,45 +165,24 @@ const defaultTheme: ThemeInterface = {
   rightPanel: {
     backgroundColor: '#263238',
     width: '40%',
-    textColor: '#ffffff'
+    textColor: '#ffffff',
+    servers: {
+      overlay: {
+        backgroundColor: '#fafafa',
+        textColor: '#263238',
+      },
+      url: {
+        backgroundColor: '#fff',
+      },
+    },
   },
   codeBlock: {
-    fontSize: ({typography}) => typography.code.fontSize,
-    fontFamily: ({typography}) => typography.code.fontFamily,
     backgroundColor: ({ rightPanel }) => darken(0.1, rightPanel.backgroundColor),
-    border:{
-      radius: '5px',
-    },
-    colors: {
-      symbol: ({rightPanel}) => rightPanel.textColor,
-      property: ({codeBlock}) => codeBlock.colors.symbol,
-      string: '#a0fbaa',
-      boolean: '#e64441',
-      number: '#4a8bb3'
-    }
   },
-  border: {
-    radius: '2px',
+  fab: {
+    backgroundColor: '#f2f2f2',
+    color: '#0065FB',
   },
-  dropdown: {
-    color: '#263238',
-    focus: {
-      boxShadow: `0px 0px 0px 1px ${(props) => props.theme.colors.primary.main}`
-    }
-  },
-  donwloadButton: {
-    hover: {
-      color: 'inherit'
-    }
-  },
-  markdown: {
-    table: {
-      border: {
-        color: '#ccc',
-      },
-      backgroundColor: 'transparent'
-    }
-  }
 };
 
 export default defaultTheme;
@@ -279,7 +191,7 @@ export function resolveTheme(theme: ThemeInterface): ResolvedThemeInterface {
   const resolvedValues = {};
   let counter = 0;
   const setProxy = (obj, path: string) => {
-    Object.keys(obj).forEach((k) => {
+    Object.keys(obj).forEach(k => {
       const currentPath = (path ? path + '.' : '') + k;
       const val = obj[k];
       if (typeof val === 'function') {
@@ -330,24 +242,13 @@ export interface FontSettings {
   color: string;
 }
 
-export interface SidebarItemSetttings {
-  backgroundColor: string;
-  color: string;
-  fontSize: string;
-  fontWeight: string;
-  opacity: string;
-  active: {
+export interface Servers {
+  overlay: {
     backgroundColor: string;
-    color: string;
+    textColor: string;
   };
-  hover: {
+  url: {
     backgroundColor: string;
-    color: string;
-  };
-  textTransform: string;
-  arrow: {
-    size: string;
-    color: string;
   };
 }
 
@@ -365,7 +266,6 @@ export interface ResolvedThemeInterface {
   colors: {
     tonalOffset: number;
     primary: ColorSetting;
-    secondary: ColorSetting;
     success: ColorSetting;
     warning: ColorSetting;
     error: ColorSetting;
@@ -433,28 +333,15 @@ export interface ResolvedThemeInterface {
     headings: {
       fontFamily: string;
       fontWeight: string;
-      h1: {
-        fontSize: string;
-        fontWeight: string;
-      };
-      h2: {
-        fontSize: string;
-        fontWeight: string;
-      };
-      h3: {
-        fontSize: string;
-        fontWeight: string;
-      };
       lineHeight: string;
     };
+
     links: {
       color: string;
-      textDecoration: string;
       visited: string;
-      hover: {
-        color: string;
-        textDecoration: string;
-      }
+      hover: string;
+      textDecoration: string;
+      hoverTextDecoration: string;
     };
   };
   sidebar: {
@@ -462,9 +349,16 @@ export interface ResolvedThemeInterface {
     backgroundColor: string;
     textColor: string;
     activeTextColor: string;
-    groupItems: SidebarItemSetttings;
-    level1Items: SidebarItemSetttings;
-    level2Items: SidebarItemSetttings;
+    groupItems: {
+      activeBackgroundColor: string;
+      activeTextColor: string;
+      textTransform: string;
+    };
+    level1Items: {
+      activeBackgroundColor: string;
+      activeTextColor: string;
+      textTransform: string;
+    };
     arrow: {
       size: string;
       color: string;
@@ -479,44 +373,15 @@ export interface ResolvedThemeInterface {
     backgroundColor: string;
     textColor: string;
     width: string;
+    servers: Servers;
   };
   codeBlock: {
     backgroundColor: string;
-    fontSize: string;
-    fontFamily: string;
-    border: {
-      radius: string;
-    };
-    colors: {
-      symbol: string;
-      property: string;
-      string: string;
-      boolean: string;
-      number: string;
-    };
   };
-  border: {
-    radius: string;
-  };
-  dropdown: {
+  fab: {
+    backgroundColor: string;
     color: string;
-    focus: {
-      boxShadow: string;
-    }
   };
-  donwloadButton: {
-    hover: {
-      color: string
-    };
-  };
-  markdown: {
-    table: {
-      border: {
-        color: string;
-      };
-      backgroundColor: string;
-    }
-  }
 
   extensionsHook?: (name: string, props: any) => string;
 }

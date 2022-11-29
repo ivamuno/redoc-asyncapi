@@ -4,9 +4,8 @@ import defaultTheme, { resolveTheme } from '../theme';
 
 export default class TestThemeProvider extends React.Component {
   render() {
-    const theme = resolveTheme(defaultTheme);
     return (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={resolveTheme(defaultTheme)}>
         {React.Children.only(this.props.children as any)}
       </ThemeProvider>
     );

@@ -6,7 +6,9 @@ import {
   OneOfLabel,
   OneOfList,
 } from '../../common-elements/schema';
+import { Badge } from '../../common-elements/shelfs';
 import { SchemaModel } from '../../services/models';
+import { ConstraintsView } from '../Fields/FieldContstraints';
 import { Schema, SchemaProps } from './Schema';
 
 export interface OneOfButtonProps {
@@ -20,7 +22,11 @@ export class OneOfButton extends React.Component<OneOfButtonProps> {
   render() {
     const { idx, schema, subSchema } = this.props;
     return (
-      <StyledOneOfButton active={idx === schema.activeOneOf} onClick={this.activateOneOf}>
+      <StyledOneOfButton
+        deprecated={subSchema.deprecated}
+        active={idx === schema.activeOneOf}
+        onClick={this.activateOneOf}
+      >
         {subSchema.title || subSchema.typePrefix + subSchema.displayType}
       </StyledOneOfButton>
     );
@@ -42,6 +48,8 @@ export class OneOfSchema extends React.Component<SchemaProps> {
     if (oneOf === undefined) {
       return null;
     }
+    const activeSchema = oneOf[schema.activeOneOf];
+
     return (
       <div>
         <OneOfLabel> {schema.oneOfType} </OneOfLabel>
@@ -50,7 +58,11 @@ export class OneOfSchema extends React.Component<SchemaProps> {
             <OneOfButton key={subSchema.pointer} schema={schema} subSchema={subSchema} idx={idx} />
           ))}
         </OneOfList>
-        <Schema {...this.props} schema={oneOf[schema.activeOneOf]} />
+        <div>
+          {oneOf[schema.activeOneOf].deprecated && <Badge type="warning">Deprecated</Badge>}
+        </div>
+        <ConstraintsView constraints={activeSchema.constraints} />
+        <Schema {...this.props} schema={activeSchema} />
       </div>
     );
   }

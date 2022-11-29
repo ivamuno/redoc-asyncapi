@@ -17,7 +17,7 @@ module.exports = {
       version: 'detect',
     },
   },
-  plugins: ['@typescript-eslint', 'import'],
+  plugins: ['react', 'react-hooks', '@typescript-eslint', 'import'],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -29,9 +29,10 @@ module.exports = {
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/ban-types': ['error', { types: { object: false }, extendDefaults: true }],
     '@typescript-eslint/no-var-requires': 'off',
-    '@typescript-eslint/no-empty-interface': ['error', { 'allowSingleExtends': true }],
 
     'react/prop-types': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
 
     'import/no-extraneous-dependencies': 'error',
     'import/no-internal-modules': [

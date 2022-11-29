@@ -4,7 +4,7 @@ import { Collapse } from 'react-collapse';
 import styled from '../../styled-components';
 import { UnderlinedHeader } from '../../common-elements';
 import { PropertiesTable } from '../../common-elements/fields-layout';
-import { MimeLabel } from '../../common-elements/dropdown';
+import { MimeLabel } from '../../common-elements/Dropdown';
 import { ShelfIcon } from '../../common-elements/shelfs';
 
 import { mapWithLast } from '../../utils';
@@ -15,9 +15,9 @@ import {
 } from '../../common-elements/fields-layout';
 
 const TypeName = styled.span`
-  color: ${(props) => props.theme.schema.typeNameColor};
-  font-size: ${(props) => props.theme.typography.code.fontSize};
-  font-family: ${(props) => props.theme.typography.code.fontFamily};
+  color: ${props => props.theme.schema.typeNameColor};
+  font-size: ${props => props.theme.typography.code.fontSize};
+  font-family: ${props => props.theme.typography.code.fontFamily};
 `;
 
 const BindingsHeader = styled(UnderlinedHeader)`
@@ -44,9 +44,11 @@ export class Bindings extends React.PureComponent<BindingsProps, BindingsState> 
     const { expanded } = this.state;
     return (
       <div>
-        <BindingsHeader  onClick={() => {
-          this.setState({ expanded: !expanded });
-        }}>
+        <BindingsHeader
+          onClick={() => {
+            this.setState({ expanded: !expanded });
+          }}
+        >
           {this.props.bindingGroupHeader}: <MimeLabel>{this.props.bindingGroupName}</MimeLabel>
           <ShelfIcon float={'right'} direction={expanded ? 'down' : 'right'} />
         </BindingsHeader>

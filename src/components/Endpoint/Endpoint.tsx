@@ -12,12 +12,12 @@ import {
   OperationEndpointWrap,
   ServerItem,
   ServerPropsItem,
-  ServerVarName,
-  ServerVarDesc,
-  ServerVarValue,
   ServerRelativeURL,
   ServersOverlay,
   ServerUrl,
+  ServerVarName,
+  ServerVarDesc,
+  ServerVarValue,
 } from './styled.elements';
 
 export interface EndpointProps {
@@ -51,7 +51,7 @@ export class Endpoint extends React.Component<EndpointProps, EndpointState> {
     // TODO: highlight server variables, e.g. https://{user}.test.com
     return (
       <OptionsContext.Consumer>
-        {(options) => (
+        {options => (
           <OperationEndpointWrap>
             <EndpointInfo onClick={this.toggle} expanded={expanded} inverted={inverted}>
               <HttpVerb type={operation.httpVerb} compact={this.props.compact}>
@@ -67,7 +67,7 @@ export class Endpoint extends React.Component<EndpointProps, EndpointState> {
               />
             </EndpointInfo>
             <ServersOverlay expanded={expanded} aria-hidden={!expanded}>
-              {operation.servers.map((server) => {
+              {operation.servers.map(server => {
                 const expandDefaultServerVars = options.expandDefaultServerVariables;
                 const normalizedUrl = expandDefaultServerVars
                   ? expandDefaultServerVariables(server.url, server.variables)
@@ -95,7 +95,7 @@ export class Endpoint extends React.Component<EndpointProps, EndpointState> {
                       </ServerUrl>
                     </SelectOnClick>
                     {!expandDefaultServerVars &&
-                      Object.keys(serverVariables).map((key) => {
+                      Object.keys(serverVariables).map(key => {
                         const variable = serverVariables[key];
                         return (
                           <ServerPropsItem key={key}>
